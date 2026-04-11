@@ -167,7 +167,7 @@
   .theme-white .file-labels { color: #111; }
   .theme-dark .file-labels { color: #fff; }
   .theme-rainbow .file-labels { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
-  .theme-chaos .file-labels { color: #0ff; }
+  .theme-chaos .file-labels { color: #0ff; text-shadow: 0 0 8px rgba(0,0,0,0.8); background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 6px; }
 
   /* ===== WAVEFORM ===== */
   .waveform-area { width: 100%; max-width: 800px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
@@ -224,7 +224,7 @@
   .theme-white .drag-hint, .theme-white .or-hint { color: #111; }
   .theme-dark .drag-hint, .theme-dark .or-hint { color: #fff; }
   .theme-rainbow .drag-hint, .theme-rainbow .or-hint { color: #fff; }
-  .theme-chaos .drag-hint, .theme-chaos .or-hint { color: #0ff; }
+  .theme-chaos .drag-hint, .theme-chaos .or-hint { color: #0ff; text-shadow: 0 0 8px rgba(0,0,0,0.8); background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 6px; display: inline-block; }
 
   /* ===== MANUAL TIME INPUT ===== */
   .time-input-row { display: none; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; font-size: 1.05rem; font-weight: 800; }
@@ -241,7 +241,7 @@
   .theme-dark .time-input-row input { background: #2a2a4a; color: #fff; border-color: #666; }
   .theme-rainbow .time-input-row { color: #fff; }
   .theme-rainbow .time-input-row input { background: rgba(0,0,0,0.3); color: #fff; border-color: rgba(255,255,255,0.5); }
-  .theme-chaos .time-input-row { color: #0ff; }
+  .theme-chaos .time-input-row { color: #0ff; text-shadow: 0 0 8px rgba(0,0,0,0.8); background: rgba(0,0,0,0.5); padding: 6px 14px; border-radius: 6px; }
   .theme-chaos .time-input-row input { background: rgba(0,0,0,0.5); color: #ff0; border-color: #ff00ff; }
 
   .section-info { text-align: center; font-size: 1.1rem; font-weight: 700; min-height: 1.4em; }
@@ -264,7 +264,7 @@
   .theme-dark .speed-control input { accent-color: #7c5cbf; }
   .theme-rainbow .speed-control { color: #fff; }
   .theme-rainbow .speed-control input { accent-color: #ffff00; }
-  .theme-chaos .speed-control { color: #0ff; }
+  .theme-chaos .speed-control { color: #0ff; text-shadow: 0 0 8px rgba(0,0,0,0.8); background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 6px; }
   .theme-chaos .speed-control input { accent-color: #ff00ff; }
 
   /* ===== PLACEHOLDER ===== */
@@ -930,6 +930,7 @@ document.body.addEventListener('drop', e => {
 });
 
 function loadAudio(file) {
+  if(audio.src) URL.revokeObjectURL(audio.src);
   audio.src = URL.createObjectURL(file);
   audioLabel.textContent = file.name;
   audio.addEventListener('loadedmetadata', () => {
