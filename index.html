@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choir Loop Practice</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 20px;
+    transition: background 0.3s, color 0.3s;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* ===== THEMES ===== */
+  body.theme-pink { background: #e6007e; color: #ffe600; }
+  body.theme-white { background: #f5f5f5; color: #111; }
+  body.theme-dark { background: #1a1a2e; color: #fff; }
+  body.theme-rainbow {
+    background: linear-gradient(135deg, #ff0000, #ff7700, #ffff00, #00ff00, #0077ff, #8800ff, #ff0088);
+    background-size: 400% 400%;
+    animation: rainbowBg 4s ease infinite;
+    color: #fff;
+  }
+  body.theme-chaos {
+    background: #1a0a2e;
+    color: #fff;
+  }
+
+  @keyframes rainbowBg {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* ===== CHAOS KITTEN BACKGROUND ===== */
+  #chaosCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    display: none;
+  }
+  body.theme-chaos #chaosCanvas { display: block; }
+  body.theme-chaos .main-content { position: relative; z-index: 1; }
+
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  /* ===== TITLE ===== */
+  h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.2rem;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-align: center;
+  }
+  .theme-pink h1 { color: #ffe600; }
+  .theme-white h1 { color: #111; }
+  .theme-dark h1 { color: #fff; }
+  .theme-rainbow h1 {
+    background: linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff00, #0077ff, #8800ff);
+    background-size: 200% auto;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: rainbowText 2s linear infinite; font-size: 2.6rem;
+  }
+  .theme-chaos h1 {
+    background: linear-gradient(90deg, #ff00ff, #00ffff, #ffff00, #ff0066);
+    background-size: 300% auto;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: rainbowText 1.5s linear infinite; font-size: 2.6rem;
+    text-shadow: none;
+  }
+  @keyframes rainbowText { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+
+  .subtitle {
+    font-size: 1.2rem; font-weight: 800;
+    margin-bottom: 20px; text-align: center;
+    padding: 8px 20px; border-radius: 6px; display: inline-block;
+  }
+  .theme-pink .subtitle { background: rgba(0,0,0,0.35); color: #ffe600; }
+  .theme-white .subtitle { background: rgba(0,0,0,0.07); color: #111; }
+  .theme-dark .subtitle { background: rgba(255,255,255,0.1); color: #fff; }
+  .theme-rainbow .subtitle { background: rgba(0,0,0,0.4); color: #fff; }
+  .theme-chaos .subtitle { background: rgba(255,0,255,0.3); color: #0ff; font-size: 1.3rem; }
+
+  /* ===== LAYOUT ===== */
+  .main-area {
+    width: 100%; max-width: 1100px;
+    display: flex; gap: 20px;
+    align-items: flex-start; justify-content: center;
+  }
+  .player-col {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column;
+    gap: 10px; align-items: center;
+  }
+
+  /* ===== BUTTONS ===== */
+  .btn {
+    border-radius: 8px; padding: 12px 22px;
+    font-size: 1.1rem; font-weight: 800;
+    cursor: pointer; transition: background 0.15s, transform 0.1s;
+    border: 2px solid transparent; font-family: 'Nunito', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (max-width: 600px) {
+    .btn { padding: 14px 20px; font-size: 1rem; min-height: 48px; }
+    h1 { font-size: 1.6rem; }
+    .subtitle { font-size: 1rem; }
+    .instructions { font-size: 0.95rem; padding: 14px 16px; line-height: 1.7; }
+    .controls { gap: 8px; }
+    .speed-control input[type="range"] { width: 80px; }
+    .time-input-row input[type="text"] { width: 60px; font-size: 1rem; }
+    .theme-pick { padding: 6px 12px; font-size: 0.85rem; }
+  }
+  .btn:hover { transform: scale(1.03); }
+  .btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+  .theme-pink .btn { background: #b8005f; color: #ffe600; border-color: #ffe600; }
+  .theme-pink .btn:hover { background: #d40070; }
+  .theme-pink .btn.primary { background: #ffe600; color: #e6007e; border-color: #ffe600; }
+  .theme-pink .btn.active { background: #ffe600; color: #e6007e; }
+
+  .theme-white .btn { background: #fff; color: #111; border-color: #999; }
+  .theme-white .btn:hover { background: #eee; }
+  .theme-white .btn.primary { background: #0066cc; color: #fff; border-color: #0066cc; }
+  .theme-white .btn.active { background: #0066cc; color: #fff; }
+
+  .theme-dark .btn { background: #2a2a4a; color: #fff; border-color: #666; }
+  .theme-dark .btn:hover { background: #3a3a5a; }
+  .theme-dark .btn.primary { background: #7c5cbf; color: #fff; border-color: #7c5cbf; }
+  .theme-dark .btn.active { background: #5a9a5a; color: #fff; }
+
+  .theme-rainbow .btn { background: rgba(0,0,0,0.3); color: #fff; border-color: rgba(255,255,255,0.5); }
+  .theme-rainbow .btn.primary {
+    background: linear-gradient(90deg, #ff0055, #ff9900, #ffff00, #00cc44, #0088ff, #7700ff);
+    background-size: 200% auto; animation: rainbowText 3s linear infinite;
+    color: #fff; border-color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  }
+  .theme-rainbow .btn.active { background: rgba(255,255,255,0.25); color: #fff; border-color: #fff; }
+
+  .theme-chaos .btn { background: rgba(255,0,255,0.3); color: #0ff; border-color: #ff0; }
+  .theme-chaos .btn:hover { background: rgba(255,0,255,0.5); }
+  .theme-chaos .btn.primary { background: #ff0066; color: #fff; border-color: #ff0; }
+  .theme-chaos .btn.active { background: #ff0; color: #000; border-color: #ff0; }
+
+  /* ===== UPLOAD ===== */
+  .upload-row { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; }
+  input[type="file"] { display: none; }
+  .file-labels { display: flex; gap: 16px; justify-content: center; font-size: 1.15rem; font-weight: 800; }
+  .theme-pink .file-labels { color: #ffe600; }
+  .theme-white .file-labels { color: #111; }
+  .theme-dark .file-labels { color: #fff; }
+  .theme-rainbow .file-labels { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
+  .theme-chaos .file-labels { color: #0ff; }
+
+  /* ===== WAVEFORM ===== */
+  .waveform-area { width: 100%; max-width: 800px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .waveform-wrap {
+    position: relative; width: 100%; height: 150px;
+    border-radius: 10px; overflow: hidden; cursor: crosshair; display: none;
+    touch-action: none; /* prevent scroll/zoom while dragging on waveform */
+    -webkit-user-select: none; user-select: none;
+  }
+  .waveform-wrap.visible { display: block; }
+  .theme-pink .waveform-wrap { background: #b8005f; }
+  .theme-white .waveform-wrap { background: #d5d5d5; }
+  .theme-dark .waveform-wrap { background: #16213e; }
+  .theme-rainbow .waveform-wrap { background: rgba(0,0,0,0.25); border: 2px solid rgba(255,255,255,0.2); }
+  .theme-chaos .waveform-wrap { background: rgba(0,0,0,0.4); border: 2px solid #ff00ff; }
+
+  #waveformCanvas { width: 100%; height: 100%; display: block; }
+  .selection-overlay { position: absolute; top: 0; height: 100%; pointer-events: none; display: none; }
+  .theme-pink .selection-overlay { background: rgba(255,230,0,0.25); border-left: 2px solid #ffe600; border-right: 2px solid #ffe600; }
+  .theme-white .selection-overlay { background: rgba(0,100,200,0.2); border-left: 2px solid #0066cc; border-right: 2px solid #0066cc; }
+  .theme-dark .selection-overlay { background: rgba(124,92,191,0.3); border-left: 2px solid #7c5cbf; border-right: 2px solid #7c5cbf; }
+  .theme-rainbow .selection-overlay { background: rgba(255,255,255,0.2); border-left: 2px solid #fff; border-right: 2px solid #fff; }
+  .theme-chaos .selection-overlay { background: rgba(255,0,255,0.3); border-left: 2px solid #0ff; border-right: 2px solid #0ff; }
+
+  .edge-handle { position: absolute; top: 0; height: 100%; width: 28px; cursor: ew-resize; z-index: 5; display: none; }
+  .edge-handle-left { left: -6px; }
+  .edge-handle-right { right: -6px; }
+
+  .playhead { position: absolute; top: 0; height: 100%; width: 2px; pointer-events: none; display: none; }
+  .theme-pink .playhead { background: #fff; }
+  .theme-white .playhead { background: #ff3333; }
+  .theme-dark .playhead { background: #ff6b6b; }
+  .theme-rainbow .playhead { background: #fff; }
+  .theme-chaos .playhead { background: #ff0; }
+
+  /* ===== TIME ===== */
+  .time-display {
+    display: none; justify-content: space-between;
+    font-size: 1.15rem; font-weight: 800; padding: 0 4px; width: 100%;
+  }
+  .time-display.visible { display: flex; }
+  .theme-pink .time-display { color: #ffe600; }
+  .theme-white .time-display { color: #111; }
+  .theme-dark .time-display { color: #fff; }
+  .theme-rainbow .time-display { color: #fff; }
+  .theme-chaos .time-display { color: #0ff; }
+
+  /* ===== DRAG / OR HINTS ===== */
+  .drag-hint, .or-hint { display: none; text-align: center; font-weight: 800; font-family: 'Nunito', sans-serif; }
+  .drag-hint.visible, .or-hint.visible { display: block; }
+  .drag-hint { font-size: 1.15rem; margin-top: 6px; }
+  .or-hint { font-size: 1.3rem; font-weight: 900; letter-spacing: 3px; margin: 2px 0; }
+  .theme-pink .drag-hint, .theme-pink .or-hint { color: #ffe600; }
+  .theme-white .drag-hint, .theme-white .or-hint { color: #111; }
+  .theme-dark .drag-hint, .theme-dark .or-hint { color: #fff; }
+  .theme-rainbow .drag-hint, .theme-rainbow .or-hint { color: #fff; }
+  .theme-chaos .drag-hint, .theme-chaos .or-hint { color: #0ff; }
+
+  /* ===== MANUAL TIME INPUT ===== */
+  .time-input-row { display: none; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; font-size: 1.05rem; font-weight: 800; }
+  .time-input-row.visible { display: flex; }
+  .time-input-row input[type="text"] {
+    width: 70px; padding: 6px 10px; border-radius: 6px; border: 2px solid;
+    font-size: 1.05rem; font-weight: 800; font-family: 'Nunito', sans-serif; text-align: center;
+  }
+  .theme-pink .time-input-row { color: #ffe600; }
+  .theme-pink .time-input-row input { background: #b8005f; color: #ffe600; border-color: #ffe600; }
+  .theme-white .time-input-row { color: #111; }
+  .theme-white .time-input-row input { background: #fff; color: #111; border-color: #999; }
+  .theme-dark .time-input-row { color: #fff; }
+  .theme-dark .time-input-row input { background: #2a2a4a; color: #fff; border-color: #666; }
+  .theme-rainbow .time-input-row { color: #fff; }
+  .theme-rainbow .time-input-row input { background: rgba(0,0,0,0.3); color: #fff; border-color: rgba(255,255,255,0.5); }
+  .theme-chaos .time-input-row { color: #0ff; }
+  .theme-chaos .time-input-row input { background: rgba(0,0,0,0.5); color: #ff0; border-color: #ff00ff; }
+
+  .section-info { text-align: center; font-size: 1.1rem; font-weight: 700; min-height: 1.4em; }
+  .theme-pink .section-info { color: #ffe600; }
+  .theme-white .section-info { color: #0066cc; }
+  .theme-dark .section-info { color: #7c5cbf; }
+  .theme-rainbow .section-info { color: #fff; }
+  .theme-chaos .section-info { color: #ff0; }
+
+  /* ===== CONTROLS ===== */
+  .controls { display: none; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+  .controls.visible { display: flex; }
+  .speed-control { display: flex; align-items: center; gap: 8px; font-size: 1.05rem; font-weight: 800; }
+  .speed-control input[type="range"] { width: 100px; }
+  .theme-pink .speed-control { color: #ffe600; }
+  .theme-pink .speed-control input { accent-color: #ffe600; }
+  .theme-white .speed-control { color: #111; }
+  .theme-white .speed-control input { accent-color: #0066cc; }
+  .theme-dark .speed-control { color: #fff; }
+  .theme-dark .speed-control input { accent-color: #7c5cbf; }
+  .theme-rainbow .speed-control { color: #fff; }
+  .theme-rainbow .speed-control input { accent-color: #ffff00; }
+  .theme-chaos .speed-control { color: #0ff; }
+  .theme-chaos .speed-control input { accent-color: #ff00ff; }
+
+  /* ===== PLACEHOLDER ===== */
+  .placeholder-msg {
+    text-align: center; font-weight: 800;
+    padding: 50px 20px; border-radius: 10px;
+    width: 100%; max-width: 800px;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .placeholder-msg .big { font-size: 1.4rem; margin-bottom: 10px; display: block; }
+  .placeholder-msg .sub { font-size: 1.15rem; font-weight: 700; display: block; }
+  .theme-pink .placeholder-msg { background: #b8005f; border: 3px dashed #ffe600; }
+  .theme-pink .placeholder-msg .big { color: #ffe600; }
+  .theme-pink .placeholder-msg .sub { color: #ffe600; }
+  .theme-pink .placeholder-msg:hover { background: #cc006d; }
+  .theme-white .placeholder-msg { background: #e0e0e0; border: 3px dashed #999; }
+  .theme-white .placeholder-msg .big { color: #111; }
+  .theme-white .placeholder-msg .sub { color: #111; }
+  .theme-white .placeholder-msg:hover { background: #d0d0d0; }
+  .theme-dark .placeholder-msg { background: #16213e; border: 3px dashed #666; }
+  .theme-dark .placeholder-msg .big { color: #fff; }
+  .theme-dark .placeholder-msg .sub { color: #fff; }
+  .theme-dark .placeholder-msg:hover { background: #1d2a4a; }
+  .theme-rainbow .placeholder-msg { background: rgba(0,0,0,0.25); border: 3px dashed rgba(255,255,255,0.5); }
+  .theme-rainbow .placeholder-msg .big, .theme-rainbow .placeholder-msg .sub { color: #fff; }
+  .theme-chaos .placeholder-msg { background: rgba(0,0,0,0.4); border: 3px dashed #ff00ff; }
+  .theme-chaos .placeholder-msg .big { color: #ff0; }
+  .theme-chaos .placeholder-msg .sub { color: #0ff; }
+
+  /* ===== INSTRUCTIONS ===== */
+  .instructions {
+    max-width: 1100px; width: 100%;
+    border-radius: 10px; padding: 18px 24px;
+    font-size: 1.1rem; font-weight: 700;
+    line-height: 2; text-align: center; margin-top: 14px;
+  }
+  .theme-pink .instructions { background: #b8005f; color: #ffe600; }
+  .theme-white .instructions { background: #e0e0e0; color: #111; }
+  .theme-dark .instructions { background: #16213e; color: #fff; }
+  .theme-rainbow .instructions { background: rgba(0,0,0,0.3); color: #fff; }
+  .theme-chaos .instructions { background: rgba(0,0,0,0.5); color: #0ff; border: 1px solid #ff00ff; }
+  .instructions strong {
+    font-size: 1.2rem; font-family: 'Fredoka One', cursive; display: block; margin-bottom: 6px;
+  }
+  .theme-pink .instructions strong { color: #fff; }
+  .theme-white .instructions strong { color: #111; }
+  .theme-dark .instructions strong { color: #fff; }
+  .theme-rainbow .instructions strong { color: #ffff00; }
+  .theme-chaos .instructions strong { color: #ff0; }
+
+  /* ===== THEME SWITCHER ===== */
+  .theme-switcher { display: flex; gap: 8px; align-items: center; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+  .theme-switcher-label { font-size: 1.2rem; font-weight: 800; margin-right: 4px; }
+  .theme-pink .theme-switcher-label { color: #ffe600; }
+  .theme-white .theme-switcher-label { color: #111; }
+  .theme-dark .theme-switcher-label { color: #fff; }
+  .theme-rainbow .theme-switcher-label { color: #fff; }
+  .theme-chaos .theme-switcher-label { color: #ff0; }
+
+  .theme-pick {
+    padding: 8px 16px; border-radius: 20px;
+    font-size: 0.95rem; font-weight: 800;
+    cursor: pointer; border: 2px solid;
+    font-family: 'Nunito', sans-serif; transition: transform 0.15s;
+  }
+  .theme-pick:hover { transform: scale(1.08); }
+  .theme-pick.tp-pink { background: #e6007e; color: #ffe600; border-color: #ffe600; }
+  .theme-pick.tp-white { background: #f5f5f5; color: #111; border-color: #999; }
+  .theme-pick.tp-dark { background: #1a1a2e; color: #fff; border-color: #555; }
+  .theme-pick.tp-rainbow {
+    background: linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff00, #0077ff, #8800ff);
+    color: #fff; border-color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  }
+  .theme-pick.tp-chaos {
+    background: linear-gradient(135deg, #ff00ff, #000, #00ffff);
+    color: #ff0; border-color: #ff0; text-shadow: 0 0 6px #ff00ff;
+    animation: chaosPickPulse 1s ease infinite alternate;
+  }
+  @keyframes chaosPickPulse { 0% { box-shadow: 0 0 4px #ff00ff; } 100% { box-shadow: 0 0 12px #00ffff; } }
+  .theme-pick.active-theme { outline: 3px solid #fff; outline-offset: 2px; }
+  .theme-white .theme-pick.active-theme { outline-color: #111; }
+</style>
+</head>
+<body class="theme-pink">
+
+<!-- CHAOS KITTEN CANVAS -->
+<canvas id="chaosCanvas"></canvas>
+
+<div class="main-content">
+<h1>Choir Loop Practice</h1>
+<p class="subtitle">Practice your part, one section at a time</p>
+
+<div class="main-area">
+  <div class="player-col">
+    <div class="upload-row">
+      <button class="btn primary" id="audioBtn">Open audio file</button>
+      <input type="file" id="audioInput" accept="audio/*,video/mpeg,.mpeg,.mpg,.mp4,.m4a">
+    </div>
+    <div class="file-labels">
+      <span id="audioLabel"></span>
+    </div>
+    <div class="waveform-area">
+      <div class="placeholder-msg" id="placeholderMsg">
+        <span class="big">Click here to open your audio file</span>
+        <span class="sub">Or drag a file onto this box</span>
+      </div>
+      <div class="waveform-wrap" id="waveformWrap">
+        <canvas id="waveformCanvas"></canvas>
+        <div class="selection-overlay" id="selectionOverlay">
+          <div class="edge-handle edge-handle-left" id="edgeLeft"></div>
+          <div class="edge-handle edge-handle-right" id="edgeRight"></div>
+        </div>
+        <div class="playhead" id="playhead"></div>
+      </div>
+    </div>
+    <div class="drag-hint" id="dragHint">Drag a section to loop</div>
+    <div class="or-hint" id="orHint">OR</div>
+    <div class="time-input-row" id="timeInputRow">
+      <label>Start:</label>
+      <input type="text" id="startInput" placeholder="0:00">
+      <label>End:</label>
+      <input type="text" id="endInput" placeholder="0:00">
+      <button class="btn" id="setTimeBtn" style="padding:8px 14px; font-size:0.95rem;">Set</button>
+    </div>
+    <!-- section info removed -->
+    <div class="controls" id="controls">
+      <button class="btn primary" id="playBtn">Play</button>
+      <button class="btn" id="loopBtn">Loop: Off</button>
+      <button class="btn" id="clearBtn">Clear</button>
+      <div class="speed-control">
+        <span>Speed:</span>
+        <input type="range" id="speedSlider" min="0.5" max="1.5" step="0.05" value="1">
+        <span id="speedValue">1.0x</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="instructions">
+  <strong>How to use</strong>
+  1. Open your audio file<br>
+  2. Drag across the wave to pick a section<br>
+  3. Press Play, then Loop to repeat
+</div>
+
+<div class="theme-switcher">
+  <span class="theme-switcher-label">Change colors:</span>
+  <button class="theme-pick tp-pink active-theme" onclick="setTheme('pink')">Pink</button>
+  <button class="theme-pick tp-white" onclick="setTheme('white')">White</button>
+  <button class="theme-pick tp-dark" onclick="setTheme('dark')">Dark</button>
+  <button class="theme-pick tp-rainbow" onclick="setTheme('rainbow')">Rainbow</button>
+  <button class="theme-pick tp-chaos" onclick="setTheme('chaos')">Chaos Kitten</button>
+</div>
+</div>
+
+<script>
+// ===== CHAOS KITTEN ENGINE (Anime Style) =====
+const chaosCanvas = document.getElementById('chaosCanvas');
+const cctx = chaosCanvas.getContext('2d');
+let chaosRunning = false;
+const kittens = [];
+const kaijus = [];
+const buildings = [];
+const trees = [];
+const particles = [];
+const lasers = [];
+
+const KITTEN_COLORS = ['#ff66cc','#66ffff','#ffff66','#ff6666','#66ff99','#cc99ff','#ff9966'];
+const KAIJU_COLORS = ['#880044','#440088','#004488'];
+const POWER_COLORS = ['#ff0','#0ff','#f0f','#ff4400','#00ff88','#fff'];
+
+function resizeChaos() {
+  chaosCanvas.width = window.innerWidth;
+  chaosCanvas.height = window.innerHeight;
+}
+
+// Draw anime-style kitten (full body, flying pose)
+function drawKitten(k) {
+  const c = cctx;
+  const s = k.size;
+  const flip = k.vx < 0 ? -1 : 1;
+  c.save();
+  c.translate(k.x, k.y);
+  c.scale(flip, 1);
+
+  // Cape / trail
+  c.fillStyle = k.capeColor;
+  c.globalAlpha = 0.5;
+  c.beginPath();
+  c.moveTo(-s*0.2, -s*0.1);
+  c.quadraticCurveTo(-s*0.8 - Math.sin(k.wobble)*s*0.3, s*0.3, -s*0.5, s*0.7);
+  c.quadraticCurveTo(-s*0.1, s*0.5, 0, s*0.1);
+  c.fill();
+  c.globalAlpha = 1;
+
+  // Body (oval)
+  c.fillStyle = k.color;
+  c.beginPath();
+  c.ellipse(0, 0, s*0.25, s*0.35, 0, 0, Math.PI*2);
+  c.fill();
+  c.strokeStyle = '#000'; c.lineWidth = 1.5;
+  c.stroke();
+
+  // Head
+  c.fillStyle = k.color;
+  c.beginPath();
+  c.arc(0, -s*0.4, s*0.22, 0, Math.PI*2);
+  c.fill(); c.stroke();
+
+  // Ears (triangles)
+  c.fillStyle = k.color;
+  c.beginPath();
+  c.moveTo(-s*0.15, -s*0.55); c.lineTo(-s*0.08, -s*0.75); c.lineTo(-s*0.02, -s*0.55);
+  c.fill(); c.stroke();
+  c.beginPath();
+  c.moveTo(s*0.02, -s*0.55); c.lineTo(s*0.08, -s*0.75); c.lineTo(s*0.15, -s*0.55);
+  c.fill(); c.stroke();
+  // Inner ears
+  c.fillStyle = '#ffaacc';
+  c.beginPath();
+  c.moveTo(-s*0.12, -s*0.56); c.lineTo(-s*0.08, -s*0.68); c.lineTo(-s*0.04, -s*0.56); c.fill();
+  c.beginPath();
+  c.moveTo(s*0.04, -s*0.56); c.lineTo(s*0.08, -s*0.68); c.lineTo(s*0.12, -s*0.56); c.fill();
+
+  // Eyes (big anime eyes)
+  const eyeGlow = k.power === 'laser';
+  c.fillStyle = eyeGlow ? '#ff0000' : '#fff';
+  c.beginPath(); c.ellipse(-s*0.08, -s*0.42, s*0.06, s*0.07, 0, 0, Math.PI*2); c.fill();
+  c.beginPath(); c.ellipse(s*0.08, -s*0.42, s*0.06, s*0.07, 0, 0, Math.PI*2); c.fill();
+  if(!eyeGlow) {
+    c.fillStyle = k.eyeColor;
+    c.beginPath(); c.arc(-s*0.08, -s*0.41, s*0.035, 0, Math.PI*2); c.fill();
+    c.beginPath(); c.arc(s*0.08, -s*0.41, s*0.035, 0, Math.PI*2); c.fill();
+    c.fillStyle = '#fff';
+    c.beginPath(); c.arc(-s*0.06, -s*0.43, s*0.015, 0, Math.PI*2); c.fill();
+    c.beginPath(); c.arc(s*0.1, -s*0.43, s*0.015, 0, Math.PI*2); c.fill();
+  }
+
+  // Mouth
+  c.strokeStyle = '#333'; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(-s*0.04,-s*0.33); c.lineTo(0,-s*0.3); c.lineTo(s*0.04,-s*0.33); c.stroke();
+
+  // Arms (outstretched, flying)
+  c.strokeStyle = '#000'; c.lineWidth = 2;
+  c.fillStyle = k.color;
+  // Left arm
+  c.beginPath(); c.moveTo(-s*0.2, -s*0.1); c.lineTo(-s*0.4, -s*0.25); c.lineTo(-s*0.38, -s*0.15); c.fill(); c.stroke();
+  // Right arm (holding weapon if applicable)
+  c.beginPath(); c.moveTo(s*0.2, -s*0.1); c.lineTo(s*0.4, -s*0.25); c.lineTo(s*0.38, -s*0.15); c.fill(); c.stroke();
+
+  // Light sword
+  if(k.power === 'sword') {
+    const swordHue = (k.wobble * 50) % 360;
+    c.strokeStyle = `hsl(${swordHue},100%,70%)`;
+    c.lineWidth = 3; c.shadowColor = `hsl(${swordHue},100%,60%)`; c.shadowBlur = 10;
+    c.beginPath(); c.moveTo(s*0.4,-s*0.25); c.lineTo(s*0.7,-s*0.55); c.stroke();
+    c.shadowBlur = 0;
+  }
+
+  // Claws (if claw power)
+  if(k.power === 'claw') {
+    c.strokeStyle = '#fff'; c.lineWidth = 2;
+    c.shadowColor = '#ff0'; c.shadowBlur = 6;
+    for(let i = 0; i < 3; i++) {
+      c.beginPath();
+      c.moveTo(s*0.35, -s*0.3 + i*s*0.06);
+      c.lineTo(s*0.55, -s*0.35 + i*s*0.06);
+      c.stroke();
+    }
+    c.shadowBlur = 0;
+  }
+
+  // Legs (dangling)
+  c.fillStyle = k.color; c.strokeStyle = '#000'; c.lineWidth = 1.5;
+  c.beginPath();
+  c.ellipse(-s*0.1, s*0.3, s*0.07, s*0.12, Math.sin(k.wobble)*0.3, 0, Math.PI*2);
+  c.fill(); c.stroke();
+  c.beginPath();
+  c.ellipse(s*0.1, s*0.3, s*0.07, s*0.12, -Math.sin(k.wobble)*0.3, 0, Math.PI*2);
+  c.fill(); c.stroke();
+
+  // Tail
+  c.strokeStyle = k.color; c.lineWidth = 3;
+  c.beginPath();
+  c.moveTo(-s*0.1, s*0.2);
+  c.quadraticCurveTo(-s*0.4, s*0.1 + Math.sin(k.wobble)*s*0.15, -s*0.3, s*0.35);
+  c.stroke();
+
+  c.restore();
+}
+
+// Draw anime-style kaiju (Godzilla-like)
+function drawKaiju(k) {
+  const c = cctx;
+  const s = k.size;
+  c.save();
+  c.translate(k.x, k.y);
+
+  // Body
+  c.fillStyle = k.color;
+  c.beginPath();
+  c.ellipse(0, 0, s*0.4, s*0.6, 0, 0, Math.PI*2);
+  c.fill();
+  c.strokeStyle = '#000'; c.lineWidth = 2; c.stroke();
+
+  // Spines down the back
+  c.fillStyle = k.spineColor;
+  for(let i = -3; i <= 3; i++) {
+    c.beginPath();
+    const sy = i * s*0.12;
+    c.moveTo(-s*0.35, sy - s*0.06);
+    c.lineTo(-s*0.55, sy);
+    c.lineTo(-s*0.35, sy + s*0.06);
+    c.fill();
+  }
+
+  // Head
+  c.fillStyle = k.color;
+  c.beginPath();
+  c.ellipse(s*0.35, -s*0.15, s*0.25, s*0.2, -0.2, 0, Math.PI*2);
+  c.fill(); c.strokeStyle = '#000'; c.stroke();
+
+  // Jaw
+  c.fillStyle = k.color;
+  c.beginPath();
+  c.moveTo(s*0.45, -s*0.05);
+  c.lineTo(s*0.7, s*0.05 + Math.sin(k.mouthOpen)*s*0.08);
+  c.lineTo(s*0.45, s*0.1);
+  c.fill(); c.stroke();
+
+  // Teeth
+  c.fillStyle = '#fff';
+  const jawY = s*0.05 + Math.sin(k.mouthOpen)*s*0.08;
+  for(let i = 0; i < 4; i++) {
+    const tx = s*0.48 + i*s*0.05;
+    c.beginPath();
+    c.moveTo(tx, -s*0.04); c.lineTo(tx+s*0.02, s*0.02); c.lineTo(tx+s*0.04, -s*0.04);
+    c.fill();
+  }
+
+  // Eyes (angry, glowing)
+  c.fillStyle = '#ff0000';
+  c.shadowColor = '#ff0000'; c.shadowBlur = 8;
+  c.beginPath(); c.ellipse(s*0.4, -s*0.25, s*0.06, s*0.04, -0.3, 0, Math.PI*2); c.fill();
+  c.fillStyle = '#ff8800';
+  c.beginPath(); c.arc(s*0.4, -s*0.25, s*0.025, 0, Math.PI*2); c.fill();
+  c.shadowBlur = 0;
+
+  // Arms (small T-rex style)
+  c.fillStyle = k.color; c.strokeStyle = '#000'; c.lineWidth = 1.5;
+  c.beginPath();
+  c.moveTo(s*0.15, -s*0.15); c.lineTo(s*0.2, -s*0.3); c.lineTo(s*0.25, -s*0.2);
+  c.fill(); c.stroke();
+
+  // Legs
+  c.beginPath();
+  c.ellipse(-s*0.1, s*0.55, s*0.12, s*0.15, 0, 0, Math.PI*2);
+  c.fill(); c.stroke();
+  c.beginPath();
+  c.ellipse(s*0.15, s*0.55, s*0.12, s*0.15, 0, 0, Math.PI*2);
+  c.fill(); c.stroke();
+
+  // Tail
+  c.strokeStyle = k.color; c.lineWidth = s*0.12;
+  c.beginPath();
+  c.moveTo(-s*0.35, s*0.1);
+  c.quadraticCurveTo(-s*0.7, s*0.3 + Math.sin(k.mouthOpen*2)*s*0.1, -s*0.9, s*0.05);
+  c.stroke();
+  c.strokeStyle = '#000'; c.lineWidth = 2;
+  c.beginPath();
+  c.moveTo(-s*0.35, s*0.1);
+  c.quadraticCurveTo(-s*0.7, s*0.3 + Math.sin(k.mouthOpen*2)*s*0.1, -s*0.9, s*0.05);
+  c.stroke();
+
+  c.restore();
+
+  // Mouth blast (Godzilla beam)
+  if(k.blasting) {
+    c.save();
+    const bx = k.x + s*0.7;
+    const by = k.y + Math.sin(k.mouthOpen)*s*0.08;
+    const blastLen = s*2.5;
+    const grad = c.createLinearGradient(bx, by, bx + blastLen, by);
+    grad.addColorStop(0, 'rgba(0,200,255,0.9)');
+    grad.addColorStop(0.3, 'rgba(100,0,255,0.6)');
+    grad.addColorStop(1, 'rgba(255,0,100,0)');
+    c.fillStyle = grad;
+    c.beginPath();
+    c.moveTo(bx, by - s*0.05);
+    c.lineTo(bx + blastLen, by - s*0.3 + Math.sin(k.mouthOpen*3)*s*0.1);
+    c.lineTo(bx + blastLen, by + s*0.3 + Math.sin(k.mouthOpen*3)*s*0.1);
+    c.lineTo(bx, by + s*0.05);
+    c.fill();
+    // Inner glow
+    c.shadowColor = '#00ccff'; c.shadowBlur = 20;
+    c.strokeStyle = 'rgba(255,255,255,0.5)'; c.lineWidth = 2;
+    c.beginPath(); c.moveTo(bx, by); c.lineTo(bx + blastLen*0.8, by); c.stroke();
+    c.shadowBlur = 0;
+    c.restore();
+  }
+}
+
+function spawnKitten() {
+  const side = Math.floor(Math.random() * 4);
+  const w = chaosCanvas.width, h = chaosCanvas.height;
+  let x, y, vx, vy;
+  if(side===0){x=-50;y=Math.random()*h;vx=1.5+Math.random()*2.5;vy=(Math.random()-0.5)*2;}
+  else if(side===1){x=w+50;y=Math.random()*h;vx=-(1.5+Math.random()*2.5);vy=(Math.random()-0.5)*2;}
+  else if(side===2){x=Math.random()*w;y=-50;vx=(Math.random()-0.5)*2;vy=1.5+Math.random()*2.5;}
+  else{x=Math.random()*w;y=h+50;vx=(Math.random()-0.5)*2;vy=-(1.5+Math.random()*2.5);}
+  const powers = ['laser','sword','claw','fly'];
+  const eyeColors = ['#00ccff','#ff00ff','#00ff00','#ffcc00'];
+  kittens.push({
+    x, y, vx, vy,
+    color: KITTEN_COLORS[Math.floor(Math.random()*KITTEN_COLORS.length)],
+    capeColor: POWER_COLORS[Math.floor(Math.random()*POWER_COLORS.length)],
+    eyeColor: eyeColors[Math.floor(Math.random()*eyeColors.length)],
+    power: powers[Math.floor(Math.random()*powers.length)],
+    size: 30 + Math.random()*25,
+    life: 350 + Math.random()*400,
+    wobble: Math.random()*Math.PI*2
+  });
+}
+
+function spawnKaiju() {
+  const w = chaosCanvas.width, h = chaosCanvas.height;
+  kaijus.push({
+    x: Math.random()*w*0.6 + w*0.2,
+    y: h*0.45 + Math.random()*h*0.2,
+    color: KAIJU_COLORS[Math.floor(Math.random()*KAIJU_COLORS.length)],
+    spineColor: `hsl(${Math.random()*60+160},80%,50%)`,
+    size: 350 + Math.random()*250,
+    life: 300 + Math.random()*400,
+    vx: (Math.random()-0.5)*0.8,
+    vy: (Math.random()-0.5)*0.3,
+    mouthOpen: Math.random()*Math.PI*2,
+    blasting: false,
+    blastTimer: 0
+  });
+}
+
+function spawnParticle(x, y, color) {
+  const c = color || POWER_COLORS[Math.floor(Math.random()*POWER_COLORS.length)];
+  particles.push({
+    x, y, color: c,
+    size: 3 + Math.random()*5,
+    life: 25 + Math.random()*35,
+    maxLife: 25 + Math.random()*35,
+    vx: (Math.random()-0.5)*8,
+    vy: (Math.random()-0.5)*8
+  });
+}
+
+function spawnLaser(x, y, tx, ty) {
+  lasers.push({ x, y, tx, ty, life: 8, color: `hsl(${Math.random()*360},100%,60%)` });
+}
+
+function initChaosScene() {
+  buildings.length = 0; trees.length = 0;
+  kittens.length = 0; kaijus.length = 0; particles.length = 0; lasers.length = 0;
+  const w = chaosCanvas.width, h = chaosCanvas.height;
+  for(let i=0;i<14;i++) buildings.push({x:(w/14)*i, w:25+Math.random()*55, h:80+Math.random()*180, hue:Math.random()*360});
+  for(let i=0;i<10;i++) trees.push({x:Math.random()*w, h:50+Math.random()*70, hue:90+Math.random()*60});
+}
+
+let bgPhase = 0;
+function drawChaos() {
+  if(!chaosRunning) return;
+  const w = chaosCanvas.width, h = chaosCanvas.height;
+  bgPhase += 0.003;
+
+  // Morphing sky
+  const cityAmount = (Math.sin(bgPhase)+1)/2;
+  const grad = cctx.createLinearGradient(0,0,0,h);
+  grad.addColorStop(0, `hsl(${(bgPhase*30)%360},40%,${8+cityAmount*5}%)`);
+  grad.addColorStop(1, `hsl(${((bgPhase*30)+180)%360},30%,${12+cityAmount*10}%)`);
+  cctx.fillStyle = grad;
+  cctx.fillRect(0,0,w,h);
+
+  // Stars
+  cctx.fillStyle = 'rgba(255,255,255,0.4)';
+  for(let i=0;i<30;i++) {
+    const sx = (Math.sin(i*127.1+bgPhase*0.5)*0.5+0.5)*w;
+    const sy = (Math.sin(i*311.7)*0.5+0.5)*h*0.5;
+    const ss = 1+Math.sin(bgPhase*2+i)*0.8;
+    cctx.beginPath(); cctx.arc(sx,sy,ss,0,Math.PI*2); cctx.fill();
+  }
+
+  const groundY = h*0.75;
+
+  // Mountains (forest phase)
+  cctx.globalAlpha = 1-cityAmount;
+  for(let i=0;i<6;i++) {
+    const mx = (w/6)*i+w/12;
+    const mh = 100+Math.sin(i*2.5)*60;
+    cctx.fillStyle = `hsl(${200+i*15},20%,${15+i*3}%)`;
+    cctx.beginPath(); cctx.moveTo(mx-120,groundY); cctx.lineTo(mx,groundY-mh); cctx.lineTo(mx+120,groundY); cctx.fill();
+  }
+
+  // Trees (forest)
+  trees.forEach(t => {
+    cctx.fillStyle = '#3a2000';
+    cctx.fillRect(t.x-3, groundY-t.h*0.35, 6, t.h*0.35);
+    cctx.fillStyle = `hsl(${t.hue},55%,28%)`;
+    cctx.beginPath(); cctx.arc(t.x, groundY-t.h*0.45, t.h*0.3, 0, Math.PI*2); cctx.fill();
+  });
+  cctx.globalAlpha = 1;
+
+  // Buildings (city)
+  cctx.globalAlpha = cityAmount;
+  buildings.forEach(b => {
+    cctx.fillStyle = `hsl(${b.hue},40%,20%)`;
+    cctx.fillRect(b.x, groundY-b.h, b.w, b.h);
+    cctx.fillStyle = `hsla(50,100%,70%,0.5)`;
+    for(let wy=groundY-b.h+10;wy<groundY-10;wy+=18)
+      for(let wx=b.x+4;wx<b.x+b.w-4;wx+=10)
+        cctx.fillRect(wx,wy,5,7);
+  });
+  cctx.globalAlpha = 1;
+
+  // Ground
+  const gHue = cityAmount>0.5 ? 220 : 130;
+  cctx.fillStyle = `hsl(${gHue},25%,12%)`;
+  cctx.fillRect(0,groundY,w,h-groundY);
+
+  // Spawn
+  if(Math.random()<0.05) spawnKitten();
+  if(Math.random()<0.008 && kaijus.length<2) spawnKaiju();
+
+  // Update & draw kaijus
+  for(let i=kaijus.length-1;i>=0;i--) {
+    const k = kaijus[i];
+    k.x += k.vx; k.y += k.vy; k.life--; k.mouthOpen += 0.05;
+    k.blastTimer--;
+    if(k.blastTimer <= 0) { k.blasting = Math.random()<0.3; k.blastTimer = 60+Math.random()*100; }
+    if(k.life<=0||k.x<-150||k.x>w+150) { kaijus.splice(i,1); continue; }
+    drawKaiju(k);
+  }
+
+  // Update & draw kittens
+  for(let i=kittens.length-1;i>=0;i--) {
+    const k = kittens[i];
+    k.wobble += 0.08;
+    k.x += k.vx; k.y += k.vy + Math.sin(k.wobble)*0.6; k.life--;
+    if(k.life<=0||k.x<-70||k.x>w+70||k.y<-70||k.y>h+70) { kittens.splice(i,1); continue; }
+    drawKitten(k);
+    // Superpowers
+    if(Math.random()<0.06) spawnParticle(k.x, k.y, k.capeColor);
+    // Laser eyes at nearest kaiju
+    if(k.power==='laser' && Math.random()<0.04) {
+      const closest = kaijus.reduce((best,kj)=>{const d=Math.hypot(k.x-kj.x,k.y-kj.y);return d<(best?best.d:999)?{kj,d}:best;},null);
+      if(closest) {
+        spawnLaser(k.x, k.y-k.size*0.4, closest.kj.x, closest.kj.y);
+        for(let p=0;p<4;p++) spawnParticle(closest.kj.x+(Math.random()-0.5)*30, closest.kj.y+(Math.random()-0.5)*30, '#ff0');
+      }
+    }
+    // Claw slash sparks near kaiju
+    if(k.power==='claw') {
+      kaijus.forEach(kj=>{
+        if(Math.hypot(k.x-kj.x,k.y-kj.y)<100 && Math.random()<0.1)
+          for(let p=0;p<5;p++) spawnParticle((k.x+kj.x)/2,(k.y+kj.y)/2,'#fff');
+      });
+    }
+  }
+
+  // Lasers
+  for(let i=lasers.length-1;i>=0;i--) {
+    const l = lasers[i]; l.life--;
+    if(l.life<=0){lasers.splice(i,1);continue;}
+    cctx.globalAlpha = l.life/8;
+    cctx.strokeStyle = l.color; cctx.lineWidth = 2;
+    cctx.shadowColor = l.color; cctx.shadowBlur = 8;
+    cctx.beginPath(); cctx.moveTo(l.x,l.y); cctx.lineTo(l.tx,l.ty); cctx.stroke();
+    cctx.shadowBlur = 0;
+  }
+  cctx.globalAlpha = 1;
+
+  // Particles (explosion sparks)
+  for(let i=particles.length-1;i>=0;i--) {
+    const p = particles[i];
+    p.x += p.vx; p.y += p.vy; p.vy += 0.1; p.life--;
+    if(p.life<=0){particles.splice(i,1);continue;}
+    cctx.globalAlpha = p.life/p.maxLife;
+    cctx.fillStyle = p.color;
+    cctx.shadowColor = p.color; cctx.shadowBlur = 4;
+    cctx.beginPath(); cctx.arc(p.x,p.y,p.size*(p.life/p.maxLife),0,Math.PI*2); cctx.fill();
+    cctx.shadowBlur = 0;
+  }
+  cctx.globalAlpha = 1;
+
+  requestAnimationFrame(drawChaos);
+}
+
+function startChaos() {
+  if(chaosRunning) return;
+  chaosRunning = true;
+  resizeChaos();
+  initChaosScene();
+  drawChaos();
+}
+function stopChaos() { chaosRunning = false; }
+
+// ===== THEME =====
+const themeColors = {
+  pink: { wave: '#ffe600', waveBg: '#b8005f' },
+  white: { wave: '#0055aa', waveBg: '#d5d5d5' },
+  dark: { wave: '#6688cc', waveBg: '#16213e' },
+  rainbow: { wave: '#fff', waveBg: 'rgba(0,0,0,0.2)' },
+  chaos: { wave: '#ff00ff', waveBg: 'rgba(0,0,0,0.4)' }
+};
+let currentTheme = 'pink';
+
+function setTheme(name) {
+  document.body.className = 'theme-' + name;
+  currentTheme = name;
+  document.querySelectorAll('.theme-pick').forEach(b => b.classList.remove('active-theme'));
+  document.querySelector('.tp-' + name).classList.add('active-theme');
+  if (name === 'chaos') startChaos(); else stopChaos();
+  if (audioBuffer) drawWaveform();
+}
+
+// ===== ELEMENTS =====
+const audioBtn = document.getElementById('audioBtn');
+const audioInput = document.getElementById('audioInput');
+const audioLabel = document.getElementById('audioLabel');
+const placeholderMsg = document.getElementById('placeholderMsg');
+const waveformWrap = document.getElementById('waveformWrap');
+const canvas = document.getElementById('waveformCanvas');
+const ctx = canvas.getContext('2d');
+const selectionOverlay = document.getElementById('selectionOverlay');
+const edgeLeft = document.getElementById('edgeLeft');
+const edgeRight = document.getElementById('edgeRight');
+const playheadEl = document.getElementById('playhead');
+const timeInputRow = document.getElementById('timeInputRow');
+const startInput = document.getElementById('startInput');
+const endInput = document.getElementById('endInput');
+const setTimeBtn = document.getElementById('setTimeBtn');
+const controlsEl = document.getElementById('controls');
+const playBtn = document.getElementById('playBtn');
+const loopBtn = document.getElementById('loopBtn');
+const clearBtn = document.getElementById('clearBtn');
+const speedSlider = document.getElementById('speedSlider');
+const speedValueEl = document.getElementById('speedValue');
+let audioContext, audioBuffer;
+let audio = new Audio();
+let isPlaying = false, isLooping = false;
+let selectionStart = null, selectionEnd = null;
+let isDragging = false, dragStartX = 0;
+let isDraggingEdge = false, draggingEdge = null;
+
+function fmt(s) { if(isNaN(s)) return '0:00'; return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'); }
+function parseTime(str) { const p=str.trim().split(':'); if(p.length===2) return parseInt(p[0])*60+parseFloat(p[1]); return parseFloat(str)||0; }
+
+// ===== AUDIO =====
+audioBtn.addEventListener('click', () => audioInput.click());
+placeholderMsg.addEventListener('click', () => audioInput.click());
+audioInput.addEventListener('change', () => { if(audioInput.files.length) loadAudio(audioInput.files[0]); });
+document.body.addEventListener('dragover', e => e.preventDefault());
+document.body.addEventListener('drop', e => {
+  e.preventDefault();
+  const f = e.dataTransfer.files[0]; if(!f) return;
+  loadAudio(f);
+});
+
+function loadAudio(file) {
+  audio.src = URL.createObjectURL(file);
+  audioLabel.textContent = file.name;
+  audio.addEventListener('loadedmetadata', () => {
+    placeholderMsg.style.display = 'none';
+    waveformWrap.classList.add('visible');
+    document.getElementById('dragHint').classList.add('visible');
+    document.getElementById('orHint').classList.add('visible');
+    timeInputRow.classList.add('visible');
+    controlsEl.classList.add('visible');
+  }, { once: true });
+  const reader = new FileReader();
+  reader.onload = async e => {
+    audioContext = audioContext || new (window.AudioContext || window.webkitAudioContext)();
+    try { audioBuffer = await audioContext.decodeAudioData(e.target.result); drawWaveform(); } catch(err) { console.error(err); }
+  };
+  reader.readAsArrayBuffer(file);
+  resetSelection();
+}
+
+function resetSelection() {
+  selectionStart=null; selectionEnd=null;
+  selectionOverlay.style.display='none'; edgeLeft.style.display='none'; edgeRight.style.display='none';
+  startInput.value=''; endInput.value='';
+  isLooping=false; loopBtn.textContent='Loop: Off'; loopBtn.classList.remove('active');
+  isPlaying=false; playBtn.textContent='Play'; playBtn.classList.add('primary');
+}
+
+// ===== WAVEFORM =====
+function drawWaveform() {
+  const t = themeColors[currentTheme];
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+  const data = audioBuffer.getChannelData(0);
+  const step = Math.ceil(data.length / rect.width);
+  const amp = rect.height / 2;
+  ctx.clearRect(0,0,rect.width,rect.height);
+  ctx.fillStyle = t.waveBg; ctx.fillRect(0,0,rect.width,rect.height);
+
+  if(currentTheme === 'rainbow' || currentTheme === 'chaos') {
+    for(let i=0;i<rect.width;i++) {
+      let mn=1,mx=-1;
+      for(let j=0;j<step;j++) { const v=data[i*step+j]||0; if(v<mn)mn=v; if(v>mx)mx=v; }
+      const hue = (i/rect.width)*360;
+      ctx.strokeStyle = 'hsl('+hue+',100%,60%)';
+      ctx.beginPath(); ctx.moveTo(i,amp+mn*amp); ctx.lineTo(i,amp+mx*amp); ctx.stroke();
+    }
+  } else {
+    ctx.beginPath(); ctx.strokeStyle=t.wave; ctx.lineWidth=1;
+    for(let i=0;i<rect.width;i++) {
+      let mn=1,mx=-1;
+      for(let j=0;j<step;j++) { const v=data[i*step+j]||0; if(v<mn)mn=v; if(v>mx)mx=v; }
+      ctx.moveTo(i,amp+mn*amp); ctx.lineTo(i,amp+mx*amp);
+    }
+    ctx.stroke();
+  }
+}
+
+// ===== SELECTION (mouse + touch) =====
+function getPointerX(e) {
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const rect = waveformWrap.getBoundingClientRect();
+  return (clientX - rect.left) / rect.width;
+}
+
+function handlePointerDown(e) {
+  if(!audio.src) return;
+  // Resume AudioContext on first touch (iOS requirement)
+  if(audioContext && audioContext.state === 'suspended') audioContext.resume();
+  const x = getPointerX(e);
+  if(selectionStart !== null) {
+    // Wider hit zone on touch (0.04 vs 0.015 for mouse)
+    const threshold = e.touches ? 0.04 : 0.015;
+    if(Math.abs(x-selectionStart)<threshold) { isDraggingEdge=true; draggingEdge='left'; e.preventDefault(); return; }
+    if(Math.abs(x-selectionEnd)<threshold) { isDraggingEdge=true; draggingEdge='right'; e.preventDefault(); return; }
+  }
+  isDragging=true; dragStartX=x;
+  selectionStart=dragStartX; selectionEnd=dragStartX; updateSelectionUI();
+  e.preventDefault();
+}
+
+function handlePointerMove(e) {
+  if(isDraggingEdge) {
+    let x=Math.max(0,Math.min(1,getPointerX(e)));
+    if(draggingEdge==='left') selectionStart=Math.min(x,selectionEnd-0.005);
+    else selectionEnd=Math.max(x,selectionStart+0.005);
+    updateSelectionUI(); updateTimeInputs(); return;
+  }
+  if(!isDragging) return;
+  let x=Math.max(0,Math.min(1,getPointerX(e)));
+  if(x<dragStartX){selectionStart=x;selectionEnd=dragStartX;}
+  else{selectionStart=dragStartX;selectionEnd=x;}
+  updateSelectionUI();
+}
+
+function handlePointerUp() {
+  if(isDraggingEdge) { isDraggingEdge=false; draggingEdge=null; updateTimeInputs(); return; }
+  if(!isDragging) return; isDragging=false;
+  if(selectionEnd-selectionStart<0.005) {
+    audio.currentTime=selectionStart*audio.duration;
+    selectionStart=null;selectionEnd=null;
+    selectionOverlay.style.display='none'; edgeLeft.style.display='none'; edgeRight.style.display='none';
+    startInput.value=''; endInput.value='';
+  } else { updateTimeInputs(); audio.currentTime=selectionStart*audio.duration; }
+}
+
+// Mouse events
+waveformWrap.addEventListener('mousedown', handlePointerDown);
+window.addEventListener('mousemove', handlePointerMove);
+window.addEventListener('mouseup', handlePointerUp);
+
+// Touch events
+waveformWrap.addEventListener('touchstart', handlePointerDown, { passive: false });
+window.addEventListener('touchmove', handlePointerMove, { passive: false });
+window.addEventListener('touchend', handlePointerUp);
+
+function updateSelectionUI() {
+  if(selectionStart===null){selectionOverlay.style.display='none';edgeLeft.style.display='none';edgeRight.style.display='none';return;}
+  selectionOverlay.style.display='block';
+  selectionOverlay.style.left=(selectionStart*100)+'%';
+  selectionOverlay.style.width=((selectionEnd-selectionStart)*100)+'%';
+  edgeLeft.style.display='block'; edgeRight.style.display='block';
+}
+function updateTimeInputs() {
+  if(selectionStart===null)return;
+  const s=selectionStart*audio.duration, e=selectionEnd*audio.duration;
+  startInput.value=fmt(s); endInput.value=fmt(e);
+}
+
+setTimeBtn.addEventListener('click', () => {
+  if(!audio.duration)return;
+  const s=parseTime(startInput.value),e=parseTime(endInput.value);
+  if(e>s && e<=audio.duration) { selectionStart=s/audio.duration; selectionEnd=e/audio.duration; updateSelectionUI(); updateTimeInputs(); audio.currentTime=s; }
+});
+startInput.addEventListener('keydown', e=>{if(e.key==='Enter')setTimeBtn.click();});
+endInput.addEventListener('keydown', e=>{if(e.key==='Enter')setTimeBtn.click();});
+
+// ===== PLAYBACK =====
+playBtn.addEventListener('click', () => {
+  if(!audio.src)return;
+  if(audioContext && audioContext.state === 'suspended') audioContext.resume();
+  if(isPlaying) { audio.pause(); isPlaying=false; playBtn.textContent='Play'; playBtn.classList.add('primary'); }
+  else {
+    if(isLooping&&selectionStart!==null) { const s=selectionStart*audio.duration,e=selectionEnd*audio.duration; if(audio.currentTime<s||audio.currentTime>=e)audio.currentTime=s; }
+    audio.play(); isPlaying=true; playBtn.textContent='Pause'; playBtn.classList.remove('primary'); updatePlayhead();
+  }
+});
+loopBtn.addEventListener('click', () => { isLooping=!isLooping; loopBtn.textContent='Loop: '+(isLooping?'On':'Off'); isLooping?loopBtn.classList.add('active'):loopBtn.classList.remove('active'); });
+clearBtn.addEventListener('click', () => {
+  selectionStart=null;selectionEnd=null;
+  selectionOverlay.style.display='none';edgeLeft.style.display='none';edgeRight.style.display='none';
+  startInput.value='';endInput.value='';
+});
+speedSlider.addEventListener('input', () => { const v=parseFloat(speedSlider.value); audio.playbackRate=v; speedValueEl.textContent=v.toFixed(2)+'x'; });
+
+function updatePlayhead() {
+  if(!isPlaying)return;
+  playheadEl.style.display='block';
+  playheadEl.style.left=(audio.currentTime/audio.duration*100)+'%';
+  requestAnimationFrame(updatePlayhead);
+}
+
+// Loop check via timeupdate — fires even when tab is in background
+audio.addEventListener('timeupdate', () => {
+  if(isLooping && selectionStart !== null && audio.currentTime >= selectionEnd * audio.duration) {
+    audio.currentTime = selectionStart * audio.duration;
+  }
+});
+audio.addEventListener('ended', () => {
+  if(isLooping&&selectionStart!==null){audio.currentTime=selectionStart*audio.duration;audio.play();}
+  else{isPlaying=false;playBtn.textContent='Play';playBtn.classList.add('primary');playheadEl.style.display='none';}
+});
+
+document.addEventListener('keydown', e => {
+  if(e.target.tagName==='INPUT')return;
+  if(e.code==='Space'){e.preventDefault();playBtn.click();}
+  if(e.code==='KeyL')loopBtn.click();
+});
+window.addEventListener('resize', () => { if(audioBuffer)drawWaveform(); if(chaosRunning)resizeChaos(); });
+</script>
+</body>
+</html>
