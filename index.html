@@ -1071,11 +1071,14 @@ endInput.addEventListener('keydown', e=>{if(e.key==='Enter')setTimeBtn.click();}
 // ===== PLAYBACK =====
 playBtn.addEventListener('click', () => {
   if(!audio.src)return;
+  // Resume AudioContext on user gesture (required by iOS)
   if(audioContext && audioContext.state === 'suspended') audioContext.resume();
   if(isPlaying) { audio.pause(); isPlaying=false; playBtn.textContent='Play'; playBtn.classList.add('primary'); }
   else {
     if(isLooping&&selectionStart!==null) { const s=selectionStart*audio.duration,e=selectionEnd*audio.duration; if(audio.currentTime<s||audio.currentTime>=e)audio.currentTime=s; }
-    audio.play(); isPlaying=true; playBtn.textContent='Pause'; playBtn.classList.remove('primary'); updatePlayhead();
+    const p = audio.play();
+    if(p) p.catch(()=>{});  // prevent unhandled promise rejection on iOS
+    isPlaying=true; playBtn.textContent='Pause'; playBtn.classList.remove('primary'); updatePlayhead();
   }
 });
 loopBtn.addEventListener('click', () => { isLooping=!isLooping; loopBtn.textContent='Loop: '+(isLooping?'On':'Off'); isLooping?loopBtn.classList.add('active'):loopBtn.classList.remove('active'); });
@@ -1093,12 +1096,18 @@ function updatePlayhead() {
   requestAnimationFrame(updatePlayhead);
 }
 
-// Loop check via timeupdate — fires even when tab is in background
+// Loop check via timeupdate — reliable on iOS even when rAF is throttled
 audio.addEventListener('timeupdate', () => {
   if(isLooping && selectionStart !== null && audio.currentTime >= selectionEnd * audio.duration) {
     audio.currentTime = selectionStart * audio.duration;
   }
+  // Keep playhead in sync even if rAF is paused
+  if(isPlaying) {
+    playheadEl.style.display='block';
+    playheadEl.style.left=(audio.currentTime/audio.duration*100)+'%';
+  }
 });
+
 audio.addEventListener('ended', () => {
   if(isLooping&&selectionStart!==null){audio.currentTime=selectionStart*audio.duration;audio.play();}
   else{isPlaying=false;playBtn.textContent='Play';playBtn.classList.add('primary');playheadEl.style.display='none';}
