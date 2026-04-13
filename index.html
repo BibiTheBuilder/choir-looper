@@ -203,18 +203,6 @@
   .theme-rainbow .playhead { background: #fff; }
   .theme-chaos .playhead { background: #ff0; }
 
-  /* ===== TIME ===== */
-  .time-display {
-    display: none; justify-content: space-between;
-    font-size: 1.15rem; font-weight: 800; padding: 0 4px; width: 100%;
-  }
-  .time-display.visible { display: flex; }
-  .theme-pink .time-display { color: #ffe600; }
-  .theme-white .time-display { color: #111; }
-  .theme-dark .time-display { color: #fff; }
-  .theme-rainbow .time-display { color: #fff; }
-  .theme-chaos .time-display { color: #0ff; }
-
   /* ===== DRAG / OR HINTS ===== */
   .drag-hint, .or-hint { display: none; text-align: center; font-weight: 800; font-family: 'Nunito', sans-serif; }
   .drag-hint.visible, .or-hint.visible { display: block; }
@@ -226,6 +214,7 @@
   .theme-rainbow .drag-hint, .theme-rainbow .or-hint { color: #fff; }
   .theme-chaos .drag-hint, .theme-chaos .or-hint { color: #0ff; text-shadow: 0 0 8px rgba(0,0,0,0.8); }
   .theme-chaos .drag-hint.visible, .theme-chaos .or-hint.visible { background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 6px; display: inline-block; }
+  .theme-chaos .drag-hint.visible { border: 2px solid #ff0; }
 
   /* ===== MANUAL TIME INPUT ===== */
   .time-input-row { display: none; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; font-size: 1.05rem; font-weight: 800; }
@@ -245,13 +234,6 @@
   .theme-chaos .time-input-row { color: #0ff; text-shadow: 0 0 8px rgba(0,0,0,0.8); background: rgba(0,0,0,0.5); padding: 6px 14px; border-radius: 6px; }
   .theme-chaos .time-input-row input { background: rgba(0,0,0,0.5); color: #ff0; border-color: #ff00ff; }
 
-  .section-info { text-align: center; font-size: 1.1rem; font-weight: 700; min-height: 1.4em; }
-  .theme-pink .section-info { color: #ffe600; }
-  .theme-white .section-info { color: #0066cc; }
-  .theme-dark .section-info { color: #7c5cbf; }
-  .theme-rainbow .section-info { color: #fff; }
-  .theme-chaos .section-info { color: #ff0; }
-
   /* ===== CONTROLS ===== */
   .controls { display: none; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
   .controls.visible { display: flex; }
@@ -265,39 +247,12 @@
   .theme-dark .speed-control input { accent-color: #7c5cbf; }
   .theme-rainbow .speed-control { color: #fff; }
   .theme-rainbow .speed-control input { accent-color: #ffff00; }
-  .theme-chaos .speed-control { color: #0ff; text-shadow: 0 0 8px rgba(0,0,0,0.8); background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 6px; }
+  .theme-chaos .speed-control { color: #0ff; text-shadow: 0 0 8px rgba(0,0,0,0.8); background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 6px; border: 2px solid #ff0; }
   .theme-chaos .speed-control input { accent-color: #ff00ff; }
-
-  /* ===== PLACEHOLDER ===== */
-  .placeholder-msg {
-    text-align: center; font-weight: 800;
-    padding: 50px 20px; border-radius: 10px;
-    width: 100%; max-width: 800px;
-    cursor: pointer; transition: background 0.2s;
-  }
-  .placeholder-msg .big { font-size: 1.4rem; margin-bottom: 10px; display: block; }
-  .placeholder-msg .sub { font-size: 1.15rem; font-weight: 700; display: block; }
-  .theme-pink .placeholder-msg { background: #b8005f; border: 3px dashed #ffe600; }
-  .theme-pink .placeholder-msg .big { color: #ffe600; }
-  .theme-pink .placeholder-msg .sub { color: #ffe600; }
-  .theme-pink .placeholder-msg:hover { background: #cc006d; }
-  .theme-white .placeholder-msg { background: #e0e0e0; border: 3px dashed #999; }
-  .theme-white .placeholder-msg .big { color: #111; }
-  .theme-white .placeholder-msg .sub { color: #111; }
-  .theme-white .placeholder-msg:hover { background: #d0d0d0; }
-  .theme-dark .placeholder-msg { background: #16213e; border: 3px dashed #666; }
-  .theme-dark .placeholder-msg .big { color: #fff; }
-  .theme-dark .placeholder-msg .sub { color: #fff; }
-  .theme-dark .placeholder-msg:hover { background: #1d2a4a; }
-  .theme-rainbow .placeholder-msg { background: rgba(0,0,0,0.25); border: 3px dashed rgba(255,255,255,0.5); }
-  .theme-rainbow .placeholder-msg .big, .theme-rainbow .placeholder-msg .sub { color: #fff; }
-  .theme-chaos .placeholder-msg { background: rgba(0,0,0,0.4); border: 3px dashed #ff00ff; }
-  .theme-chaos .placeholder-msg .big { color: #ff0; }
-  .theme-chaos .placeholder-msg .sub { color: #0ff; }
 
   /* ===== INSTRUCTIONS ===== */
   .instructions {
-    max-width: 1100px; width: 100%;
+    max-width: 500px; width: 100%;
     border-radius: 10px; padding: 18px 24px;
     font-size: 1.1rem; font-weight: 700;
     line-height: 2; text-align: center; margin-top: 14px;
@@ -318,13 +273,6 @@
 
   /* ===== THEME SWITCHER ===== */
   .theme-switcher { display: flex; gap: 8px; align-items: center; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
-  .theme-switcher-label { font-size: 1.2rem; font-weight: 800; margin-right: 4px; }
-  .theme-pink .theme-switcher-label { color: #ffe600; }
-  .theme-white .theme-switcher-label { color: #111; }
-  .theme-dark .theme-switcher-label { color: #fff; }
-  .theme-rainbow .theme-switcher-label { color: #fff; }
-  .theme-chaos .theme-switcher-label { color: #ff0; }
-
   .theme-pick {
     padding: 8px 16px; border-radius: 20px;
     font-size: 0.95rem; font-weight: 800;
@@ -368,10 +316,6 @@
       <span id="audioLabel"></span>
     </div>
     <div class="waveform-area">
-      <div class="placeholder-msg" id="placeholderMsg">
-        <span class="big">Click here to open your audio file</span>
-        <span class="sub">Or drag a file onto this box</span>
-      </div>
       <div class="waveform-wrap" id="waveformWrap">
         <canvas id="waveformCanvas"></canvas>
         <div class="selection-overlay" id="selectionOverlay">
@@ -390,7 +334,6 @@
       <input type="text" id="endInput" placeholder="0:00">
       <button class="btn" id="setTimeBtn" style="padding:8px 14px; font-size:0.95rem;">Set</button>
     </div>
-    <!-- section info removed -->
     <div class="controls" id="controls">
       <button class="btn primary" id="playBtn">Play</button>
       <button class="btn" id="loopBtn">Loop: Off</button>
@@ -408,12 +351,12 @@
   <strong>How to use</strong>
   1. Open your audio file<br>
   2. Drag across the wave to pick a section<br>
-  3. Press Play, then Loop to repeat
+  3. Press Play, then Loop to repeat<br>
+  4. Change colors below
 </div>
 
 <div class="theme-switcher">
-  <span class="theme-switcher-label">Change colors:</span>
-  <button class="theme-pick tp-pink active-theme" onclick="setTheme('pink')">Pink</button>
+<button class="theme-pick tp-pink active-theme" onclick="setTheme('pink')">Pink</button>
   <button class="theme-pick tp-white" onclick="setTheme('white')">White</button>
   <button class="theme-pick tp-dark" onclick="setTheme('dark')">Dark</button>
   <button class="theme-pick tp-rainbow" onclick="setTheme('rainbow')">Rainbow</button>
@@ -891,7 +834,6 @@ function setTheme(name) {
 const audioBtn = document.getElementById('audioBtn');
 const audioInput = document.getElementById('audioInput');
 const audioLabel = document.getElementById('audioLabel');
-const placeholderMsg = document.getElementById('placeholderMsg');
 const waveformWrap = document.getElementById('waveformWrap');
 const canvas = document.getElementById('waveformCanvas');
 const ctx = canvas.getContext('2d');
@@ -921,21 +863,13 @@ function parseTime(str) { const p=str.trim().split(':'); if(p.length===2) return
 
 // ===== AUDIO =====
 audioBtn.addEventListener('click', () => audioInput.click());
-placeholderMsg.addEventListener('click', () => audioInput.click());
 audioInput.addEventListener('change', () => { if(audioInput.files.length) loadAudio(audioInput.files[0]); });
-document.body.addEventListener('dragover', e => e.preventDefault());
-document.body.addEventListener('drop', e => {
-  e.preventDefault();
-  const f = e.dataTransfer.files[0]; if(!f) return;
-  loadAudio(f);
-});
 
 function loadAudio(file) {
   if(audio.src) URL.revokeObjectURL(audio.src);
   audio.src = URL.createObjectURL(file);
   audioLabel.textContent = file.name;
   audio.addEventListener('loadedmetadata', () => {
-    placeholderMsg.style.display = 'none';
     waveformWrap.classList.add('visible');
     document.getElementById('dragHint').classList.add('visible');
     document.getElementById('orHint').classList.add('visible');
