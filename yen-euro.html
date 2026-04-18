@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yen &harr; Euro</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #0f172a;
+    color: #f1f5f9;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .card {
+    background: #1e293b;
+    border-radius: 16px;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+  }
+  h1 {
+    font-size: 1.3rem;
+    margin-bottom: 18px;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    transition: border-color 0.15s;
+  }
+  .row:focus-within { border-color: #60a5fa; }
+  .symbol {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #94a3b8;
+    width: 32px;
+  }
+  .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    flex: 1;
+  }
+  input[type="number"] {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #f1f5f9;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-align: right;
+    font-family: inherit;
+    -moz-appearance: textfield;
+  }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .swap {
+    display: block;
+    margin: 6px auto 14px;
+    background: #334155;
+    border: none;
+    color: #f1f5f9;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.2s;
+  }
+  .swap:hover { background: #475569; transform: rotate(180deg); }
+  .rate {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #334155;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .rate input {
+    width: 90px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    padding: 4px 8px;
+    color: #f1f5f9;
+    font-size: 0.9rem;
+    text-align: right;
+    outline: none;
+    font-family: inherit;
+  }
+  .rate input:focus { border-color: #60a5fa; }
+  .note {
+    margin-top: 10px;
+    font-size: 0.72rem;
+    color: #64748b;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Yen &harr; Euro</h1>
+
+    <div class="row">
+      <span class="symbol">&yen;</span>
+      <span class="label">JPY</span>
+      <input type="number" id="jpy" inputmode="decimal" placeholder="0" autofocus>
+    </div>
+
+    <button class="swap" id="swap" title="Swap">&#8645;</button>
+
+    <div class="row">
+      <span class="symbol">&euro;</span>
+      <span class="label">EUR</span>
+      <input type="number" id="eur" inputmode="decimal" placeholder="0">
+    </div>
+
+    <div class="rate">
+      <span>1 EUR =</span>
+      <input type="number" id="rate" step="0.01" min="0">
+      <span>JPY</span>
+    </div>
+    <div class="note">Works offline. Edit the rate anytime &mdash; it's saved on this device.</div>
+  </div>
+
+<script>
+  const jpyEl = document.getElementById('jpy');
+  const eurEl = document.getElementById('eur');
+  const rateEl = document.getElementById('rate');
+  const swapBtn = document.getElementById('swap');
+
+  const DEFAULT_RATE = 165;
+  let rate = parseFloat(localStorage.getItem('jpyPerEur')) || DEFAULT_RATE;
+  rateEl.value = rate;
+
+  let lastEdited = 'jpy';
+
+  function fmt(n) {
+    if (!isFinite(n)) return '';
+    return (Math.round(n * 100) / 100).toString();
+  }
+
+  function recompute() {
+    if (lastEdited === 'jpy') {
+      const v = parseFloat(jpyEl.value);
+      eurEl.value = isNaN(v) ? '' : fmt(v / rate);
+    } else {
+      const v = parseFloat(eurEl.value);
+      jpyEl.value = isNaN(v) ? '' : fmt(v * rate);
+    }
+  }
+
+  jpyEl.addEventListener('input', () => { lastEdited = 'jpy'; recompute(); });
+  eurEl.addEventListener('input', () => { lastEdited = 'eur'; recompute(); });
+
+  rateEl.addEventListener('input', () => {
+    const v = parseFloat(rateEl.value);
+    if (v > 0) {
+      rate = v;
+      localStorage.setItem('jpyPerEur', rate);
+      recompute();
+    }
+  });
+
+  swapBtn.addEventListener('click', () => {
+    const j = jpyEl.value, e = eurEl.value;
+    jpyEl.value = e ? fmt(parseFloat(e) * rate) : '';
+    eurEl.value = j ? fmt(parseFloat(j) / rate) : '';
+    (lastEdited === 'jpy' ? eurEl : jpyEl).focus();
+  });
+</script>
+</body>
+</html>
