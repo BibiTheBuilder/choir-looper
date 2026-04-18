@@ -3,122 +3,244 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yen &harr; Euro</title>
+<title>Yen ♡ Euro</title>
 <style>
+  @font-face {
+    font-family: 'Kawaii';
+    src: local('Comic Sans MS'), local('Chalkboard SE'), local('Marker Felt');
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { overflow-x: hidden; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #0f172a;
-    color: #f1f5f9;
+    font-family: 'Kawaii', 'Comic Sans MS', 'Chalkboard SE', system-ui, sans-serif;
+    background: linear-gradient(135deg,
+      #ffd1dc 0%,
+      #ffe4c4 20%,
+      #fff8b5 40%,
+      #c7f0c7 60%,
+      #c7e5ff 80%,
+      #e0c7ff 100%);
+    background-size: 400% 400%;
+    animation: dream 12s ease infinite;
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 24px 16px;
+    color: #6b4a7a;
   }
+  @keyframes dream {
+    0%,100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes sparkle {
+    0%,100% { opacity: 0.4; transform: scale(0.9) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.1) rotate(20deg); }
+  }
+  @keyframes wiggle {
+    0%,100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+  }
+
+  .sparkle {
+    position: fixed;
+    font-size: 2rem;
+    pointer-events: none;
+    animation: sparkle 3s ease-in-out infinite;
+  }
+  .s1 { top: 8%; left: 10%; animation-delay: 0s; }
+  .s2 { top: 15%; right: 12%; animation-delay: 0.6s; }
+  .s3 { bottom: 18%; left: 14%; animation-delay: 1.2s; }
+  .s4 { bottom: 10%; right: 8%; animation-delay: 1.8s; }
+  .s5 { top: 45%; left: 5%; animation-delay: 2.4s; }
+  .s6 { top: 55%; right: 6%; animation-delay: 0.9s; }
+
   .card {
-    background: #1e293b;
-    border-radius: 16px;
-    padding: 28px 24px;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 36px;
+    padding: 36px 28px 28px;
     width: 100%;
-    max-width: 380px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.35);
+    max-width: 480px;
+    box-shadow:
+      0 0 0 4px rgba(255,255,255,0.6),
+      0 20px 60px rgba(255, 182, 193, 0.5),
+      0 8px 20px rgba(200, 150, 220, 0.3);
+    border: 3px solid #fff;
+    position: relative;
+    z-index: 2;
   }
   h1 {
-    font-size: 1.3rem;
-    margin-bottom: 18px;
+    font-size: 3rem;
     text-align: center;
-    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg,
+      #ff9ec7, #ffc988, #fff48a, #a8e6a3, #9ad2ff, #c9a8ff, #ff9ec7);
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: dream 6s linear infinite;
+    font-weight: 900;
+    text-shadow: 0 2px 0 rgba(255,255,255,0.8);
   }
+  .subtitle {
+    text-align: center;
+    font-size: 1.3rem;
+    margin-bottom: 24px;
+    color: #c77bb8;
+    animation: float 3s ease-in-out infinite;
+  }
+
   .row {
     display: flex;
     align-items: center;
-    background: #0f172a;
-    border: 1px solid #334155;
-    border-radius: 10px;
-    padding: 10px 14px;
-    margin-bottom: 12px;
-    transition: border-color 0.15s;
+    gap: 10px;
+    border-radius: 28px;
+    padding: 18px 22px;
+    margin-bottom: 14px;
+    border: 4px solid #fff;
+    transition: transform 0.2s, box-shadow 0.2s;
   }
-  .row:focus-within { border-color: #60a5fa; }
+  .row:focus-within {
+    transform: scale(1.03);
+    box-shadow: 0 8px 24px rgba(255,182,193,0.6);
+  }
+  .row.jpy {
+    background: linear-gradient(135deg, #ffe0ec 0%, #ffd1dc 100%);
+    box-shadow: 0 6px 0 #ffb6c9;
+  }
+  .row.eur {
+    background: linear-gradient(135deg, #d9ecff 0%, #c7e0ff 100%);
+    box-shadow: 0 6px 0 #9cc8ff;
+  }
   .symbol {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #94a3b8;
-    width: 32px;
+    font-size: 3.2rem;
+    font-weight: 900;
+    width: 56px;
+    text-align: center;
+    filter: drop-shadow(0 2px 0 rgba(255,255,255,0.9));
   }
+  .row.jpy .symbol { color: #ff7eb3; }
+  .row.eur .symbol { color: #6fa8ff; }
   .label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #94a3b8;
-    flex: 1;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    flex-shrink: 0;
   }
+  .row.jpy .label { color: #d65a95; }
+  .row.eur .label { color: #4a85e0; }
   input[type="number"] {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     background: transparent;
     border: none;
     outline: none;
-    color: #f1f5f9;
-    font-size: 1.4rem;
-    font-weight: 600;
+    font-size: 3rem;
+    font-weight: 900;
     text-align: right;
+    font-family: inherit;
+    color: #6b4a7a;
+    -moz-appearance: textfield;
+  }
+  .row.jpy input { color: #c2185b; }
+  .row.eur input { color: #1976d2; }
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input::placeholder { color: rgba(107,74,122,0.3); }
+
+  .swap {
+    display: block;
+    margin: 4px auto 10px;
+    background: linear-gradient(135deg, #fff48a, #ffc988, #ff9ec7);
+    border: 4px solid #fff;
+    color: #fff;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    font-size: 2rem;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #e89ab9, 0 10px 20px rgba(255,158,199,0.5);
+    transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s;
+    font-weight: 900;
+  }
+  .swap:hover { transform: rotate(180deg) scale(1.1); }
+  .swap:active { transform: rotate(180deg) translateY(3px); box-shadow: 0 3px 0 #e89ab9; }
+
+  .rate {
+    margin-top: 20px;
+    padding: 18px 20px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #f0ffe6 0%, #e6fff0 100%);
+    border: 4px solid #fff;
+    box-shadow: 0 5px 0 #b5e5c2;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #4a9b5e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .rate input {
+    width: 110px;
+    background: #fff;
+    border: 3px solid #b5e5c2;
+    border-radius: 14px;
+    padding: 6px 10px;
+    color: #4a9b5e;
+    font-size: 1.4rem;
+    font-weight: 900;
+    text-align: center;
+    outline: none;
     font-family: inherit;
     -moz-appearance: textfield;
   }
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .swap {
-    display: block;
-    margin: 6px auto 14px;
-    background: #334155;
-    border: none;
-    color: #f1f5f9;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: background 0.15s, transform 0.2s;
-  }
-  .swap:hover { background: #475569; transform: rotate(180deg); }
-  .rate {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid #334155;
-    font-size: 0.85rem;
-    color: #94a3b8;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .rate input {
-    width: 90px;
-    background: #0f172a;
-    border: 1px solid #334155;
-    border-radius: 6px;
-    padding: 4px 8px;
-    color: #f1f5f9;
-    font-size: 0.9rem;
-    text-align: right;
-    outline: none;
-    font-family: inherit;
-  }
-  .rate input:focus { border-color: #60a5fa; }
+  .rate input:focus { border-color: #4a9b5e; transform: scale(1.05); }
+  .rate input::-webkit-outer-spin-button,
+  .rate input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
   .note {
-    margin-top: 10px;
-    font-size: 0.72rem;
-    color: #64748b;
+    margin-top: 16px;
+    font-size: 1rem;
+    color: #a88bb3;
     text-align: center;
+    font-weight: 700;
+    animation: wiggle 4s ease-in-out infinite;
+  }
+
+  @media (max-width: 440px) {
+    h1 { font-size: 2.3rem; }
+    .subtitle { font-size: 1.1rem; }
+    .symbol { font-size: 2.6rem; width: 44px; }
+    input[type="number"] { font-size: 2.3rem; }
+    .row { padding: 14px 16px; }
+    .swap { width: 60px; height: 60px; font-size: 1.6rem; }
+    .rate { font-size: 1.1rem; }
   }
 </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Yen &harr; Euro</h1>
+  <div class="sparkle s1">&#10023;</div>
+  <div class="sparkle s2">&#10047;</div>
+  <div class="sparkle s3">&#9733;</div>
+  <div class="sparkle s4">&#10023;</div>
+  <div class="sparkle s5">&#10047;</div>
+  <div class="sparkle s6">&#9733;</div>
 
-    <div class="row">
+  <div class="card">
+    <h1>Yen &#9825; Euro</h1>
+    <div class="subtitle">~ kawaii converter ~</div>
+
+    <div class="row jpy">
       <span class="symbol">&yen;</span>
       <span class="label">JPY</span>
       <input type="number" id="jpy" inputmode="decimal" placeholder="0" autofocus>
@@ -126,18 +248,18 @@
 
     <button class="swap" id="swap" title="Swap">&#8645;</button>
 
-    <div class="row">
+    <div class="row eur">
       <span class="symbol">&euro;</span>
       <span class="label">EUR</span>
       <input type="number" id="eur" inputmode="decimal" placeholder="0">
     </div>
 
     <div class="rate">
-      <span>1 EUR =</span>
+      <span>1 &euro; =</span>
       <input type="number" id="rate" step="0.01" min="0">
-      <span>JPY</span>
+      <span>&yen;</span>
     </div>
-    <div class="note">Works offline. Edit the rate anytime &mdash; it's saved on this device.</div>
+    <div class="note">&#9825; works offline &bull; rate saved on your device &#9825;</div>
   </div>
 
 <script>
