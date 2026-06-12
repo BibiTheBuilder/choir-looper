@@ -5,192 +5,355 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Lifehacks</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Nunito:wght@700;800;900&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Nunito', -apple-system, sans-serif;
+    font-family: 'Nunito', sans-serif;
     min-height: 100vh;
-    background: #1a1a2e;
-    color: #fff;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* ===== ANIMATED PASTEL GRADIENT BG ===== */
+  .bg {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #EDE0FF, #FFE8D6, #D6FFE8, #D6EEFF, #FFD6E8, #EDE0FF);
+    background-size: 500% 500%;
+    animation: bgShift 14s ease infinite;
+    z-index: 0;
+  }
+  @keyframes bgShift {
+    0%   { background-position: 0% 50%; }
+    25%  { background-position: 50% 0%; }
+    50%  { background-position: 100% 50%; }
+    75%  { background-position: 50% 100%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* ===== GEOMETRIC SHAPES ===== */
+  .geo {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  /* Rings */
+  .ring {
+    position: absolute;
+    border-radius: 50%;
+    border-style: solid;
+    animation: spin linear infinite;
+  }
+  .r1 { width: 260px; height: 260px; border-width: 8px; border-color: rgba(176,130,255,0.25); top: -80px; left: -80px; animation-duration: 28s; }
+  .r2 { width: 180px; height: 180px; border-width: 5px; border-color: rgba(255,160,200,0.2); top: 18%; right: -50px; animation-duration: 20s; animation-direction: reverse; }
+  .r3 { width: 360px; height: 360px; border-width: 10px; border-color: rgba(100,210,160,0.15); bottom: -120px; right: 5%; animation-duration: 42s; }
+  .r4 { width: 140px; height: 140px; border-width: 4px; border-color: rgba(120,180,255,0.22); bottom: 20%; left: 3%; animation-duration: 16s; animation-direction: reverse; }
+  .r5 { width: 80px; height: 80px; border-width: 3px; border-color: rgba(255,210,100,0.3); top: 50%; left: 40%; animation-duration: 12s; }
+
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* Floating dots */
+  .dot {
+    position: absolute;
+    border-radius: 50%;
+    animation: float ease-in-out infinite;
+  }
+  .d1 { width: 48px; height: 48px; background: rgba(176,130,255,0.28); top: 12%; left: 6%; animation-duration: 6s; }
+  .d2 { width: 22px; height: 22px; background: rgba(255,140,190,0.35); top: 38%; right: 5%; animation-duration: 7.5s; animation-delay: -2s; }
+  .d3 { width: 64px; height: 64px; background: rgba(100,210,160,0.2); bottom: 22%; left: 2%; animation-duration: 9s; animation-delay: -4s; }
+  .d4 { width: 16px; height: 16px; background: rgba(255,200,80,0.45); top: 66%; right: 10%; animation-duration: 5s; animation-delay: -1s; }
+  .d5 { width: 36px; height: 36px; background: rgba(100,170,255,0.25); top: 52%; left: 12%; animation-duration: 8s; animation-delay: -3.5s; }
+  .d6 { width: 28px; height: 28px; background: rgba(255,160,200,0.3); top: 80%; right: 20%; animation-duration: 10s; animation-delay: -5s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-22px); }
+  }
+
+  /* Triangles */
+  .tri {
+    position: absolute;
+    width: 0; height: 0;
+    animation: triFloat ease-in-out infinite;
+  }
+  .t1 { border-left: 40px solid transparent; border-right: 40px solid transparent; border-bottom: 70px solid rgba(176,130,255,0.22); top: 28%; right: 2%; animation-duration: 13s; }
+  .t2 { border-left: 22px solid transparent; border-right: 22px solid transparent; border-bottom: 38px solid rgba(255,160,200,0.25); bottom: 38%; right: 7%; animation-duration: 9s; animation-delay: -4s; }
+  .t3 { border-left: 30px solid transparent; border-right: 30px solid transparent; border-bottom: 52px solid rgba(100,210,160,0.2); top: 6%; right: 18%; animation-duration: 16s; animation-delay: -7s; }
+  .t4 { border-left: 18px solid transparent; border-right: 18px solid transparent; border-bottom: 30px solid rgba(255,200,80,0.28); bottom: 55%; left: 5%; animation-duration: 11s; animation-delay: -2s; }
+
+  @keyframes triFloat {
+    0%   { transform: rotate(0deg) translateY(0); }
+    25%  { transform: rotate(90deg) translateY(-18px); }
+    50%  { transform: rotate(180deg) translateY(0); }
+    75%  { transform: rotate(270deg) translateY(-12px); }
+    100% { transform: rotate(360deg) translateY(0); }
+  }
+
+  /* Rotating squares */
+  .sq {
+    position: absolute;
+    border-radius: 6px;
+    animation: squareSpin linear infinite;
+  }
+  .s1 { width: 52px; height: 52px; background: rgba(255,200,80,0.22); bottom: 8%; left: 7%; animation-duration: 20s; }
+  .s2 { width: 28px; height: 28px; background: rgba(255,140,190,0.3); top: 22%; left: 1%; animation-duration: 13s; animation-direction: reverse; }
+  .s3 { width: 38px; height: 38px; background: rgba(100,170,255,0.22); bottom: 45%; right: 3%; animation-duration: 17s; }
+  .s4 { width: 20px; height: 20px; background: rgba(176,130,255,0.3); top: 72%; left: 25%; animation-duration: 9s; animation-direction: reverse; }
+
+  @keyframes squareSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* ===== PAGE CONTENT ===== */
+  .page {
+    position: relative;
+    z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 40px 20px 60px;
+    padding: 56px 20px 80px;
+    min-height: 100vh;
   }
 
+  .title-block { text-align: center; margin-bottom: 48px; }
+
   h1 {
-    font-family: 'Fredoka One', cursive;
-    font-size: 2.4rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    background: linear-gradient(90deg, #ff00cc, #00ccff, #ffe600, #ff00cc);
-    background-size: 300% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: slide 4s linear infinite;
-    text-align: center;
-    margin-bottom: 6px;
+    font-family: 'Space Grotesk', 'Nunito', sans-serif;
+    font-size: 3.6rem;
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    color: #2A1060;
+    margin-bottom: 10px;
   }
-  @keyframes slide { 0% { background-position: 0% center; } 100% { background-position: 300% center; } }
 
   .subtitle {
     font-size: 1rem;
-    font-weight: 700;
-    color: rgba(255,255,255,0.5);
-    margin-bottom: 40px;
-    letter-spacing: 1px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #8860C8;
   }
 
+  /* ===== CARDS ===== */
   .cards {
     display: flex;
     flex-direction: column;
-    gap: 22px;
+    gap: 26px;
     width: 100%;
-    max-width: 600px;
+    max-width: 640px;
   }
 
   .card {
-    background: #16213e;
-    border-radius: 16px;
-    padding: 28px 30px;
-    border: 2px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.72);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 28px;
+    padding: 32px 34px 28px;
+    border: 2px solid rgba(255,255,255,0.85);
     position: relative;
     overflow: hidden;
-    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    box-shadow: 0 8px 40px rgba(120,70,220,0.1), 0 2px 8px rgba(120,70,220,0.06);
   }
   .card:nth-child(1) { animation-delay: 0.05s; }
-  .card:nth-child(2) { animation-delay: 0.15s; }
-  .card:nth-child(3) { animation-delay: 0.25s; }
+  .card:nth-child(2) { animation-delay: 0.18s; }
+  .card:nth-child(3) { animation-delay: 0.31s; }
+
   @keyframes popIn {
-    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    from { opacity: 0; transform: translateY(28px) scale(0.93); }
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
+  /* Thick gradient top bar */
   .card::before {
     content: '';
     position: absolute;
-    top: 0; left: 0;
-    width: 5px; height: 100%;
-    border-radius: 16px 0 0 16px;
+    top: 0; left: 0; right: 0;
+    height: 7px;
+    border-radius: 28px 28px 0 0;
   }
-  .card:nth-child(1)::before { background: #ff00cc; }
-  .card:nth-child(2)::before { background: #00ccff; }
-  .card:nth-child(3)::before { background: #ffe600; }
+  .card:nth-child(1)::before { background: linear-gradient(90deg, #B890FF, #FF90C0, #FFD080); }
+  .card:nth-child(2)::before { background: linear-gradient(90deg, #80DDAA, #80C8FF, #B890FF); }
+  .card:nth-child(3)::before { background: linear-gradient(90deg, #FFD080, #FF90C0, #80DDAA); }
+
+  /* Soft circle decoration top-right */
+  .card::after {
+    content: '';
+    position: absolute;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    top: -60px; right: -40px;
+    opacity: 0.1;
+  }
+  .card:nth-child(1)::after { background: #B890FF; }
+  .card:nth-child(2)::after { background: #80DDAA; }
+  .card:nth-child(3)::after { background: #FFD080; }
 
   .card-num {
-    font-family: 'Fredoka One', cursive;
-    font-size: 0.85rem;
-    letter-spacing: 2px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    letter-spacing: 4px;
     text-transform: uppercase;
-    margin-bottom: 10px;
-    opacity: 0.5;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
-  .card:nth-child(1) .card-num { color: #ff00cc; }
-  .card:nth-child(2) .card-num { color: #00ccff; }
-  .card:nth-child(3) .card-num { color: #ffe600; }
+  .card-num::after { content: ''; flex: 1; height: 2px; border-radius: 2px; max-width: 40px; }
+  .card:nth-child(1) .card-num { color: #8840CC; }
+  .card:nth-child(1) .card-num::after { background: #B890FF; }
+  .card:nth-child(2) .card-num { color: #2A9068; }
+  .card:nth-child(2) .card-num::after { background: #80DDAA; }
+  .card:nth-child(3) .card-num { color: #B07010; }
+  .card:nth-child(3) .card-num::after { background: #FFD080; }
 
-  .card-emoji {
-    font-size: 2rem;
-    margin-bottom: 10px;
-    display: block;
-  }
+  .card-emoji { font-size: 2.4rem; display: block; margin-bottom: 12px; }
 
   .card-title {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.35rem;
-    margin-bottom: 10px;
-    color: #fff;
+    font-family: 'Space Grotesk', 'Nunito', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #1C0848;
+    margin-bottom: 14px;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
   }
 
   .card-body {
     font-size: 1rem;
     font-weight: 700;
-    line-height: 1.75;
-    color: rgba(255,255,255,0.75);
+    line-height: 1.85;
+    color: #4A3068;
   }
 
-  .card-expert {
-    margin-top: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  .card-divider {
+    margin: 18px 0 0;
+    border: none;
+    border-top: 2px dashed rgba(150,100,220,0.18);
   }
+
+  .card-expert { margin-top: 12px; display: flex; flex-direction: column; gap: 2px; }
+
   .card-expert-name {
-    font-size: 0.82rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.84rem;
     font-weight: 800;
-    letter-spacing: 0.5px;
-    color: rgba(255,255,255,0.9);
+    color: #5030A0;
+    letter-spacing: 0.3px;
   }
+
   .card-expert-source {
     font-size: 0.78rem;
     font-weight: 700;
-    color: rgba(255,255,255,0.4);
+    color: #9070B8;
     font-style: italic;
   }
-  .card-divider {
-    margin: 14px 0 0;
-    border: none;
-    border-top: 1px solid rgba(255,255,255,0.08);
-  }
-  .card-action {
-    margin-top: 12px;
-    display: inline-block;
-    font-size: 0.9rem;
-    font-weight: 800;
-    padding: 7px 16px;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.6);
-    border: 1px solid rgba(255,255,255,0.12);
-  }
-  .card-action::before { content: '→ '; }
 
+  .card-action {
+    margin-top: 16px;
+    display: inline-block;
+    font-size: 0.88rem;
+    font-weight: 900;
+    padding: 10px 20px;
+    border-radius: 50px;
+    letter-spacing: 0.3px;
+  }
+  .card:nth-child(1) .card-action { background: #F0E6FF; color: #6020B0; }
+  .card:nth-child(2) .card-action { background: #DCFFF0; color: #187050; }
+  .card:nth-child(3) .card-action { background: #FFF6D8; color: #905010; }
+  .card-action::before { content: '→  '; }
+
+  /* ===== REFRESH BUTTON ===== */
   .refresh-btn {
-    margin-top: 38px;
-    padding: 14px 36px;
-    font-family: 'Nunito', sans-serif;
-    font-size: 1.1rem;
+    margin-top: 44px;
+    padding: 18px 52px;
+    font-family: 'Space Grotesk', 'Nunito', sans-serif;
+    font-size: 1.05rem;
     font-weight: 800;
     border: none;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #ff00cc, #7700ff);
+    border-radius: 60px;
+    background: linear-gradient(135deg, #B090FF 0%, #FF90C0 50%, #FFD080 100%);
+    background-size: 200% 200%;
+    animation: btnShift 4s ease infinite;
     color: #fff;
     cursor: pointer;
     letter-spacing: 1px;
+    text-transform: uppercase;
     transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: 0 4px 20px rgba(119,0,255,0.4);
+    box-shadow: 0 6px 28px rgba(160,100,255,0.4);
   }
-  .refresh-btn:hover { transform: scale(1.04); box-shadow: 0 6px 28px rgba(119,0,255,0.55); }
+  @keyframes btnShift {
+    0%, 100% { background-position: 0% 50%; }
+    50%       { background-position: 100% 50%; }
+  }
+  .refresh-btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 12px 36px rgba(160,100,255,0.5); }
   .refresh-btn:active { transform: scale(0.97); }
 
   .back-link {
-    margin-top: 28px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: rgba(255,255,255,0.3);
+    margin-top: 24px;
+    font-size: 0.85rem;
+    font-weight: 900;
+    color: #9070B8;
     text-decoration: none;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
     transition: color 0.2s;
   }
-  .back-link:hover { color: rgba(255,255,255,0.65); }
+  .back-link:hover { color: #4A2080; }
 
-  @media (max-width: 500px) {
-    h1 { font-size: 1.8rem; }
-    .card { padding: 22px 20px; }
-    .card-title { font-size: 1.2rem; }
+  @media (max-width: 520px) {
+    h1 { font-size: 2.4rem; letter-spacing: -1px; }
+    .card { padding: 26px 22px 22px; }
+    .card-title { font-size: 1.3rem; }
+    .refresh-btn { padding: 16px 36px; font-size: 0.95rem; }
   }
 </style>
 </head>
 <body>
 
-<h1>Daily Lifehacks</h1>
-<p class="subtitle">3 things you can actually do today</p>
+<!-- Animated background -->
+<div class="bg"></div>
 
-<div class="cards" id="cards"></div>
+<!-- Geometric shapes -->
+<div class="geo">
+  <div class="ring r1"></div>
+  <div class="ring r2"></div>
+  <div class="ring r3"></div>
+  <div class="ring r4"></div>
+  <div class="ring r5"></div>
 
-<button class="refresh-btn" onclick="render()">Give me 3 more</button>
-<a class="back-link" href="index.html">← Back to Choir Looper</a>
+  <div class="dot d1"></div>
+  <div class="dot d2"></div>
+  <div class="dot d3"></div>
+  <div class="dot d4"></div>
+  <div class="dot d5"></div>
+  <div class="dot d6"></div>
+
+  <div class="tri t1"></div>
+  <div class="tri t2"></div>
+  <div class="tri t3"></div>
+  <div class="tri t4"></div>
+
+  <div class="sq s1"></div>
+  <div class="sq s2"></div>
+  <div class="sq s3"></div>
+  <div class="sq s4"></div>
+</div>
+
+<div class="page">
+  <div class="title-block">
+    <h1>Daily Lifehacks</h1>
+    <p class="subtitle">3 things you can actually do today</p>
+  </div>
+
+  <div class="cards" id="cards"></div>
+
+  <button class="refresh-btn" onclick="render()">Give me 3 more ✦</button>
+  <a class="back-link" href="index.html">← Choir Looper</a>
+</div>
 
 <script>
 const HACKS = [
@@ -451,9 +614,7 @@ function pick3() {
 
 function render() {
   const container = document.getElementById('cards');
-  // Remove old cards (force re-animation)
   container.innerHTML = '';
-  // Small delay so animation re-triggers
   requestAnimationFrame(() => {
     pick3().forEach((hack, i) => {
       const card = document.createElement('div');
@@ -465,10 +626,8 @@ function render() {
         <div class="card-body">${hack.body}</div>
         <hr class="card-divider">
         <div class="card-expert">
-          <div>
-            <div class="card-expert-name">${hack.expert}</div>
-            <div class="card-expert-source">${hack.source}</div>
-          </div>
+          <div class="card-expert-name">${hack.expert}</div>
+          <div class="card-expert-source">${hack.source}</div>
         </div>
         <div class="card-action">${hack.action}</div>
       `;
