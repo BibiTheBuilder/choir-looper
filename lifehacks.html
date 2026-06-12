@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daily Lifehacks</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=Nunito:wght@700;800;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=Nunito:wght@700;800;900&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
@@ -15,7 +15,7 @@
     position: relative;
   }
 
-  /* ===== ANIMATED PASTEL GRADIENT BG ===== */
+  /* ===== ANIMATED BG ===== */
   .bg {
     position: fixed;
     inset: 0;
@@ -32,81 +32,47 @@
     100% { background-position: 0% 50%; }
   }
 
-  /* ===== GEOMETRIC SHAPES ===== */
-  .geo {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 1;
-    overflow: hidden;
-  }
+  /* ===== GEOMETRIC SHAPES (subtler, don't fight cards) ===== */
+  .geo { position: fixed; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
 
-  /* Rings */
   .ring {
     position: absolute;
     border-radius: 50%;
     border-style: solid;
     animation: spin linear infinite;
   }
-  .r1 { width: 260px; height: 260px; border-width: 8px; border-color: rgba(176,130,255,0.25); top: -80px; left: -80px; animation-duration: 28s; }
-  .r2 { width: 180px; height: 180px; border-width: 5px; border-color: rgba(255,160,200,0.2); top: 18%; right: -50px; animation-duration: 20s; animation-direction: reverse; }
-  .r3 { width: 360px; height: 360px; border-width: 10px; border-color: rgba(100,210,160,0.15); bottom: -120px; right: 5%; animation-duration: 42s; }
-  .r4 { width: 140px; height: 140px; border-width: 4px; border-color: rgba(120,180,255,0.22); bottom: 20%; left: 3%; animation-duration: 16s; animation-direction: reverse; }
-  .r5 { width: 80px; height: 80px; border-width: 3px; border-color: rgba(255,210,100,0.3); top: 50%; left: 40%; animation-duration: 12s; }
-
+  .r1 { width: 320px; height: 320px; border-width: 10px; border-color: rgba(180,140,255,0.15); top: -130px; left: -100px; animation-duration: 32s; }
+  .r2 { width: 200px; height: 200px; border-width: 6px;  border-color: rgba(255,160,200,0.13); top: 15%; right: -70px; animation-duration: 22s; animation-direction: reverse; }
+  .r3 { width: 440px; height: 440px; border-width: 12px; border-color: rgba(100,210,160,0.1);  bottom: -180px; right: 0%; animation-duration: 48s; }
+  .r4 { width: 120px; height: 120px; border-width: 4px;  border-color: rgba(120,180,255,0.18); bottom: 22%; left: 2%; animation-duration: 18s; animation-direction: reverse; }
   @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-  /* Floating dots */
-  .dot {
-    position: absolute;
-    border-radius: 50%;
-    animation: float ease-in-out infinite;
-  }
-  .d1 { width: 48px; height: 48px; background: rgba(176,130,255,0.28); top: 12%; left: 6%; animation-duration: 6s; }
-  .d2 { width: 22px; height: 22px; background: rgba(255,140,190,0.35); top: 38%; right: 5%; animation-duration: 7.5s; animation-delay: -2s; }
-  .d3 { width: 64px; height: 64px; background: rgba(100,210,160,0.2); bottom: 22%; left: 2%; animation-duration: 9s; animation-delay: -4s; }
-  .d4 { width: 16px; height: 16px; background: rgba(255,200,80,0.45); top: 66%; right: 10%; animation-duration: 5s; animation-delay: -1s; }
-  .d5 { width: 36px; height: 36px; background: rgba(100,170,255,0.25); top: 52%; left: 12%; animation-duration: 8s; animation-delay: -3.5s; }
-  .d6 { width: 28px; height: 28px; background: rgba(255,160,200,0.3); top: 80%; right: 20%; animation-duration: 10s; animation-delay: -5s; }
+  .dot { position: absolute; border-radius: 50%; animation: float ease-in-out infinite; }
+  .d1 { width: 44px; height: 44px; background: rgba(180,140,255,0.2);  top: 10%; left: 4%;   animation-duration: 7s; }
+  .d2 { width: 20px; height: 20px; background: rgba(255,140,190,0.25); top: 35%; right: 4%;  animation-duration: 8s;  animation-delay: -2s; }
+  .d3 { width: 56px; height: 56px; background: rgba(100,210,160,0.14); bottom: 20%; left: 1%; animation-duration: 10s; animation-delay: -4s; }
+  .d4 { width: 14px; height: 14px; background: rgba(255,200,80,0.35);  top: 62%; right: 8%;  animation-duration: 6s;  animation-delay: -1s; }
+  .d5 { width: 30px; height: 30px; background: rgba(100,170,255,0.18); top: 50%; left: 9%;   animation-duration: 9s;  animation-delay: -3s; }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50%       { transform: translateY(-22px); }
-  }
-
-  /* Triangles */
-  .tri {
-    position: absolute;
-    width: 0; height: 0;
-    animation: triFloat ease-in-out infinite;
-  }
-  .t1 { border-left: 40px solid transparent; border-right: 40px solid transparent; border-bottom: 70px solid rgba(176,130,255,0.22); top: 28%; right: 2%; animation-duration: 13s; }
-  .t2 { border-left: 22px solid transparent; border-right: 22px solid transparent; border-bottom: 38px solid rgba(255,160,200,0.25); bottom: 38%; right: 7%; animation-duration: 9s; animation-delay: -4s; }
-  .t3 { border-left: 30px solid transparent; border-right: 30px solid transparent; border-bottom: 52px solid rgba(100,210,160,0.2); top: 6%; right: 18%; animation-duration: 16s; animation-delay: -7s; }
-  .t4 { border-left: 18px solid transparent; border-right: 18px solid transparent; border-bottom: 30px solid rgba(255,200,80,0.28); bottom: 55%; left: 5%; animation-duration: 11s; animation-delay: -2s; }
-
+  .tri { position: absolute; width: 0; height: 0; animation: triFloat ease-in-out infinite; }
+  .t1 { border-left: 32px solid transparent; border-right: 32px solid transparent; border-bottom: 56px solid rgba(180,140,255,0.16); top: 30%; right: 1%; animation-duration: 14s; }
+  .t2 { border-left: 18px solid transparent; border-right: 18px solid transparent; border-bottom: 32px solid rgba(255,160,200,0.18); bottom: 40%; right: 6%; animation-duration: 10s; animation-delay: -4s; }
+  .t3 { border-left: 24px solid transparent; border-right: 24px solid transparent; border-bottom: 42px solid rgba(100,210,160,0.15); top: 5%; right: 16%; animation-duration: 18s; animation-delay: -7s; }
   @keyframes triFloat {
     0%   { transform: rotate(0deg) translateY(0); }
-    25%  { transform: rotate(90deg) translateY(-18px); }
-    50%  { transform: rotate(180deg) translateY(0); }
-    75%  { transform: rotate(270deg) translateY(-12px); }
+    33%  { transform: rotate(120deg) translateY(-16px); }
+    66%  { transform: rotate(240deg) translateY(-8px); }
     100% { transform: rotate(360deg) translateY(0); }
   }
 
-  /* Rotating squares */
-  .sq {
-    position: absolute;
-    border-radius: 6px;
-    animation: squareSpin linear infinite;
-  }
-  .s1 { width: 52px; height: 52px; background: rgba(255,200,80,0.22); bottom: 8%; left: 7%; animation-duration: 20s; }
-  .s2 { width: 28px; height: 28px; background: rgba(255,140,190,0.3); top: 22%; left: 1%; animation-duration: 13s; animation-direction: reverse; }
-  .s3 { width: 38px; height: 38px; background: rgba(100,170,255,0.22); bottom: 45%; right: 3%; animation-duration: 17s; }
-  .s4 { width: 20px; height: 20px; background: rgba(176,130,255,0.3); top: 72%; left: 25%; animation-duration: 9s; animation-direction: reverse; }
-
+  .sq { position: absolute; border-radius: 5px; animation: squareSpin linear infinite; }
+  .s1 { width: 44px; height: 44px; background: rgba(255,200,80,0.18);  bottom: 9%; left: 6%;  animation-duration: 22s; }
+  .s2 { width: 24px; height: 24px; background: rgba(255,140,190,0.22); top: 20%; left: 1%;   animation-duration: 14s; animation-direction: reverse; }
+  .s3 { width: 32px; height: 32px; background: rgba(100,170,255,0.16); bottom: 48%; right: 2%; animation-duration: 19s; }
   @keyframes squareSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-  /* ===== PAGE CONTENT ===== */
+  /* ===== PAGE ===== */
   .page {
     position: relative;
     z-index: 2;
@@ -117,184 +83,240 @@
     min-height: 100vh;
   }
 
+  /* ===== HEADER ===== */
   .title-block { text-align: center; margin-bottom: 48px; }
 
   h1 {
-    font-family: 'Space Grotesk', 'Nunito', sans-serif;
-    font-size: 3.6rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 3rem;
     font-weight: 800;
-    line-height: 1.05;
-    letter-spacing: -2px;
     color: #2A1060;
+    letter-spacing: -2px;
+    line-height: 1.05;
     margin-bottom: 10px;
   }
 
   .subtitle {
-    font-size: 1rem;
+    font-size: 0.82rem;
     font-weight: 900;
     letter-spacing: 4px;
     text-transform: uppercase;
-    color: #8860C8;
+    color: #8060B8;
   }
 
-  /* ===== CARDS ===== */
+  /* ===== CARD GRID ===== */
   .cards {
+    width: 100%;
+    max-width: 600px;
     display: flex;
     flex-direction: column;
-    gap: 26px;
-    width: 100%;
-    max-width: 640px;
+    gap: 20px;
   }
 
+  /* ===== BASE CARD (8px grid, flex column) ===== */
   .card {
-    background: rgba(255,255,255,0.72);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-radius: 28px;
-    padding: 32px 34px 28px;
-    border: 2px solid rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.74);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border: 2px solid rgba(255,255,255,0.88);
+    border-radius: 24px;
+    padding: 24px 24px 20px;
+    display: flex;
+    flex-direction: column;
     position: relative;
     overflow: hidden;
-    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
-    box-shadow: 0 8px 40px rgba(120,70,220,0.1), 0 2px 8px rgba(120,70,220,0.06);
+    box-shadow: 0 4px 24px rgba(100,60,180,0.09), 0 1px 4px rgba(100,60,180,0.05);
+    animation: popIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
   }
-  .card:nth-child(1) { animation-delay: 0.05s; }
-  .card:nth-child(2) { animation-delay: 0.18s; }
-  .card:nth-child(3) { animation-delay: 0.31s; }
+  .card:nth-child(1) { animation-delay: 0.04s; }
+  .card:nth-child(2) { animation-delay: 0.15s; }
+  .card:nth-child(3) { animation-delay: 0.26s; }
 
   @keyframes popIn {
-    from { opacity: 0; transform: translateY(28px) scale(0.93); }
+    from { opacity: 0; transform: translateY(24px) scale(0.94); }
     to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
-  /* Thick gradient top bar */
+  /* Decorative blob top-right */
+  .card::after {
+    content: '';
+    position: absolute;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    top: -36px; right: -28px;
+    opacity: 0.12;
+    pointer-events: none;
+  }
+
+  /* ===== ACCENT COLORS via class ===== */
+  .acc-purple::before { background: linear-gradient(90deg, #C4A0FF, #FF9EC8); }
+  .acc-purple::after  { background: #C4A0FF; }
+  .acc-purple .card-num        { color: #7030B8; }
+  .acc-purple .card-num::after { background: #C4A0FF; }
+  .acc-purple .card-action     { background: #F0E6FF; color: #5820A0; }
+  .acc-purple .card-expert-name { color: #5030A0; }
+
+  .acc-green::before { background: linear-gradient(90deg, #80DDAA, #80C8FF); }
+  .acc-green::after  { background: #80DDAA; }
+  .acc-green .card-num        { color: #208058; }
+  .acc-green .card-num::after { background: #80DDAA; }
+  .acc-green .card-action     { background: #DCFFF0; color: #106840; }
+  .acc-green .card-expert-name { color: #187050; }
+
+  .acc-peach::before { background: linear-gradient(90deg, #FFD080, #FF9EC8, #FFB060); }
+  .acc-peach::after  { background: #FFD080; }
+  .acc-peach .card-num        { color: #B07018; }
+  .acc-peach .card-num::after { background: #FFD080; }
+  .acc-peach .card-action     { background: #FFF4D8; color: #906010; }
+  .acc-peach .card-expert-name { color: #A06818; }
+
+  /* Top bar — shared */
   .card::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 7px;
-    border-radius: 28px 28px 0 0;
+    height: 6px;
+    border-radius: 24px 24px 0 0;
   }
-  .card:nth-child(1)::before { background: linear-gradient(90deg, #B890FF, #FF90C0, #FFD080); }
-  .card:nth-child(2)::before { background: linear-gradient(90deg, #80DDAA, #80C8FF, #B890FF); }
-  .card:nth-child(3)::before { background: linear-gradient(90deg, #FFD080, #FF90C0, #80DDAA); }
 
-  /* Soft circle decoration top-right */
-  .card::after {
-    content: '';
-    position: absolute;
-    width: 160px; height: 160px;
-    border-radius: 50%;
-    top: -60px; right: -40px;
-    opacity: 0.1;
-  }
-  .card:nth-child(1)::after { background: #B890FF; }
-  .card:nth-child(2)::after { background: #80DDAA; }
-  .card:nth-child(3)::after { background: #FFD080; }
-
-  .card-num {
-    font-size: 0.75rem;
+  /* ===== CARD CONTENT ===== */
+  .card-label {
+    font-size: 0.72rem;
     font-weight: 900;
-    letter-spacing: 4px;
+    letter-spacing: 3.5px;
     text-transform: uppercase;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
     gap: 8px;
   }
-  .card-num::after { content: ''; flex: 1; height: 2px; border-radius: 2px; max-width: 40px; }
-  .card:nth-child(1) .card-num { color: #8840CC; }
-  .card:nth-child(1) .card-num::after { background: #B890FF; }
-  .card:nth-child(2) .card-num { color: #2A9068; }
-  .card:nth-child(2) .card-num::after { background: #80DDAA; }
-  .card:nth-child(3) .card-num { color: #B07010; }
-  .card:nth-child(3) .card-num::after { background: #FFD080; }
+  .card-label::after {
+    content: '';
+    display: block;
+    height: 2px;
+    width: 32px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
 
-  .card-emoji { font-size: 2.4rem; display: block; margin-bottom: 12px; }
+  .card-emoji {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
 
   .card-title {
-    font-family: 'Space Grotesk', 'Nunito', sans-serif;
-    font-size: 1.6rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.35rem;
     font-weight: 800;
     color: #1C0848;
-    margin-bottom: 14px;
-    line-height: 1.2;
-    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+    line-height: 1.25;
+    letter-spacing: -0.3px;
   }
 
   .card-body {
-    font-size: 1rem;
+    font-size: 0.94rem;
     font-weight: 700;
-    line-height: 1.85;
+    line-height: 1.75;
     color: #4A3068;
+    flex: 1; /* pushes action to bottom */
   }
 
   .card-divider {
-    margin: 18px 0 0;
+    margin: 16px 0 0;
     border: none;
-    border-top: 2px dashed rgba(150,100,220,0.18);
+    border-top: 1px dashed rgba(140,90,200,0.2);
+    flex-shrink: 0;
   }
 
-  .card-expert { margin-top: 12px; display: flex; flex-direction: column; gap: 2px; }
-
+  .card-expert {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    flex-shrink: 0;
+  }
   .card-expert-name {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.84rem;
-    font-weight: 800;
-    color: #5030A0;
-    letter-spacing: 0.3px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
   }
-
   .card-expert-source {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: #9070B8;
     font-style: italic;
   }
 
   .card-action {
+    align-self: flex-start;
     margin-top: 16px;
-    display: inline-block;
-    font-size: 0.88rem;
+    font-size: 0.84rem;
     font-weight: 900;
-    padding: 10px 20px;
+    padding: 9px 18px;
     border-radius: 50px;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.2px;
+    flex-shrink: 0;
+    cursor: default;
   }
-  .card:nth-child(1) .card-action { background: #F0E6FF; color: #6020B0; }
-  .card:nth-child(2) .card-action { background: #DCFFF0; color: #187050; }
-  .card:nth-child(3) .card-action { background: #FFF6D8; color: #905010; }
   .card-action::before { content: '→  '; }
 
-  /* ===== REFRESH BUTTON ===== */
+  /* ===== QUESTION CARD EXTRAS ===== */
+  .card.question-card .card-title {
+    font-size: 1.5rem;
+    line-height: 1.3;
+    color: #1C0848;
+    font-style: italic;
+    margin-bottom: 0;
+  }
+  .card.question-card .card-body { display: none; }
+  .card.question-card .card-divider { display: none; }
+  .card.question-card .card-expert { display: none; }
+  .card.question-card .card-prompt {
+    margin-top: 16px;
+    font-size: 0.82rem;
+    font-weight: 900;
+    padding: 9px 18px;
+    border-radius: 50px;
+    align-self: flex-start;
+    flex-shrink: 0;
+  }
+
+  .acc-peach.question-card .card-prompt { background: #FFF4D8; color: #906010; }
+
+  /* ===== REFRESH BTN ===== */
   .refresh-btn {
-    margin-top: 44px;
-    padding: 18px 52px;
-    font-family: 'Space Grotesk', 'Nunito', sans-serif;
-    font-size: 1.05rem;
+    margin-top: 40px;
+    padding: 16px 48px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
     font-weight: 800;
     border: none;
     border-radius: 60px;
-    background: linear-gradient(135deg, #B090FF 0%, #FF90C0 50%, #FFD080 100%);
+    background: linear-gradient(135deg, #C0A0FF 0%, #FF9EC8 50%, #FFD080 100%);
     background-size: 200% 200%;
-    animation: btnShift 4s ease infinite;
+    animation: btnShift 5s ease infinite;
     color: #fff;
     cursor: pointer;
     letter-spacing: 1px;
     text-transform: uppercase;
+    box-shadow: 0 4px 24px rgba(160,100,255,0.35);
     transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: 0 6px 28px rgba(160,100,255,0.4);
+    text-shadow: 0 1px 4px rgba(80,20,140,0.25);
   }
   @keyframes btnShift {
-    0%, 100% { background-position: 0% 50%; }
-    50%       { background-position: 100% 50%; }
+    0%,100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
   }
-  .refresh-btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 12px 36px rgba(160,100,255,0.5); }
+  .refresh-btn:hover  { transform: translateY(-2px) scale(1.03); box-shadow: 0 8px 28px rgba(160,100,255,0.45); }
   .refresh-btn:active { transform: scale(0.97); }
 
   .back-link {
-    margin-top: 24px;
-    font-size: 0.85rem;
+    margin-top: 20px;
+    font-size: 0.8rem;
     font-weight: 900;
     color: #9070B8;
     text-decoration: none;
@@ -302,335 +324,142 @@
     text-transform: uppercase;
     transition: color 0.2s;
   }
-  .back-link:hover { color: #4A2080; }
+  .back-link:hover { color: #4A1E88; }
 
   @media (max-width: 520px) {
-    h1 { font-size: 2.4rem; letter-spacing: -1px; }
-    .card { padding: 26px 22px 22px; }
-    .card-title { font-size: 1.3rem; }
-    .refresh-btn { padding: 16px 36px; font-size: 0.95rem; }
+    h1 { font-size: 2.2rem; letter-spacing: -1px; }
+    .card { padding: 20px 20px 18px; }
+    .card-title { font-size: 1.2rem; }
+    .refresh-btn { padding: 14px 32px; }
   }
 </style>
 </head>
 <body>
 
-<!-- Animated background -->
 <div class="bg"></div>
 
-<!-- Geometric shapes -->
 <div class="geo">
-  <div class="ring r1"></div>
-  <div class="ring r2"></div>
-  <div class="ring r3"></div>
-  <div class="ring r4"></div>
-  <div class="ring r5"></div>
-
-  <div class="dot d1"></div>
-  <div class="dot d2"></div>
-  <div class="dot d3"></div>
-  <div class="dot d4"></div>
-  <div class="dot d5"></div>
-  <div class="dot d6"></div>
-
-  <div class="tri t1"></div>
-  <div class="tri t2"></div>
-  <div class="tri t3"></div>
-  <div class="tri t4"></div>
-
-  <div class="sq s1"></div>
-  <div class="sq s2"></div>
-  <div class="sq s3"></div>
-  <div class="sq s4"></div>
+  <div class="ring r1"></div><div class="ring r2"></div>
+  <div class="ring r3"></div><div class="ring r4"></div>
+  <div class="dot d1"></div><div class="dot d2"></div>
+  <div class="dot d3"></div><div class="dot d4"></div><div class="dot d5"></div>
+  <div class="tri t1"></div><div class="tri t2"></div><div class="tri t3"></div>
+  <div class="sq s1"></div><div class="sq s2"></div><div class="sq s3"></div>
 </div>
 
 <div class="page">
   <div class="title-block">
     <h1>Daily Lifehacks</h1>
-    <p class="subtitle">3 things you can actually do today</p>
+    <p class="subtitle">2 hacks + 1 question to think about</p>
   </div>
 
   <div class="cards" id="cards"></div>
 
-  <button class="refresh-btn" onclick="render()">Give me 3 more ✦</button>
+  <button class="refresh-btn" onclick="render()">Give me more ✦</button>
   <a class="back-link" href="index.html">← Choir Looper</a>
 </div>
 
 <script>
+const ACCENTS = ['acc-purple', 'acc-green', 'acc-peach'];
+
 const HACKS = [
-  {
-    emoji: '🌅',
-    title: 'Get Morning Sunlight',
-    expert: 'Dr. Andrew Huberman',
-    source: 'Huberman Lab Podcast',
-    body: 'Get outside within 30 minutes of waking and look toward (not directly at) bright sky for 5–10 minutes. This anchors your circadian clock, boosts cortisol at the right time, and improves sleep quality that night. Even on cloudy days, outdoor light is 10–50x brighter than indoor lighting.',
-    action: 'Step outside first thing tomorrow morning — no sunglasses'
-  },
-  {
-    emoji: '🥶',
-    title: 'Cold Exposure for Dopamine',
-    expert: 'Dr. Andrew Huberman',
-    source: 'Huberman Lab Podcast',
-    body: 'A 1–3 minute cold shower or cold plunge triggers a long-lasting (~3 hour) rise in dopamine and norepinephrine — chemicals that drive motivation and focus. Unlike caffeine, it doesn\'t cause a crash. The key: don\'t warm up immediately afterward.',
-    action: 'End your next shower with 60 seconds of cold water'
-  },
-  {
-    emoji: '😮‍💨',
-    title: 'Physiological Sigh',
-    expert: 'Dr. Andrew Huberman',
-    source: 'Huberman Lab / Stanford research',
-    body: 'Double-inhale through the nose (short inhale, then sniff more air), then a long exhale through the mouth. This is the fastest known way to reduce stress in real time — it deflates air sacs in the lungs, offloading CO₂ and activating the parasympathetic nervous system.',
-    action: 'Try it right now — one double-inhale, long exhale'
-  },
-  {
-    emoji: '🏃',
-    title: 'Habit Stacking',
-    expert: 'James Clear',
-    source: 'Atomic Habits',
-    body: '"After I [current habit], I will [new habit]." Linking a new behavior to an existing cue removes the need to remember or find motivation. The existing habit acts as a trigger. E.g. "After I pour my morning coffee, I will write in my journal for 2 minutes."',
-    action: 'Write one habit stack you\'ll start tomorrow'
-  },
-  {
-    emoji: '🔬',
-    title: 'Make It Obvious',
-    expert: 'James Clear',
-    source: 'Atomic Habits',
-    body: 'The most powerful way to build a habit is to make the cue visible. Want to take vitamins? Put them next to the coffee maker. Want to read more? Leave the book on your pillow. Environment design beats willpower every time.',
-    action: 'Rearrange one thing in your environment to trigger a habit you want'
-  },
-  {
-    emoji: '⏱️',
-    title: 'The 2-Minute Rule',
-    expert: 'David Allen',
-    source: 'Getting Things Done',
-    body: 'If a task will take less than 2 minutes to complete, do it immediately — don\'t put it on a list. The mental overhead of tracking a 2-minute task costs more than just doing it. Applies to emails, quick tidying, small decisions.',
-    action: 'Identify one 2-minute task you\'ve been deferring and do it now'
-  },
-  {
-    emoji: '📬',
-    title: 'Process Your Inbox to Zero',
-    expert: 'David Allen',
-    source: 'Getting Things Done',
-    body: 'Treat your inbox as a processing point, not a storage system. Every item gets one of four responses: delete it, do it (if under 2 min), delegate it, or defer it to a specific time. An inbox with 1,400 unread emails is a decision backlog, not a communication tool.',
-    action: 'Set aside 20 minutes today for inbox zero'
-  },
-  {
-    emoji: '🗓️',
-    title: 'Time-Block Your Day',
-    expert: 'Cal Newport',
-    source: 'Deep Work',
-    body: 'Assign every hour of your workday to a specific task or category in advance. Unscheduled time gets filled by other people\'s priorities. Newport finds that a 20-minute planning session each morning produces far more output than reactive to-do lists.',
-    action: 'Block 2 hours tomorrow for your most important work, before checking email'
-  },
-  {
-    emoji: '📵',
-    title: 'Digital Declutter',
-    expert: 'Cal Newport',
-    source: 'Digital Minimalism',
-    body: 'Delete all optional social media apps from your phone for 30 days. At the end, only reinstall ones that genuinely serve your values — not out of habit. Newport argues that reclaiming attention is more valuable than any single productivity technique.',
-    action: 'Delete one app from your phone that you open out of habit, not purpose'
-  },
-  {
-    emoji: '😴',
-    title: 'Keep a Consistent Wake Time',
-    expert: 'Dr. Matthew Walker',
-    source: 'Why We Sleep',
-    body: 'Your wake time is the anchor of your entire sleep schedule. Going to bed at different times is less harmful than waking at different times. A consistent wake time — including weekends — stabilizes your circadian rhythm more powerfully than any supplement.',
-    action: 'Set a fixed alarm for tomorrow and every day this week'
-  },
-  {
-    emoji: '🍷',
-    title: 'Alcohol Destroys Sleep Quality',
-    expert: 'Dr. Matthew Walker',
-    source: 'Why We Sleep',
-    body: 'Alcohol is a sedative, not a sleep aid. It fragments sleep in the second half of the night and almost completely suppresses REM sleep — the phase responsible for memory consolidation and emotional processing. Even 1–2 drinks measurably degrades sleep quality.',
-    action: 'Skip alcohol the night before a day that matters'
-  },
-  {
-    emoji: '💪',
-    title: 'Zone 2 Cardio Is Your Longevity Foundation',
-    expert: 'Dr. Peter Attia',
-    source: 'Outlive',
-    body: 'Zone 2 cardio — low intensity where you can hold a conversation — is the single most important exercise for long-term health. Aim for 150–180 min per week. It builds mitochondrial density, metabolic efficiency, and cardiovascular resilience without recovery cost.',
-    action: 'Schedule a 30-minute brisk walk or easy bike ride this week'
-  },
-  {
-    emoji: '🏋️',
-    title: 'Muscle Mass Is a Longevity Drug',
-    expert: 'Dr. Peter Attia',
-    source: 'Outlive',
-    body: 'Muscle mass and strength are among the strongest predictors of longevity. People with the most muscle in their 40s–50s have dramatically lower all-cause mortality. Resistance training twice a week is not optional if you want to be functional at 80.',
-    action: 'Book a strength training session this week — even bodyweight counts'
-  },
-  {
-    emoji: '💰',
-    title: 'Automate Your Finances',
-    expert: 'Ramit Sethi',
-    source: 'I Will Teach You to Be Rich',
-    body: 'Set up automatic transfers so money flows to savings, investments, and bills on payday — before you can spend it. Sethi calls this the "Conscious Spending Plan." Automation removes willpower from the equation entirely. You don\'t need to budget; you just need a good system.',
-    action: 'Set up one automatic savings transfer today, even $25'
-  },
-  {
-    emoji: '🎉',
-    title: 'Celebrate Immediately After Habits',
-    expert: 'BJ Fogg',
-    source: 'Tiny Habits',
-    body: 'Immediately after completing a habit — even a tiny one — celebrate with a genuine positive emotion (fist pump, smile, saying "yes!"). Fogg\'s research shows this creates a direct neurological reward that wires the habit into your brain faster than any other technique.',
-    action: 'After your next habit, add a small celebration — feel it, don\'t fake it'
-  },
-  {
-    emoji: '🌱',
-    title: 'Shrink the Habit First',
-    expert: 'BJ Fogg',
-    source: 'Tiny Habits',
-    body: 'To reliably start a new habit, make it so small it seems almost absurd. "Floss one tooth." "Do one push-up." "Write one sentence." Fogg\'s research shows motivation is unreliable; starting tiny bypasses the resistance that kills 95% of habit attempts.',
-    action: 'Pick a habit you\'ve failed at — shrink it to 2 minutes or less'
-  },
-  {
-    emoji: '5️⃣',
-    title: 'The 5-Second Rule',
-    expert: 'Mel Robbins',
-    source: 'The 5 Second Rule',
-    body: 'The moment you feel hesitation, count backward: 5-4-3-2-1 and physically move. This interrupts the brain\'s habit of generating excuses and activates the prefrontal cortex. Robbins developed it to get herself out of bed — it works for any moment of resistance.',
-    action: 'Use it the next time you hesitate before something you know you should do'
-  },
-  {
-    emoji: '📚',
-    title: 'Read What You\'re Curious About',
-    expert: 'Naval Ravikant',
-    source: 'The Almanack of Naval Ravikant',
-    body: 'Don\'t force yourself to finish books. Read what genuinely interests you, even if it\'s "frivolous." Naval argues that reading from real curiosity — not obligation — produces the kind of deep, connected knowledge that generates original insights over time.',
-    action: 'Abandon a book you\'re forcing yourself through and start one you actually want to read'
-  },
-  {
-    emoji: '🎯',
-    title: 'Find Your ONE Thing',
-    expert: 'Gary Keller',
-    source: 'The ONE Thing',
-    body: 'Every morning ask: "What\'s the ONE thing I can do such that by doing it, everything else becomes easier or unnecessary?" Keller\'s research found that extraordinary results come from narrowing focus, not expanding it. Most to-do lists are actually obstacles to this.',
-    action: 'Identify your ONE thing for tomorrow before you go to bed tonight'
-  },
-  {
-    emoji: '😰',
-    title: 'Fear-Setting',
-    expert: 'Tim Ferriss',
-    source: 'The 4-Hour Workweek / TED Talk',
-    body: 'Write down the worst-case scenario for something you\'re afraid to do. Then ask: How likely is this actually? Could I recover if it happened? What\'s the cost of NOT doing it? Ferriss argues that fear of action is almost always worse than its reality.',
-    action: 'Write down one fear you\'ve been avoiding and answer those three questions'
-  },
-  {
-    emoji: '📰',
-    title: 'Go on a Low-Information Diet',
-    expert: 'Tim Ferriss',
-    source: 'The 4-Hour Workweek',
-    body: 'Most news is irrelevant to your actual decisions. Stop consuming it daily. Check the news once per week if you must. Ferriss found that being on a "low-information diet" dramatically reduced anxiety and freed 1–2 hours per day with zero meaningful downside.',
-    action: 'Delete one news app or turn off one news notification today'
-  },
-  {
-    emoji: '🙏',
-    title: 'Specific Gratitude Practice',
-    expert: 'Brené Brown',
-    source: 'The Gifts of Imperfection',
-    body: 'Gratitude journaling only works when it\'s specific. "I\'m grateful for my health" does nothing. "I\'m grateful that I had a conversation with my sister and she made me laugh so hard I cried" — that does. Specificity forces genuine attention and creates real emotional shift.',
-    action: 'Write one specific, detailed thing you\'re grateful for right now'
-  },
-  {
-    emoji: '🔁',
-    title: 'Rethink Before You Double Down',
-    expert: 'Adam Grant',
-    source: 'Think Again',
-    body: 'When someone challenges your view, treat it as data rather than a threat. Grant\'s research shows that the most effective people hold their beliefs lightly and actively look for reasons they might be wrong. Intelligence isn\'t how much you know — it\'s how fast you can update.',
-    action: 'Identify one belief you hold strongly and write down the best counterargument'
-  },
-  {
-    emoji: '🌿',
-    title: 'Eat Food, Not Too Much, Mostly Plants',
-    expert: 'Michael Pollan',
-    source: 'In Defense of Food',
-    body: '"Eat food. Not too much. Mostly plants." Pollan argues this seven-word sentence captures more nutritional wisdom than most diet books. "Food" means ingredients your great-grandmother would recognize. If it has more than five ingredients or contains things you can\'t pronounce, reconsider.',
-    action: 'Cook one meal this week using only whole, recognizable ingredients'
-  },
-  {
-    emoji: '🧠',
-    title: 'Pre-Mortem Your Projects',
-    expert: 'Daniel Kahneman',
-    source: 'Thinking, Fast and Slow',
-    body: 'Before starting a project, imagine it\'s one year later and it failed spectacularly. Now write down why. This "pre-mortem" forces your brain to surface risks it would otherwise suppress to stay optimistic. It consistently catches fatal flaws before they happen.',
-    action: 'Run a quick pre-mortem on your current biggest project'
-  },
-  {
-    emoji: '⚖️',
-    title: 'Subtract Before You Add',
-    expert: 'Nassim Taleb',
-    source: 'Antifragile',
-    body: 'Taleb\'s "via negativa": improvement often comes from removing bad things rather than adding good ones. Before adding a new habit, supplement, or strategy — ask what you should eliminate. Removing junk food beats adding green juice. Removing distractions beats adding focus techniques.',
-    action: 'Identify one thing to remove from your life this week rather than something to add'
-  },
-  {
-    emoji: '🧘',
-    title: 'NSDR / Yoga Nidra for Recovery',
-    expert: 'Dr. Andrew Huberman',
-    source: 'Huberman Lab Podcast',
-    body: 'Non-Sleep Deep Rest (NSDR) — a 10–20 minute body-scan meditation — accelerates neuroplasticity and restores mental energy as effectively as a nap, without grogginess. Huberman does it daily post-workout or after lunch. Free scripts are widely available on YouTube.',
-    action: 'Try a 10-minute NSDR or Yoga Nidra session today'
-  },
-  {
-    emoji: '🌡️',
-    title: 'Regular Sauna Use',
-    expert: 'Dr. Rhonda Patrick',
-    source: 'FoundMyFitness Podcast',
-    body: 'People using a sauna 4+ times per week at ~175°F for 20 minutes have significantly lower rates of cardiovascular disease and all-cause mortality (Finnish cohort study). It also boosts growth hormone and mimics some effects of cardio. Even 2x/week shows measurable benefit.',
-    action: 'Find a gym or wellness center near you with a sauna this week'
-  },
-  {
-    emoji: '🫀',
-    title: 'Walk After Every Meal',
-    expert: 'Dr. Peter Attia & various research',
-    source: 'Outlive / glucose monitoring studies',
-    body: 'A 10-minute walk after eating blunts the blood glucose spike from a meal by 30–50%. Over time, repeated glucose spikes drive insulin resistance and metabolic dysfunction. This single habit costs nothing and works immediately.',
-    action: 'Take a 10-minute walk after your next meal'
-  },
-  {
-    emoji: '📓',
-    title: 'Capture Everything in One Place',
-    expert: 'David Allen',
-    source: 'Getting Things Done',
-    body: 'Your brain is for having ideas, not storing them. Allen\'s core insight: cognitive overhead from trying to remember things drains mental energy all day. Use one trusted capture system — phone notes, a notebook, anything — and get everything out of your head immediately.',
-    action: 'Do a complete brain dump right now — write down everything on your mind'
-  },
-  {
-    emoji: '🏡',
-    title: 'Own Your Morning Before Others Do',
-    expert: 'Robin Sharma',
-    source: 'The 5 AM Club',
-    body: 'Sharma\'s "20/20/20 formula": the first 60 minutes of the day in three 20-minute blocks — move (exercise), reflect (journal or meditate), grow (read or learn). The core idea: whoever controls your morning controls your day. Own the first hour before inputs arrive.',
-    action: 'Block the first hour of tomorrow and plan what you\'ll do with it'
-  }
+  { type:'hack', emoji:'🌅', title:'Get Morning Sunlight', expert:'Dr. Andrew Huberman', source:'Huberman Lab Podcast', body:'Get outside within 30 minutes of waking and look toward (not directly at) bright sky for 5–10 minutes. This anchors your circadian clock, boosts cortisol at the right time, and improves sleep quality that night. Even on cloudy days, outdoor light is 10–50x brighter than indoor lighting.', action:'Step outside first thing tomorrow morning — no sunglasses' },
+  { type:'hack', emoji:'🥶', title:'Cold Exposure for Dopamine', expert:'Dr. Andrew Huberman', source:'Huberman Lab Podcast', body:'A 1–3 minute cold shower triggers a long-lasting (~3 hour) rise in dopamine and norepinephrine — the chemicals behind motivation and focus. Unlike caffeine, no crash follows. The key: don\'t warm up immediately afterward.', action:'End your next shower with 60 seconds of cold water' },
+  { type:'hack', emoji:'😮‍💨', title:'Physiological Sigh', expert:'Dr. Andrew Huberman', source:'Huberman Lab / Stanford', body:'Double-inhale through the nose, then a long exhale through the mouth. The fastest known way to reduce stress in real time — it deflates air sacs in the lungs, offloads CO₂, and activates the parasympathetic nervous system.', action:'Try it right now — one double-inhale, long exhale' },
+  { type:'hack', emoji:'🏃', title:'Habit Stacking', expert:'James Clear', source:'Atomic Habits', body:'"After I [current habit], I will [new habit]." Linking a behavior to an existing cue removes the need to remember or find motivation. E.g. "After I pour my morning coffee, I will write in my journal for 2 minutes."', action:'Write one habit stack you\'ll start tomorrow' },
+  { type:'hack', emoji:'🔬', title:'Make It Obvious', expert:'James Clear', source:'Atomic Habits', body:'The most powerful way to build a habit is to make the cue visible. Want to take vitamins? Put them next to the coffee maker. Want to read more? Leave the book on your pillow. Environment design beats willpower every time.', action:'Rearrange one thing in your environment to trigger a habit' },
+  { type:'hack', emoji:'⏱️', title:'The 2-Minute Rule', expert:'David Allen', source:'Getting Things Done', body:'If a task takes less than 2 minutes to complete, do it immediately — don\'t put it on a list. The mental overhead of tracking a 2-minute task costs more than just doing it. Applies to emails, quick tidying, small decisions.', action:'Find one deferred 2-minute task and do it right now' },
+  { type:'hack', emoji:'🗓️', title:'Time-Block Your Day', expert:'Cal Newport', source:'Deep Work', body:'Assign every hour of your workday to a specific task in advance. Unscheduled time gets filled by other people\'s priorities. A 20-minute planning session each morning produces far more output than reactive to-do lists.', action:'Block 2 hours tomorrow for your most important work' },
+  { type:'hack', emoji:'📵', title:'Digital Declutter', expert:'Cal Newport', source:'Digital Minimalism', body:'Delete all optional social media apps from your phone for 30 days. At the end, only reinstall ones that genuinely serve your values. Reclaiming attention is more valuable than any single productivity technique.', action:'Delete one app you open out of habit, not purpose' },
+  { type:'hack', emoji:'😴', title:'Consistent Wake Time', expert:'Dr. Matthew Walker', source:'Why We Sleep', body:'Your wake time is the anchor of your entire sleep schedule. A consistent wake time — including weekends — stabilizes your circadian rhythm more powerfully than any supplement. Going to bed at varying times is less harmful than waking at varying times.', action:'Set a fixed alarm for tomorrow and every day this week' },
+  { type:'hack', emoji:'💪', title:'Zone 2 Cardio', expert:'Dr. Peter Attia', source:'Outlive', body:'Zone 2 cardio — low intensity where you can hold a conversation — is the single most important exercise for long-term health. 150–180 min per week builds mitochondrial density and cardiovascular resilience without recovery cost.', action:'Schedule a 30-minute easy walk or bike ride this week' },
+  { type:'hack', emoji:'🏋️', title:'Muscle Mass Is a Longevity Drug', expert:'Dr. Peter Attia', source:'Outlive', body:'Muscle mass and strength are among the strongest predictors of longevity. People with the most muscle in their 40s–50s have dramatically lower all-cause mortality. Resistance training twice a week is essential.', action:'Book a strength training session this week — bodyweight counts' },
+  { type:'hack', emoji:'💰', title:'Automate Your Finances', expert:'Ramit Sethi', source:'I Will Teach You to Be Rich', body:'Set up automatic transfers so money flows to savings and investments on payday — before you can spend it. Automation removes willpower from the equation. You don\'t need to budget; you need a good system.', action:'Set up one automatic savings transfer today, even $25' },
+  { type:'hack', emoji:'🎉', title:'Celebrate After Every Habit', expert:'BJ Fogg', source:'Tiny Habits', body:'Immediately after a habit — even a tiny one — celebrate with a genuine emotion (fist pump, smile). Fogg\'s research shows this creates a direct neurological reward that wires the habit faster than any other technique.', action:'After your next habit, add a small celebration — feel it' },
+  { type:'hack', emoji:'🌱', title:'Shrink the Habit First', expert:'BJ Fogg', source:'Tiny Habits', body:'"Floss one tooth." "Do one push-up." "Write one sentence." Motivation is unreliable; starting tiny bypasses the resistance that kills most habit attempts. Size doesn\'t matter at the start — consistency does.', action:'Pick a failed habit — shrink it to under 2 minutes' },
+  { type:'hack', emoji:'5️⃣', title:'The 5-Second Rule', expert:'Mel Robbins', source:'The 5 Second Rule', body:'When you feel hesitation, count 5-4-3-2-1 and move. This interrupts the brain\'s habit of generating excuses and activates the prefrontal cortex. Developed to get out of bed — it works for any moment of resistance.', action:'Use it next time you hesitate before something you should do' },
+  { type:'hack', emoji:'📚', title:'Read What You\'re Curious About', expert:'Naval Ravikant', source:'Almanack of Naval Ravikant', body:'Don\'t force yourself to finish books. Read from genuine curiosity — not obligation. Naval argues this produces the kind of deep, connected knowledge that generates original insights over time.', action:'Abandon a book you\'re forcing and start one you actually want' },
+  { type:'hack', emoji:'🎯', title:'Find Your ONE Thing', expert:'Gary Keller', source:'The ONE Thing', body:'"What\'s the ONE thing I can do such that by doing it, everything else becomes easier or unnecessary?" Extraordinary results come from narrowing focus, not expanding it.', action:'Identify your ONE thing for tomorrow before bed tonight' },
+  { type:'hack', emoji:'😰', title:'Fear-Setting', expert:'Tim Ferriss', source:'The 4-Hour Workweek / TED Talk', body:'Write down the worst-case scenario for something you\'re afraid to do. How likely is it? Could you recover? What\'s the cost of NOT doing it? Ferriss argues fear of action is almost always worse than its reality.', action:'Write down one fear and answer those three questions' },
+  { type:'hack', emoji:'🙏', title:'Specific Gratitude', expert:'Brené Brown', source:'The Gifts of Imperfection', body:'"I\'m grateful for my health" does nothing. "I\'m grateful for the conversation with my sister that made me laugh until I cried" — that does. Specificity forces genuine attention and creates real emotional shift.', action:'Write one specific, detailed thing you\'re grateful for now' },
+  { type:'hack', emoji:'🌿', title:'Eat Food, Mostly Plants', expert:'Michael Pollan', source:'In Defense of Food', body:'"Eat food. Not too much. Mostly plants." Seven words that beat most diet books. "Food" means ingredients your great-grandmother would recognize. If it has more than five ingredients, reconsider.', action:'Cook one meal this week using only whole ingredients' },
+  { type:'hack', emoji:'🧠', title:'Pre-Mortem Your Projects', expert:'Daniel Kahneman', source:'Thinking, Fast and Slow', body:'Before starting a project, imagine it\'s one year later and it failed. Write down why. This "pre-mortem" surfaces risks your brain would otherwise suppress to stay optimistic. It consistently catches fatal flaws early.', action:'Run a quick pre-mortem on your current biggest project' },
+  { type:'hack', emoji:'⚖️', title:'Subtract Before You Add', expert:'Nassim Taleb', source:'Antifragile', body:'"Via negativa": improvement often comes from removing bad things, not adding good ones. Removing junk food beats adding green juice. Removing distractions beats adding focus techniques.', action:'Identify one thing to remove from your life this week' },
+  { type:'hack', emoji:'🧘', title:'NSDR / Yoga Nidra', expert:'Dr. Andrew Huberman', source:'Huberman Lab Podcast', body:'A 10–20 minute body-scan meditation restores mental energy as effectively as a nap, without grogginess. Huberman does it daily after workouts or lunch. Free scripts are widely available on YouTube.', action:'Try a 10-minute NSDR session today' },
+  { type:'hack', emoji:'🌡️', title:'Regular Sauna Use', expert:'Dr. Rhonda Patrick', source:'FoundMyFitness Podcast', body:'Sauna use 4x/week at ~175°F for 20 minutes is associated with significantly lower cardiovascular mortality. It boosts growth hormone and mimics some effects of cardio. Even 2x/week shows measurable benefit.', action:'Find a gym near you with a sauna this week' },
+  { type:'hack', emoji:'🫀', title:'Walk After Every Meal', expert:'Dr. Peter Attia', source:'Outlive / glucose monitoring research', body:'A 10-minute walk after eating blunts the blood glucose spike by 30–50%. Repeated spikes over time drive insulin resistance. This habit costs nothing and works immediately.', action:'Take a 10-minute walk after your next meal' },
+  { type:'hack', emoji:'📓', title:'Capture Everything in One Place', expert:'David Allen', source:'Getting Things Done', body:'Your brain is for having ideas, not storing them. Cognitive overhead from trying to remember things drains mental energy all day. One trusted capture system — phone notes, notebook — gets everything out of your head.', action:'Do a brain dump right now — write down everything on your mind' },
+  { type:'hack', emoji:'🏡', title:'Own Your Morning', expert:'Robin Sharma', source:'The 5 AM Club', body:'First 60 minutes: 20 min move, 20 min reflect, 20 min grow. Whoever controls your morning controls your day. Own the first hour before emails and other people\'s agendas arrive.', action:'Block the first hour of tomorrow and plan what you\'ll do with it' }
 ];
 
-function pick3() {
-  const shuffled = [...HACKS].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, 3);
+const QUESTIONS = [
+  { type:'question', emoji:'🤔', title:'What\'s one thing you keep saying "someday" about — that you haven\'t started?', prompt:'Sit with this one. Write your answer.' },
+  { type:'question', emoji:'🔭', title:'If you could only work on one project for the next 6 months, what would it be and why?', prompt:'Be honest with yourself.' },
+  { type:'question', emoji:'💡', title:'What belief do you hold today that you couldn\'t have defended 5 years ago?', prompt:'What changed you?' },
+  { type:'question', emoji:'🚀', title:'What would you attempt if you genuinely knew you couldn\'t fail?', prompt:'The answer tells you something important.' },
+  { type:'question', emoji:'❤️', title:'Who in your life deserves a thank-you that you still haven\'t said?', prompt:'Maybe today is the day.' },
+  { type:'question', emoji:'🛠️', title:'What one skill, fully developed, would change everything for you?', prompt:'What\'s stopping you from developing it?' },
+  { type:'question', emoji:'🗑️', title:'What drains you every week that you could actually just stop doing?', prompt:'Permission granted.' },
+  { type:'question', emoji:'📅', title:'What does your ideal Tuesday look like? How different is it from last Tuesday?', prompt:'The gap is the work.' },
+  { type:'question', emoji:'🪞', title:'What\'s one truth about yourself you\'ve been avoiding thinking about?', prompt:'Write it down privately. Just seeing it changes things.' },
+  { type:'question', emoji:'⏳', title:'If your 10-years-older self sent you one piece of advice right now, what would it be?', prompt:'You probably already know the answer.' },
+  { type:'question', emoji:'🎯', title:'What are you actually optimizing your life for right now — and is that what you want?', prompt:'Most people haven\'t asked this explicitly.' },
+  { type:'question', emoji:'🗣️', title:'What\'s the conversation you\'ve been putting off that you know you need to have?', prompt:'Delayed honesty costs more than immediate honesty.' },
+  { type:'question', emoji:'🌱', title:'What small daily action would make you proudest if you did it consistently for a year?', prompt:'Start tomorrow. Just once.' },
+  { type:'question', emoji:'🧩', title:'What problem do you keep solving over and over — and what would it look like to solve it once?', prompt:'Systems beat willpower.' },
+  { type:'question', emoji:'💸', title:'Are you spending money on things that actually make you happy, or things you think should?', prompt:'The receipts tell the real story.' }
+];
+
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function pickMix() {
+  const hacks = shuffle(HACKS).slice(0, 2);
+  const question = shuffle(QUESTIONS)[0];
+  const mixed = shuffle([...hacks, question]);
+  return mixed;
 }
 
 function render() {
   const container = document.getElementById('cards');
   container.innerHTML = '';
   requestAnimationFrame(() => {
-    pick3().forEach((hack, i) => {
+    const items = pickMix();
+    // assign accent colors: rotate through purple, green, peach
+    // questions always get peach; hacks rotate purple/green
+    let hackIdx = 0;
+    const hackAccents = ['acc-purple', 'acc-green'];
+    items.forEach((item, i) => {
       const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <div class="card-num">Hack ${i + 1}</div>
-        <span class="card-emoji">${hack.emoji}</span>
-        <div class="card-title">${hack.title}</div>
-        <div class="card-body">${hack.body}</div>
-        <hr class="card-divider">
-        <div class="card-expert">
-          <div class="card-expert-name">${hack.expert}</div>
-          <div class="card-expert-source">${hack.source}</div>
-        </div>
-        <div class="card-action">${hack.action}</div>
-      `;
+      let accent;
+      if (item.type === 'question') {
+        accent = 'acc-peach';
+      } else {
+        accent = hackAccents[hackIdx % 2];
+        hackIdx++;
+      }
+      card.className = `card ${accent}${item.type === 'question' ? ' question-card' : ''}`;
+
+      if (item.type === 'hack') {
+        card.innerHTML = `
+          <div class="card-label">Hack ${i + 1}</div>
+          <span class="card-emoji">${item.emoji}</span>
+          <div class="card-title">${item.title}</div>
+          <div class="card-body">${item.body}</div>
+          <hr class="card-divider">
+          <div class="card-expert">
+            <div class="card-expert-name">${item.expert}</div>
+            <div class="card-expert-source">${item.source}</div>
+          </div>
+          <div class="card-action">${item.action}</div>
+        `;
+      } else {
+        card.innerHTML = `
+          <div class="card-label">Think about this</div>
+          <span class="card-emoji">${item.emoji}</span>
+          <div class="card-title">${item.title}</div>
+          <div class="card-prompt">${item.prompt}</div>
+        `;
+      }
       container.appendChild(card);
     });
   });
