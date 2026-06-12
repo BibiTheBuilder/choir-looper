@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poetry Quote Maker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Nunito:wght@600;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+    background: #1a1035;
+    color: #fff;
+    transition: background 0.4s, color 0.4s;
+  }
+
+  /* ===== THEMES ===== */
+  body.theme-night  { background: #1a1035; color: #fff; }
+  body.theme-parchment { background: #f5efe0; color: #2c1a0e; }
+  body.theme-forest { background: #0d2b1f; color: #d4f5d4; }
+  body.theme-rose   { background: #2d0a14; color: #ffd6e0; }
+  body.theme-sky    {
+    background: linear-gradient(160deg, #0d47a1 0%, #42a5f5 60%, #b3e5fc 100%);
+    color: #fff;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  /* ===== HEADER ===== */
+  .header { text-align: center; }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    line-height: 1.15;
+  }
+  .theme-night h1    { color: #e8c9ff; }
+  .theme-parchment h1 { color: #5c2e00; }
+  .theme-forest h1   { color: #a8f5c0; }
+  .theme-rose h1     { color: #ffb3c6; }
+  .theme-sky h1      { color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+
+  .tagline {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-top: 6px;
+    opacity: 0.65;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ===== QUOTE CARD ===== */
+  .quote-card {
+    width: 100%;
+    border-radius: 16px;
+    padding: 36px 40px;
+    position: relative;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .theme-night .quote-card    { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); }
+  .theme-parchment .quote-card { background: rgba(0,0,0,0.06); border: 1px solid rgba(0,0,0,0.12); }
+  .theme-forest .quote-card   { background: rgba(255,255,255,0.07); border: 1px solid rgba(100,255,150,0.2); }
+  .theme-rose .quote-card     { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,100,130,0.25); }
+  .theme-sky .quote-card      { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3); }
+
+  .open-quote {
+    font-family: Georgia, serif;
+    font-size: 7rem;
+    line-height: 0.5;
+    opacity: 0.15;
+    position: absolute;
+    top: 20px;
+    left: 24px;
+    user-select: none;
+  }
+
+  #quoteText {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    line-height: 1.8;
+    white-space: pre-line;
+    padding-left: 12px;
+    border: none;
+    quotes: none;
+    margin-top: 16px;
+    transition: opacity 0.25s;
+  }
+  .theme-night #quoteText    { color: #f0e6ff; }
+  .theme-parchment #quoteText { color: #3b1f00; }
+  .theme-forest #quoteText   { color: #ccf5d8; }
+  .theme-rose #quoteText     { color: #ffe0ea; }
+  .theme-sky #quoteText      { color: #fff; }
+
+  .quote-meta {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  #quoteAuthor {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    font-style: normal;
+    letter-spacing: 0.5px;
+    transition: opacity 0.25s;
+  }
+  .theme-night #quoteAuthor    { color: #c9a8ff; }
+  .theme-parchment #quoteAuthor { color: #7a3b00; }
+  .theme-forest #quoteAuthor   { color: #80f0a0; }
+  .theme-rose #quoteAuthor     { color: #ffaab8; }
+  .theme-sky #quoteAuthor      { color: rgba(255,255,255,0.9); }
+
+  #quoteWork {
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0.6;
+    font-style: italic;
+    transition: opacity 0.25s;
+  }
+
+  /* ===== ACTIONS ===== */
+  .actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn {
+    padding: 13px 28px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 800;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.12s, background 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .btn:hover  { transform: scale(1.04); }
+  .btn:active { transform: scale(0.97); }
+
+  .btn-primary {
+    background: #7c3aed;
+    color: #fff;
+    border-color: #7c3aed;
+    box-shadow: 0 4px 20px rgba(124,58,237,0.4);
+  }
+  .btn-primary:hover { background: #6d28d9; box-shadow: 0 6px 24px rgba(124,58,237,0.6); }
+
+  .theme-parchment .btn-primary { background: #7a3b00; border-color: #7a3b00; box-shadow: 0 4px 16px rgba(122,59,0,0.35); }
+  .theme-parchment .btn-primary:hover { background: #5c2c00; }
+  .theme-forest .btn-primary  { background: #1b7a40; border-color: #1b7a40; box-shadow: 0 4px 16px rgba(27,122,64,0.4); }
+  .theme-forest .btn-primary:hover { background: #155e32; }
+  .theme-rose .btn-primary    { background: #c0284a; border-color: #c0284a; box-shadow: 0 4px 16px rgba(192,40,74,0.45); }
+  .theme-rose .btn-primary:hover { background: #9e1e3c; }
+  .theme-sky .btn-primary     { background: #0d47a1; border-color: #0d47a1; box-shadow: 0 4px 16px rgba(13,71,161,0.45); }
+  .theme-sky .btn-primary:hover { background: #0a3880; }
+
+  .btn-secondary {
+    background: transparent;
+    color: inherit;
+    border-color: currentColor;
+    opacity: 0.7;
+  }
+  .btn-secondary:hover { opacity: 1; }
+
+  .copy-feedback {
+    font-size: 0.85rem;
+    font-weight: 800;
+    opacity: 0;
+    transition: opacity 0.3s;
+    min-height: 1.2em;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .copy-feedback.show { opacity: 0.7; }
+
+  /* ===== THEME SWITCHER ===== */
+  .theme-switcher {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 4px;
+  }
+  .theme-dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .theme-dot:hover { transform: scale(1.2); }
+  .theme-dot.active { border-color: #fff; }
+  .theme-parchment .theme-dot.active { border-color: #3b1f00; }
+  .td-night      { background: #1a1035; }
+  .td-parchment  { background: #f5efe0; border: 2px solid #ccc; }
+  .td-forest     { background: #0d2b1f; }
+  .td-rose       { background: #2d0a14; }
+  .td-sky        { background: linear-gradient(135deg, #0d47a1, #b3e5fc); }
+
+  .theme-label {
+    font-size: 0.8rem;
+    font-weight: 800;
+    opacity: 0.5;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+
+  /* ===== FADE ANIMATION ===== */
+  .fading { opacity: 0 !important; }
+
+  @media (max-width: 500px) {
+    h1 { font-size: 2rem; }
+    .quote-card { padding: 28px 22px; }
+    #quoteText { font-size: 1.1rem; }
+    .btn { padding: 11px 20px; font-size: 0.95rem; }
+  }
+</style>
+</head>
+<body class="theme-night">
+
+<div class="app">
+
+  <div class="header">
+    <h1>Poetry Quote Maker</h1>
+    <p class="tagline">Famous lines from the poets</p>
+  </div>
+
+  <div class="quote-card">
+    <span class="open-quote">&ldquo;</span>
+    <blockquote id="quoteText"></blockquote>
+    <div class="quote-meta">
+      <cite id="quoteAuthor"></cite>
+      <span id="quoteWork"></span>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="newQuoteBtn">New Quote</button>
+    <button class="btn btn-secondary" id="copyBtn">Copy</button>
+  </div>
+  <span class="copy-feedback" id="copyFeedback">Copied to clipboard</span>
+
+  <div class="theme-switcher">
+    <span class="theme-label">Theme</span>
+    <div class="theme-dot td-night active"     title="Night"     onclick="setTheme('night')"></div>
+    <div class="theme-dot td-parchment"        title="Parchment" onclick="setTheme('parchment')"></div>
+    <div class="theme-dot td-forest"           title="Forest"    onclick="setTheme('forest')"></div>
+    <div class="theme-dot td-rose"             title="Rose"      onclick="setTheme('rose')"></div>
+    <div class="theme-dot td-sky"              title="Sky"       onclick="setTheme('sky')"></div>
+  </div>
+
+</div>
+
+<script>
+const QUOTES = [
+  { text: "Two roads diverged in a wood, and I—\nI took the one less traveled by,\nAnd that has made all the difference.", author: "Robert Frost", work: "The Road Not Taken" },
+  { text: "Hope is the thing with feathers\nThat perches in the soul,\nAnd sings the tune without the words,\nAnd never stops at all.", author: "Emily Dickinson", work: "Hope Is the Thing with Feathers" },
+  { text: "I am large, I contain multitudes.", author: "Walt Whitman", work: "Song of Myself" },
+  { text: "Do not go gentle into that good night.\nRage, rage against the dying of the light.", author: "Dylan Thomas", work: "Do Not Go Gentle into That Good Night" },
+  { text: "Out of the night that covers me,\nBlack as the pit from pole to pole,\nI thank whatever gods may be\nFor my unconquerable soul.", author: "W.E. Henley", work: "Invictus" },
+  { text: "Still I Rise.", author: "Maya Angelou", work: "Still I Rise" },
+  { text: "You may write me down in history\nWith your bitter, twisted lies,\nYou may trod me in the very dirt\nBut still, like dust, I'll rise.", author: "Maya Angelou", work: "Still I Rise" },
+  { text: "Shall I compare thee to a summer's day?\nThou art more lovely and more temperate.", author: "William Shakespeare", work: "Sonnet 18" },
+  { text: "The woods are lovely, dark and deep,\nBut I have promises to keep,\nAnd miles to go before I sleep.", author: "Robert Frost", work: "Stopping by Woods on a Snowy Evening" },
+  { text: "Tell me, what is it you plan to do\nwith your one wild and precious life?", author: "Mary Oliver", work: "The Summer Day" },
+  { text: "You do not have to be good.\nYou do not have to walk on your knees\nfor a hundred miles through the desert, repenting.", author: "Mary Oliver", work: "Wild Geese" },
+  { text: "Once upon a midnight dreary, while I pondered, weak and weary,\nOver many a quaint and curious volume of forgotten lore.", author: "Edgar Allan Poe", work: "The Raven" },
+  { text: "Because I could not stop for Death,\nHe kindly stopped for me;\nThe carriage held but just ourselves\nAnd Immortality.", author: "Emily Dickinson", work: "Because I Could Not Stop for Death" },
+  { text: "I carry your heart with me (I carry it in my heart)\nI am never without it.", author: "e.e. cummings", work: "i carry your heart with me" },
+  { text: "The world is too much with us; late and soon,\nGetting and spending, we lay waste our powers.", author: "William Wordsworth", work: "The World Is Too Much with Us" },
+  { text: "Tyger Tyger, burning bright,\nIn the forests of the night;\nWhat immortal hand or eye,\nCould frame thy fearful symmetry?", author: "William Blake", work: "The Tyger" },
+  { text: "Season of mists and mellow fruitfulness,\nClose bosom-friend of the maturing sun.", author: "John Keats", work: "To Autumn" },
+  { text: "Beauty is truth, truth beauty—that is all\nYe know on earth, and all ye need to know.", author: "John Keats", work: "Ode on a Grecian Urn" },
+  { text: "I have spread my dreams under your feet;\nTread softly because you tread on my dreams.", author: "W.B. Yeats", work: "He Wishes for the Cloths of Heaven" },
+  { text: "Things fall apart; the centre cannot hold;\nMere anarchy is loosed upon the world.", author: "W.B. Yeats", work: "The Second Coming" },
+  { text: "April is the cruellest month, breeding\nLilacs out of the dead land.", author: "T.S. Eliot", work: "The Waste Land" },
+  { text: "Let us go then, you and I,\nWhen the evening is spread out against the sky\nLike a patient etherised upon a table.", author: "T.S. Eliot", work: "The Love Song of J. Alfred Prufrock" },
+  { text: "I have measured out my life with coffee spoons.", author: "T.S. Eliot", work: "The Love Song of J. Alfred Prufrock" },
+  { text: "I wandered lonely as a cloud\nThat floats on high o'er vales and hills,\nWhen all at once I saw a crowd,\nA host, of golden daffodils.", author: "William Wordsworth", work: "I Wandered Lonely as a Cloud" },
+  { text: "How do I love thee? Let me count the ways.\nI love thee to the depth and breadth and height\nMy soul can reach.", author: "Elizabeth Barrett Browning", work: "Sonnet 43" },
+  { text: "I want to do with you what spring does with the cherry trees.", author: "Pablo Neruda", work: "Every Day You Play" },
+  { text: "I can write the saddest poem of all tonight.\nI loved her, and sometimes she loved me too.", author: "Pablo Neruda", work: "Tonight I Can Write" },
+  { text: "Out beyond ideas of wrongdoing and rightdoing,\nthere is a field. I'll meet you there.", author: "Rumi", work: "A Great Wagon" },
+  { text: "Yesterday I was clever, so I wanted to change the world.\nToday I am wise, so I am changing myself.", author: "Rumi", work: "Various" },
+  { text: "What happens to a dream deferred?\nDoes it dry up like a raisin in the sun?", author: "Langston Hughes", work: "Harlem" },
+  { text: "Life is for the living.\nDeath is for the dead.\nLet life be like music.\nAnd death a note unsaid.", author: "Langston Hughes", work: "Life Is Fine" },
+  { text: "She walks in beauty, like the night\nOf cloudless climes and starry skies.", author: "Lord Byron", work: "She Walks in Beauty" },
+  { text: "To be, or not to be, that is the question:\nWhether 'tis nobler in the mind to suffer\nThe slings and arrows of outrageous fortune.", author: "William Shakespeare", work: "Hamlet" },
+  { text: "If you can keep your head when all about you\nAre losing theirs and blaming it on you,\nIf you can trust yourself when all men doubt you—\nYours is the Earth and everything that's in it.", author: "Rudyard Kipling", work: "If—" },
+  { text: "Dying\nIs an art, like everything else.\nI do it exceptionally well.", author: "Sylvia Plath", work: "Lady Lazarus" },
+  { text: "Not all those who wander are lost.", author: "J.R.R. Tolkien", work: "All That is Gold Does Not Glitter" },
+  { text: "To see a World in a Grain of Sand\nAnd a Heaven in a Wild Flower,\nHold Infinity in the palm of your hand\nAnd Eternity in an hour.", author: "William Blake", work: "Auguries of Innocence" },
+  { text: "I celebrate myself, and sing myself,\nAnd what I assume you shall assume,\nFor every atom belonging to me as good belongs to you.", author: "Walt Whitman", work: "Song of Myself" },
+  { text: "Give me your tired, your poor,\nYour huddled masses yearning to breathe free.", author: "Emma Lazarus", work: "The New Colossus" },
+  { text: "Bright star, would I were steadfast as thou art—", author: "John Keats", work: "Bright Star" },
+  { text: "Something there is that doesn't love a wall,\nThat wants it down.", author: "Robert Frost", work: "Mending Wall" },
+  { text: "What I want is so simple I almost can't say it:\nelementary kindness.", author: "Barbara Kingsolver", work: "High Tide in Tucson" },
+  { text: "We shall not cease from exploration\nAnd the end of all our exploring\nWill be to arrive where we started\nAnd know the place for the first time.", author: "T.S. Eliot", work: "Little Gidding" },
+  { text: "I'm Nobody! Who are you?\nAre you – Nobody – too?", author: "Emily Dickinson", work: "I'm Nobody! Who are you?" },
+  { text: "Water, water, everywhere,\nAnd all the boards did shrink;\nWater, water, everywhere,\nNor any drop to drink.", author: "Samuel Taylor Coleridge", work: "The Rime of the Ancient Mariner" },
+  { text: "When you arise in the morning,\nthink of what a precious privilege it is to be alive—\nto breathe, to think, to enjoy, to love.", author: "Marcus Aurelius", work: "Meditations" },
+  { text: "Love is not love\nWhich alters when it alteration finds,\nOr bends with the remover to remove.", author: "William Shakespeare", work: "Sonnet 116" },
+  { text: "Whose woods these are I think I know.\nHis house is in the village though.", author: "Robert Frost", work: "Stopping by Woods on a Snowy Evening" },
+  { text: "In the room the women come and go\nTalking of Michelangelo.", author: "T.S. Eliot", work: "The Love Song of J. Alfred Prufrock" },
+  { text: "If I can stop one heart from breaking,\nI shall not live in vain.", author: "Emily Dickinson", work: "If I Can Stop One Heart from Breaking" },
+];
+
+let lastIdx = -1;
+
+function getRandom() {
+  let idx;
+  do { idx = Math.floor(Math.random() * QUOTES.length); } while (idx === lastIdx && QUOTES.length > 1);
+  lastIdx = idx;
+  return QUOTES[idx];
+}
+
+function showQuote(q, animate) {
+  const textEl   = document.getElementById('quoteText');
+  const authorEl = document.getElementById('quoteAuthor');
+  const workEl   = document.getElementById('quoteWork');
+
+  if (animate) {
+    [textEl, authorEl, workEl].forEach(el => el.classList.add('fading'));
+    setTimeout(() => {
+      textEl.textContent   = q.text;
+      authorEl.textContent = '— ' + q.author;
+      workEl.textContent   = q.work;
+      [textEl, authorEl, workEl].forEach(el => el.classList.remove('fading'));
+    }, 250);
+  } else {
+    textEl.textContent   = q.text;
+    authorEl.textContent = '— ' + q.author;
+    workEl.textContent   = q.work;
+  }
+}
+
+document.getElementById('newQuoteBtn').addEventListener('click', () => showQuote(getRandom(), true));
+
+document.getElementById('copyBtn').addEventListener('click', () => {
+  const q = QUOTES[lastIdx];
+  if (!q) return;
+  const text = '“' + q.text + '”\n— ' + q.author + ', ' + q.work;
+  navigator.clipboard.writeText(text).then(() => {
+    const fb = document.getElementById('copyFeedback');
+    fb.classList.add('show');
+    setTimeout(() => fb.classList.remove('show'), 2200);
+  });
+});
+
+function setTheme(name) {
+  document.body.className = 'theme-' + name;
+  document.querySelectorAll('.theme-dot').forEach(d => d.classList.remove('active'));
+  document.querySelector('.td-' + name).classList.add('active');
+}
+
+// Load first quote
+showQuote(getRandom(), false);
+</script>
+</body>
+</html>
