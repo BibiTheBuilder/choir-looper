@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Lifehacks</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', -apple-system, sans-serif;
+    min-height: 100vh;
+    background: #1a1a2e;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 60px;
+  }
+
+  h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.4rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, #ff00cc, #00ccff, #ffe600, #ff00cc);
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: slide 4s linear infinite;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  @keyframes slide { 0% { background-position: 0% center; } 100% { background-position: 300% center; } }
+
+  .subtitle {
+    font-size: 1rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+  }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .card {
+    background: #16213e;
+    border-radius: 16px;
+    padding: 28px 30px;
+    border: 2px solid rgba(255,255,255,0.08);
+    position: relative;
+    overflow: hidden;
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  }
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.15s; }
+  .card:nth-child(3) { animation-delay: 0.25s; }
+  @keyframes popIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 5px; height: 100%;
+    border-radius: 16px 0 0 16px;
+  }
+  .card:nth-child(1)::before { background: #ff00cc; }
+  .card:nth-child(2)::before { background: #00ccff; }
+  .card:nth-child(3)::before { background: #ffe600; }
+
+  .card-num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    opacity: 0.5;
+  }
+  .card:nth-child(1) .card-num { color: #ff00cc; }
+  .card:nth-child(2) .card-num { color: #00ccff; }
+  .card:nth-child(3) .card-num { color: #ffe600; }
+
+  .card-emoji {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .card-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.35rem;
+    margin-bottom: 10px;
+    color: #fff;
+  }
+
+  .card-body {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.75;
+    color: rgba(255,255,255,0.75);
+  }
+
+  .card-action {
+    margin-top: 14px;
+    display: inline-block;
+    font-size: 0.9rem;
+    font-weight: 800;
+    padding: 7px 16px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.6);
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+  .card-action::before { content: '→ '; }
+
+  .refresh-btn {
+    margin-top: 38px;
+    padding: 14px 36px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ff00cc, #7700ff);
+    color: #fff;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 4px 20px rgba(119,0,255,0.4);
+  }
+  .refresh-btn:hover { transform: scale(1.04); box-shadow: 0 6px 28px rgba(119,0,255,0.55); }
+  .refresh-btn:active { transform: scale(0.97); }
+
+  .back-link {
+    margin-top: 28px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.3);
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: rgba(255,255,255,0.65); }
+
+  @media (max-width: 500px) {
+    h1 { font-size: 1.8rem; }
+    .card { padding: 22px 20px; }
+    .card-title { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Daily Lifehacks</h1>
+<p class="subtitle">3 things you can actually do today</p>
+
+<div class="cards" id="cards"></div>
+
+<button class="refresh-btn" onclick="render()">Give me 3 more</button>
+<a class="back-link" href="index.html">← Back to Choir Looper</a>
+
+<script>
+const HACKS = [
+  {
+    emoji: '⏱️',
+    title: '2-Minute Rule',
+    body: 'If a task takes less than 2 minutes, do it right now. Replying to that text, rinsing the dish, writing the note — just do it instead of letting it pile up mentally.',
+    action: 'Do one thing on your to-do list right now'
+  },
+  {
+    emoji: '🧃',
+    title: 'Drink Water First',
+    body: 'Before coffee, before your phone — drink a full glass of water the moment you wake up. You\'ve been dehydrated for 7–8 hours. It takes 30 seconds and you\'ll feel sharper faster.',
+    action: 'Put a glass of water next to your bed tonight'
+  },
+  {
+    emoji: '📵',
+    title: 'Phone-Free First Hour',
+    body: 'Don\'t check your phone for the first hour of the day. You\'ll spend that hour on your own agenda instead of reacting to everyone else\'s.',
+    action: 'Set your phone to Do Not Disturb until 9am'
+  },
+  {
+    emoji: '🧠',
+    title: 'Brain Dump Before Bed',
+    body: 'Spend 3 minutes writing down everything on your mind before sleep — tasks, worries, ideas. Your brain will stop rehearsing them and you\'ll fall asleep faster.',
+    action: 'Keep a notepad by your bed'
+  },
+  {
+    emoji: '🔕',
+    title: 'Batch Your Notifications',
+    body: 'Turn off all non-urgent notifications and check them twice a day at set times (e.g. noon and 5pm). Constant pinging costs you 23 minutes of focus per interruption.',
+    action: 'Go to Settings → Notifications and do a purge'
+  },
+  {
+    emoji: '🥶',
+    title: 'End Showers Cold',
+    body: 'Finish your shower with 30 seconds of cold water. It spikes alertness, reduces muscle soreness, and becomes genuinely enjoyable after a week of doing it.',
+    action: 'Try it tomorrow morning — just 30 seconds'
+  },
+  {
+    emoji: '📦',
+    title: 'One-In One-Out',
+    body: 'Every time you bring something new into your home, remove one item. Applied consistently, this stops clutter from accumulating without requiring big declutter sessions.',
+    action: 'Next time you buy something, donate one thing'
+  },
+  {
+    emoji: '🗓️',
+    title: 'Time-Block Your Day',
+    body: 'Instead of a to-do list, assign every task a specific time slot on your calendar. Unscheduled tasks almost never happen. Scheduled ones usually do.',
+    action: 'Block tomorrow morning for your #1 priority'
+  },
+  {
+    emoji: '🏃',
+    title: 'Habit Stack',
+    body: 'Attach a new habit to something you already do every day. "After I pour my morning coffee, I will do 5 push-ups." The existing habit triggers the new one automatically.',
+    action: 'Identify one habit to stack onto your morning routine'
+  },
+  {
+    emoji: '💸',
+    title: '24-Hour Purchase Rule',
+    body: 'For any non-essential purchase over $30, wait 24 hours. Most impulse buys disappear overnight. For anything over $100, wait a week. Your future self will thank you.',
+    action: 'Add something to your cart — don\'t buy it yet'
+  },
+  {
+    emoji: '🌿',
+    title: 'Eat Before You Shop',
+    body: 'Never grocery shop hungry. Studies consistently show hungry shoppers spend more and buy worse food. Eat first, bring a list, stick to the perimeter of the store.',
+    action: 'Write your grocery list before you go next time'
+  },
+  {
+    emoji: '😮‍💨',
+    title: 'Box Breathing for Stress',
+    body: 'Inhale 4 seconds → hold 4 → exhale 4 → hold 4. Repeat 4 times. This is used by Navy SEALs to stay calm under pressure. It genuinely works in under 2 minutes.',
+    action: 'Try one round right now'
+  },
+  {
+    emoji: '🔋',
+    title: 'Charge Outside the Bedroom',
+    body: 'Plug your phone in outside your bedroom at night. You\'ll sleep better (no late scrolling, no 3am notifications) and start the day without immediately grabbing your phone.',
+    action: 'Tonight, leave your phone in the hallway'
+  },
+  {
+    emoji: '📝',
+    title: 'Write Tomorrow\'s Top 3',
+    body: 'Each evening, write down the 3 most important things you need to do tomorrow. Start your day with those — before email, before anything reactive. Three things. That\'s the whole strategy.',
+    action: 'Write your top 3 for tomorrow right now'
+  },
+  {
+    emoji: '👟',
+    title: 'Walk After Eating',
+    body: 'A 10-minute walk after meals lowers blood sugar spikes, aids digestion, and helps with post-lunch energy crashes. You don\'t need a gym — just a short loop around the block.',
+    action: 'Take a 10-minute walk after your next meal'
+  },
+  {
+    emoji: '💡',
+    title: 'Reduce Decision Fatigue',
+    body: 'Pick your clothes for the week on Sunday. Prep lunch the night before. Automate small repeated decisions so your brain saves its energy for things that actually matter.',
+    action: 'Lay out tomorrow\'s clothes tonight'
+  },
+  {
+    emoji: '🗣️',
+    title: 'Use People\'s Names',
+    body: 'Use someone\'s name naturally in conversation. It makes them feel seen and remembered, and dramatically improves how they perceive the interaction. Works in meetings, calls, everywhere.',
+    action: 'Use someone\'s name in your next conversation'
+  },
+  {
+    emoji: '🪴',
+    title: 'Make Your Bed',
+    body: 'Making your bed takes 2 minutes and gives you a small win first thing in the morning. It sets a tone of order for the day and makes your room feel noticeably more calm.',
+    action: 'Make your bed tomorrow before leaving the bedroom'
+  },
+  {
+    emoji: '📵',
+    title: 'No Screens 1 Hour Before Sleep',
+    body: 'Blue light from screens suppresses melatonin and delays sleep onset by up to 90 minutes. Read, stretch, or just sit in low light for the last hour before bed.',
+    action: 'Set a phone alarm for "screen off" time tonight'
+  },
+  {
+    emoji: '💰',
+    title: 'Automate Your Savings',
+    body: 'Set up an automatic transfer to savings on payday — even $20. Money you never see in your checking account gets saved without any willpower required. Start small, increase it later.',
+    action: 'Log into your bank and set up auto-transfer today'
+  },
+  {
+    emoji: '🧹',
+    title: '10-Minute Evening Reset',
+    body: 'Spend 10 minutes each evening resetting your space — dishes done, surfaces cleared, bag packed for tomorrow. Waking up to order is a huge mood and productivity booster.',
+    action: 'Set a 10-minute timer tonight for a quick reset'
+  },
+  {
+    emoji: '🎧',
+    title: 'Use Dead Time',
+    body: 'Commuting, doing dishes, walking — use this time for podcasts, audiobooks, or language learning. You can "read" 20+ books a year just from dead time. No extra time needed.',
+    action: 'Queue up a podcast for your next commute'
+  },
+  {
+    emoji: '🫁',
+    title: 'Stand Up Every Hour',
+    body: 'Set a reminder to stand up and move for 2 minutes every hour. Sitting for long stretches harms posture, focus, and metabolism even if you exercise regularly.',
+    action: 'Set an hourly reminder on your phone right now'
+  },
+  {
+    emoji: '🧂',
+    title: 'Read Ingredient Labels',
+    body: 'The first 3 ingredients on a food label are what that food is mostly made of. If they\'re sugar, seed oils, or things you can\'t pronounce, put it back. That\'s the whole skill.',
+    action: 'Check the label on the next packaged food you eat'
+  },
+  {
+    emoji: '🗑️',
+    title: 'Unsubscribe Ruthlessly',
+    body: 'Every time you open a promotional email, unsubscribe instead of deleting. Spend one week doing this and your inbox will be dramatically cleaner forever — not just today.',
+    action: 'Unsubscribe from the next 5 promo emails you get'
+  },
+  {
+    emoji: '🤝',
+    title: 'Reply Promptly or Schedule It',
+    body: 'When you see a message, either reply immediately or schedule a specific time to do it. "I\'ll get to it later" is how important conversations disappear for weeks.',
+    action: 'Reply to one overdue message right now'
+  },
+  {
+    emoji: '🌅',
+    title: 'Get Morning Sunlight',
+    body: 'Get outside within 30 minutes of waking up and look toward (not at) the sky for 5–10 minutes. Morning light sets your circadian rhythm, improves sleep that night, and boosts mood.',
+    action: 'Step outside first thing tomorrow morning'
+  },
+  {
+    emoji: '🧊',
+    title: 'Freeze Leftovers in Portions',
+    body: 'When you cook, make double and freeze half in single portions. Future you will have a real meal instead of ordering delivery on tired nights.',
+    action: 'Next time you cook, double the recipe and freeze half'
+  },
+  {
+    emoji: '📚',
+    title: 'Read 10 Pages a Day',
+    body: '10 pages a day is 3,650 pages a year — roughly 12–15 books. You don\'t need big reading sessions. A consistent small habit beats occasional marathon sessions.',
+    action: 'Find the book you\'ve been meaning to read and open it'
+  },
+  {
+    emoji: '🗺️',
+    title: 'Plan Your Week on Sunday',
+    body: 'Spend 15 minutes on Sunday looking at the week ahead — appointments, deadlines, commitments. Surprises cause stress; anticipation causes preparation.',
+    action: 'Open your calendar and scan this week right now'
+  }
+];
+
+function pick3() {
+  const shuffled = [...HACKS].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 3);
+}
+
+function render() {
+  const container = document.getElementById('cards');
+  // Remove old cards (force re-animation)
+  container.innerHTML = '';
+  // Small delay so animation re-triggers
+  requestAnimationFrame(() => {
+    pick3().forEach((hack, i) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="card-num">Hack ${i + 1}</div>
+        <span class="card-emoji">${hack.emoji}</span>
+        <div class="card-title">${hack.title}</div>
+        <div class="card-body">${hack.body}</div>
+        <div class="card-action">${hack.action}</div>
+      `;
+      container.appendChild(card);
+    });
+  });
+}
+
+render();
+</script>
+</body>
+</html>
