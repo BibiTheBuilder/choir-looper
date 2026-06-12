@@ -110,8 +110,31 @@
     color: rgba(255,255,255,0.75);
   }
 
+  .card-expert {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-expert-name {
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: rgba(255,255,255,0.9);
+  }
+  .card-expert-source {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    font-style: italic;
+  }
+  .card-divider {
+    margin: 14px 0 0;
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
   .card-action {
-    margin-top: 14px;
+    margin-top: 12px;
     display: inline-block;
     font-size: 0.9rem;
     font-weight: 800;
@@ -172,184 +195,252 @@
 <script>
 const HACKS = [
   {
-    emoji: '⏱️',
-    title: '2-Minute Rule',
-    body: 'If a task takes less than 2 minutes, do it right now. Replying to that text, rinsing the dish, writing the note — just do it instead of letting it pile up mentally.',
-    action: 'Do one thing on your to-do list right now'
-  },
-  {
-    emoji: '🧃',
-    title: 'Drink Water First',
-    body: 'Before coffee, before your phone — drink a full glass of water the moment you wake up. You\'ve been dehydrated for 7–8 hours. It takes 30 seconds and you\'ll feel sharper faster.',
-    action: 'Put a glass of water next to your bed tonight'
-  },
-  {
-    emoji: '📵',
-    title: 'Phone-Free First Hour',
-    body: 'Don\'t check your phone for the first hour of the day. You\'ll spend that hour on your own agenda instead of reacting to everyone else\'s.',
-    action: 'Set your phone to Do Not Disturb until 9am'
-  },
-  {
-    emoji: '🧠',
-    title: 'Brain Dump Before Bed',
-    body: 'Spend 3 minutes writing down everything on your mind before sleep — tasks, worries, ideas. Your brain will stop rehearsing them and you\'ll fall asleep faster.',
-    action: 'Keep a notepad by your bed'
-  },
-  {
-    emoji: '🔕',
-    title: 'Batch Your Notifications',
-    body: 'Turn off all non-urgent notifications and check them twice a day at set times (e.g. noon and 5pm). Constant pinging costs you 23 minutes of focus per interruption.',
-    action: 'Go to Settings → Notifications and do a purge'
+    emoji: '🌅',
+    title: 'Get Morning Sunlight',
+    expert: 'Dr. Andrew Huberman',
+    source: 'Huberman Lab Podcast',
+    body: 'Get outside within 30 minutes of waking and look toward (not directly at) bright sky for 5–10 minutes. This anchors your circadian clock, boosts cortisol at the right time, and improves sleep quality that night. Even on cloudy days, outdoor light is 10–50x brighter than indoor lighting.',
+    action: 'Step outside first thing tomorrow morning — no sunglasses'
   },
   {
     emoji: '🥶',
-    title: 'End Showers Cold',
-    body: 'Finish your shower with 30 seconds of cold water. It spikes alertness, reduces muscle soreness, and becomes genuinely enjoyable after a week of doing it.',
-    action: 'Try it tomorrow morning — just 30 seconds'
+    title: 'Cold Exposure for Dopamine',
+    expert: 'Dr. Andrew Huberman',
+    source: 'Huberman Lab Podcast',
+    body: 'A 1–3 minute cold shower or cold plunge triggers a long-lasting (~3 hour) rise in dopamine and norepinephrine — chemicals that drive motivation and focus. Unlike caffeine, it doesn\'t cause a crash. The key: don\'t warm up immediately afterward.',
+    action: 'End your next shower with 60 seconds of cold water'
   },
   {
-    emoji: '📦',
-    title: 'One-In One-Out',
-    body: 'Every time you bring something new into your home, remove one item. Applied consistently, this stops clutter from accumulating without requiring big declutter sessions.',
-    action: 'Next time you buy something, donate one thing'
+    emoji: '😮‍💨',
+    title: 'Physiological Sigh',
+    expert: 'Dr. Andrew Huberman',
+    source: 'Huberman Lab / Stanford research',
+    body: 'Double-inhale through the nose (short inhale, then sniff more air), then a long exhale through the mouth. This is the fastest known way to reduce stress in real time — it deflates air sacs in the lungs, offloading CO₂ and activating the parasympathetic nervous system.',
+    action: 'Try it right now — one double-inhale, long exhale'
+  },
+  {
+    emoji: '🏃',
+    title: 'Habit Stacking',
+    expert: 'James Clear',
+    source: 'Atomic Habits',
+    body: '"After I [current habit], I will [new habit]." Linking a new behavior to an existing cue removes the need to remember or find motivation. The existing habit acts as a trigger. E.g. "After I pour my morning coffee, I will write in my journal for 2 minutes."',
+    action: 'Write one habit stack you\'ll start tomorrow'
+  },
+  {
+    emoji: '🔬',
+    title: 'Make It Obvious',
+    expert: 'James Clear',
+    source: 'Atomic Habits',
+    body: 'The most powerful way to build a habit is to make the cue visible. Want to take vitamins? Put them next to the coffee maker. Want to read more? Leave the book on your pillow. Environment design beats willpower every time.',
+    action: 'Rearrange one thing in your environment to trigger a habit you want'
+  },
+  {
+    emoji: '⏱️',
+    title: 'The 2-Minute Rule',
+    expert: 'David Allen',
+    source: 'Getting Things Done',
+    body: 'If a task will take less than 2 minutes to complete, do it immediately — don\'t put it on a list. The mental overhead of tracking a 2-minute task costs more than just doing it. Applies to emails, quick tidying, small decisions.',
+    action: 'Identify one 2-minute task you\'ve been deferring and do it now'
+  },
+  {
+    emoji: '📬',
+    title: 'Process Your Inbox to Zero',
+    expert: 'David Allen',
+    source: 'Getting Things Done',
+    body: 'Treat your inbox as a processing point, not a storage system. Every item gets one of four responses: delete it, do it (if under 2 min), delegate it, or defer it to a specific time. An inbox with 1,400 unread emails is a decision backlog, not a communication tool.',
+    action: 'Set aside 20 minutes today for inbox zero'
   },
   {
     emoji: '🗓️',
     title: 'Time-Block Your Day',
-    body: 'Instead of a to-do list, assign every task a specific time slot on your calendar. Unscheduled tasks almost never happen. Scheduled ones usually do.',
-    action: 'Block tomorrow morning for your #1 priority'
-  },
-  {
-    emoji: '🏃',
-    title: 'Habit Stack',
-    body: 'Attach a new habit to something you already do every day. "After I pour my morning coffee, I will do 5 push-ups." The existing habit triggers the new one automatically.',
-    action: 'Identify one habit to stack onto your morning routine'
-  },
-  {
-    emoji: '💸',
-    title: '24-Hour Purchase Rule',
-    body: 'For any non-essential purchase over $30, wait 24 hours. Most impulse buys disappear overnight. For anything over $100, wait a week. Your future self will thank you.',
-    action: 'Add something to your cart — don\'t buy it yet'
-  },
-  {
-    emoji: '🌿',
-    title: 'Eat Before You Shop',
-    body: 'Never grocery shop hungry. Studies consistently show hungry shoppers spend more and buy worse food. Eat first, bring a list, stick to the perimeter of the store.',
-    action: 'Write your grocery list before you go next time'
-  },
-  {
-    emoji: '😮‍💨',
-    title: 'Box Breathing for Stress',
-    body: 'Inhale 4 seconds → hold 4 → exhale 4 → hold 4. Repeat 4 times. This is used by Navy SEALs to stay calm under pressure. It genuinely works in under 2 minutes.',
-    action: 'Try one round right now'
-  },
-  {
-    emoji: '🔋',
-    title: 'Charge Outside the Bedroom',
-    body: 'Plug your phone in outside your bedroom at night. You\'ll sleep better (no late scrolling, no 3am notifications) and start the day without immediately grabbing your phone.',
-    action: 'Tonight, leave your phone in the hallway'
-  },
-  {
-    emoji: '📝',
-    title: 'Write Tomorrow\'s Top 3',
-    body: 'Each evening, write down the 3 most important things you need to do tomorrow. Start your day with those — before email, before anything reactive. Three things. That\'s the whole strategy.',
-    action: 'Write your top 3 for tomorrow right now'
-  },
-  {
-    emoji: '👟',
-    title: 'Walk After Eating',
-    body: 'A 10-minute walk after meals lowers blood sugar spikes, aids digestion, and helps with post-lunch energy crashes. You don\'t need a gym — just a short loop around the block.',
-    action: 'Take a 10-minute walk after your next meal'
-  },
-  {
-    emoji: '💡',
-    title: 'Reduce Decision Fatigue',
-    body: 'Pick your clothes for the week on Sunday. Prep lunch the night before. Automate small repeated decisions so your brain saves its energy for things that actually matter.',
-    action: 'Lay out tomorrow\'s clothes tonight'
-  },
-  {
-    emoji: '🗣️',
-    title: 'Use People\'s Names',
-    body: 'Use someone\'s name naturally in conversation. It makes them feel seen and remembered, and dramatically improves how they perceive the interaction. Works in meetings, calls, everywhere.',
-    action: 'Use someone\'s name in your next conversation'
-  },
-  {
-    emoji: '🪴',
-    title: 'Make Your Bed',
-    body: 'Making your bed takes 2 minutes and gives you a small win first thing in the morning. It sets a tone of order for the day and makes your room feel noticeably more calm.',
-    action: 'Make your bed tomorrow before leaving the bedroom'
+    expert: 'Cal Newport',
+    source: 'Deep Work',
+    body: 'Assign every hour of your workday to a specific task or category in advance. Unscheduled time gets filled by other people\'s priorities. Newport finds that a 20-minute planning session each morning produces far more output than reactive to-do lists.',
+    action: 'Block 2 hours tomorrow for your most important work, before checking email'
   },
   {
     emoji: '📵',
-    title: 'No Screens 1 Hour Before Sleep',
-    body: 'Blue light from screens suppresses melatonin and delays sleep onset by up to 90 minutes. Read, stretch, or just sit in low light for the last hour before bed.',
-    action: 'Set a phone alarm for "screen off" time tonight'
+    title: 'Digital Declutter',
+    expert: 'Cal Newport',
+    source: 'Digital Minimalism',
+    body: 'Delete all optional social media apps from your phone for 30 days. At the end, only reinstall ones that genuinely serve your values — not out of habit. Newport argues that reclaiming attention is more valuable than any single productivity technique.',
+    action: 'Delete one app from your phone that you open out of habit, not purpose'
+  },
+  {
+    emoji: '😴',
+    title: 'Keep a Consistent Wake Time',
+    expert: 'Dr. Matthew Walker',
+    source: 'Why We Sleep',
+    body: 'Your wake time is the anchor of your entire sleep schedule. Going to bed at different times is less harmful than waking at different times. A consistent wake time — including weekends — stabilizes your circadian rhythm more powerfully than any supplement.',
+    action: 'Set a fixed alarm for tomorrow and every day this week'
+  },
+  {
+    emoji: '🍷',
+    title: 'Alcohol Destroys Sleep Quality',
+    expert: 'Dr. Matthew Walker',
+    source: 'Why We Sleep',
+    body: 'Alcohol is a sedative, not a sleep aid. It fragments sleep in the second half of the night and almost completely suppresses REM sleep — the phase responsible for memory consolidation and emotional processing. Even 1–2 drinks measurably degrades sleep quality.',
+    action: 'Skip alcohol the night before a day that matters'
+  },
+  {
+    emoji: '💪',
+    title: 'Zone 2 Cardio Is Your Longevity Foundation',
+    expert: 'Dr. Peter Attia',
+    source: 'Outlive',
+    body: 'Zone 2 cardio — low intensity where you can hold a conversation — is the single most important exercise for long-term health. Aim for 150–180 min per week. It builds mitochondrial density, metabolic efficiency, and cardiovascular resilience without recovery cost.',
+    action: 'Schedule a 30-minute brisk walk or easy bike ride this week'
+  },
+  {
+    emoji: '🏋️',
+    title: 'Muscle Mass Is a Longevity Drug',
+    expert: 'Dr. Peter Attia',
+    source: 'Outlive',
+    body: 'Muscle mass and strength are among the strongest predictors of longevity. People with the most muscle in their 40s–50s have dramatically lower all-cause mortality. Resistance training twice a week is not optional if you want to be functional at 80.',
+    action: 'Book a strength training session this week — even bodyweight counts'
   },
   {
     emoji: '💰',
-    title: 'Automate Your Savings',
-    body: 'Set up an automatic transfer to savings on payday — even $20. Money you never see in your checking account gets saved without any willpower required. Start small, increase it later.',
-    action: 'Log into your bank and set up auto-transfer today'
+    title: 'Automate Your Finances',
+    expert: 'Ramit Sethi',
+    source: 'I Will Teach You to Be Rich',
+    body: 'Set up automatic transfers so money flows to savings, investments, and bills on payday — before you can spend it. Sethi calls this the "Conscious Spending Plan." Automation removes willpower from the equation entirely. You don\'t need to budget; you just need a good system.',
+    action: 'Set up one automatic savings transfer today, even $25'
   },
   {
-    emoji: '🧹',
-    title: '10-Minute Evening Reset',
-    body: 'Spend 10 minutes each evening resetting your space — dishes done, surfaces cleared, bag packed for tomorrow. Waking up to order is a huge mood and productivity booster.',
-    action: 'Set a 10-minute timer tonight for a quick reset'
+    emoji: '🎉',
+    title: 'Celebrate Immediately After Habits',
+    expert: 'BJ Fogg',
+    source: 'Tiny Habits',
+    body: 'Immediately after completing a habit — even a tiny one — celebrate with a genuine positive emotion (fist pump, smile, saying "yes!"). Fogg\'s research shows this creates a direct neurological reward that wires the habit into your brain faster than any other technique.',
+    action: 'After your next habit, add a small celebration — feel it, don\'t fake it'
   },
   {
-    emoji: '🎧',
-    title: 'Use Dead Time',
-    body: 'Commuting, doing dishes, walking — use this time for podcasts, audiobooks, or language learning. You can "read" 20+ books a year just from dead time. No extra time needed.',
-    action: 'Queue up a podcast for your next commute'
+    emoji: '🌱',
+    title: 'Shrink the Habit First',
+    expert: 'BJ Fogg',
+    source: 'Tiny Habits',
+    body: 'To reliably start a new habit, make it so small it seems almost absurd. "Floss one tooth." "Do one push-up." "Write one sentence." Fogg\'s research shows motivation is unreliable; starting tiny bypasses the resistance that kills 95% of habit attempts.',
+    action: 'Pick a habit you\'ve failed at — shrink it to 2 minutes or less'
   },
   {
-    emoji: '🫁',
-    title: 'Stand Up Every Hour',
-    body: 'Set a reminder to stand up and move for 2 minutes every hour. Sitting for long stretches harms posture, focus, and metabolism even if you exercise regularly.',
-    action: 'Set an hourly reminder on your phone right now'
-  },
-  {
-    emoji: '🧂',
-    title: 'Read Ingredient Labels',
-    body: 'The first 3 ingredients on a food label are what that food is mostly made of. If they\'re sugar, seed oils, or things you can\'t pronounce, put it back. That\'s the whole skill.',
-    action: 'Check the label on the next packaged food you eat'
-  },
-  {
-    emoji: '🗑️',
-    title: 'Unsubscribe Ruthlessly',
-    body: 'Every time you open a promotional email, unsubscribe instead of deleting. Spend one week doing this and your inbox will be dramatically cleaner forever — not just today.',
-    action: 'Unsubscribe from the next 5 promo emails you get'
-  },
-  {
-    emoji: '🤝',
-    title: 'Reply Promptly or Schedule It',
-    body: 'When you see a message, either reply immediately or schedule a specific time to do it. "I\'ll get to it later" is how important conversations disappear for weeks.',
-    action: 'Reply to one overdue message right now'
-  },
-  {
-    emoji: '🌅',
-    title: 'Get Morning Sunlight',
-    body: 'Get outside within 30 minutes of waking up and look toward (not at) the sky for 5–10 minutes. Morning light sets your circadian rhythm, improves sleep that night, and boosts mood.',
-    action: 'Step outside first thing tomorrow morning'
-  },
-  {
-    emoji: '🧊',
-    title: 'Freeze Leftovers in Portions',
-    body: 'When you cook, make double and freeze half in single portions. Future you will have a real meal instead of ordering delivery on tired nights.',
-    action: 'Next time you cook, double the recipe and freeze half'
+    emoji: '5️⃣',
+    title: 'The 5-Second Rule',
+    expert: 'Mel Robbins',
+    source: 'The 5 Second Rule',
+    body: 'The moment you feel hesitation, count backward: 5-4-3-2-1 and physically move. This interrupts the brain\'s habit of generating excuses and activates the prefrontal cortex. Robbins developed it to get herself out of bed — it works for any moment of resistance.',
+    action: 'Use it the next time you hesitate before something you know you should do'
   },
   {
     emoji: '📚',
-    title: 'Read 10 Pages a Day',
-    body: '10 pages a day is 3,650 pages a year — roughly 12–15 books. You don\'t need big reading sessions. A consistent small habit beats occasional marathon sessions.',
-    action: 'Find the book you\'ve been meaning to read and open it'
+    title: 'Read What You\'re Curious About',
+    expert: 'Naval Ravikant',
+    source: 'The Almanack of Naval Ravikant',
+    body: 'Don\'t force yourself to finish books. Read what genuinely interests you, even if it\'s "frivolous." Naval argues that reading from real curiosity — not obligation — produces the kind of deep, connected knowledge that generates original insights over time.',
+    action: 'Abandon a book you\'re forcing yourself through and start one you actually want to read'
   },
   {
-    emoji: '🗺️',
-    title: 'Plan Your Week on Sunday',
-    body: 'Spend 15 minutes on Sunday looking at the week ahead — appointments, deadlines, commitments. Surprises cause stress; anticipation causes preparation.',
-    action: 'Open your calendar and scan this week right now'
+    emoji: '🎯',
+    title: 'Find Your ONE Thing',
+    expert: 'Gary Keller',
+    source: 'The ONE Thing',
+    body: 'Every morning ask: "What\'s the ONE thing I can do such that by doing it, everything else becomes easier or unnecessary?" Keller\'s research found that extraordinary results come from narrowing focus, not expanding it. Most to-do lists are actually obstacles to this.',
+    action: 'Identify your ONE thing for tomorrow before you go to bed tonight'
+  },
+  {
+    emoji: '😰',
+    title: 'Fear-Setting',
+    expert: 'Tim Ferriss',
+    source: 'The 4-Hour Workweek / TED Talk',
+    body: 'Write down the worst-case scenario for something you\'re afraid to do. Then ask: How likely is this actually? Could I recover if it happened? What\'s the cost of NOT doing it? Ferriss argues that fear of action is almost always worse than its reality.',
+    action: 'Write down one fear you\'ve been avoiding and answer those three questions'
+  },
+  {
+    emoji: '📰',
+    title: 'Go on a Low-Information Diet',
+    expert: 'Tim Ferriss',
+    source: 'The 4-Hour Workweek',
+    body: 'Most news is irrelevant to your actual decisions. Stop consuming it daily. Check the news once per week if you must. Ferriss found that being on a "low-information diet" dramatically reduced anxiety and freed 1–2 hours per day with zero meaningful downside.',
+    action: 'Delete one news app or turn off one news notification today'
+  },
+  {
+    emoji: '🙏',
+    title: 'Specific Gratitude Practice',
+    expert: 'Brené Brown',
+    source: 'The Gifts of Imperfection',
+    body: 'Gratitude journaling only works when it\'s specific. "I\'m grateful for my health" does nothing. "I\'m grateful that I had a conversation with my sister and she made me laugh so hard I cried" — that does. Specificity forces genuine attention and creates real emotional shift.',
+    action: 'Write one specific, detailed thing you\'re grateful for right now'
+  },
+  {
+    emoji: '🔁',
+    title: 'Rethink Before You Double Down',
+    expert: 'Adam Grant',
+    source: 'Think Again',
+    body: 'When someone challenges your view, treat it as data rather than a threat. Grant\'s research shows that the most effective people hold their beliefs lightly and actively look for reasons they might be wrong. Intelligence isn\'t how much you know — it\'s how fast you can update.',
+    action: 'Identify one belief you hold strongly and write down the best counterargument'
+  },
+  {
+    emoji: '🌿',
+    title: 'Eat Food, Not Too Much, Mostly Plants',
+    expert: 'Michael Pollan',
+    source: 'In Defense of Food',
+    body: '"Eat food. Not too much. Mostly plants." Pollan argues this seven-word sentence captures more nutritional wisdom than most diet books. "Food" means ingredients your great-grandmother would recognize. If it has more than five ingredients or contains things you can\'t pronounce, reconsider.',
+    action: 'Cook one meal this week using only whole, recognizable ingredients'
+  },
+  {
+    emoji: '🧠',
+    title: 'Pre-Mortem Your Projects',
+    expert: 'Daniel Kahneman',
+    source: 'Thinking, Fast and Slow',
+    body: 'Before starting a project, imagine it\'s one year later and it failed spectacularly. Now write down why. This "pre-mortem" forces your brain to surface risks it would otherwise suppress to stay optimistic. It consistently catches fatal flaws before they happen.',
+    action: 'Run a quick pre-mortem on your current biggest project'
+  },
+  {
+    emoji: '⚖️',
+    title: 'Subtract Before You Add',
+    expert: 'Nassim Taleb',
+    source: 'Antifragile',
+    body: 'Taleb\'s "via negativa": improvement often comes from removing bad things rather than adding good ones. Before adding a new habit, supplement, or strategy — ask what you should eliminate. Removing junk food beats adding green juice. Removing distractions beats adding focus techniques.',
+    action: 'Identify one thing to remove from your life this week rather than something to add'
+  },
+  {
+    emoji: '🧘',
+    title: 'NSDR / Yoga Nidra for Recovery',
+    expert: 'Dr. Andrew Huberman',
+    source: 'Huberman Lab Podcast',
+    body: 'Non-Sleep Deep Rest (NSDR) — a 10–20 minute body-scan meditation — accelerates neuroplasticity and restores mental energy as effectively as a nap, without grogginess. Huberman does it daily post-workout or after lunch. Free scripts are widely available on YouTube.',
+    action: 'Try a 10-minute NSDR or Yoga Nidra session today'
+  },
+  {
+    emoji: '🌡️',
+    title: 'Regular Sauna Use',
+    expert: 'Dr. Rhonda Patrick',
+    source: 'FoundMyFitness Podcast',
+    body: 'People using a sauna 4+ times per week at ~175°F for 20 minutes have significantly lower rates of cardiovascular disease and all-cause mortality (Finnish cohort study). It also boosts growth hormone and mimics some effects of cardio. Even 2x/week shows measurable benefit.',
+    action: 'Find a gym or wellness center near you with a sauna this week'
+  },
+  {
+    emoji: '🫀',
+    title: 'Walk After Every Meal',
+    expert: 'Dr. Peter Attia & various research',
+    source: 'Outlive / glucose monitoring studies',
+    body: 'A 10-minute walk after eating blunts the blood glucose spike from a meal by 30–50%. Over time, repeated glucose spikes drive insulin resistance and metabolic dysfunction. This single habit costs nothing and works immediately.',
+    action: 'Take a 10-minute walk after your next meal'
+  },
+  {
+    emoji: '📓',
+    title: 'Capture Everything in One Place',
+    expert: 'David Allen',
+    source: 'Getting Things Done',
+    body: 'Your brain is for having ideas, not storing them. Allen\'s core insight: cognitive overhead from trying to remember things drains mental energy all day. Use one trusted capture system — phone notes, a notebook, anything — and get everything out of your head immediately.',
+    action: 'Do a complete brain dump right now — write down everything on your mind'
+  },
+  {
+    emoji: '🏡',
+    title: 'Own Your Morning Before Others Do',
+    expert: 'Robin Sharma',
+    source: 'The 5 AM Club',
+    body: 'Sharma\'s "20/20/20 formula": the first 60 minutes of the day in three 20-minute blocks — move (exercise), reflect (journal or meditate), grow (read or learn). The core idea: whoever controls your morning controls your day. Own the first hour before inputs arrive.',
+    action: 'Block the first hour of tomorrow and plan what you\'ll do with it'
   }
 ];
 
@@ -372,6 +463,13 @@ function render() {
         <span class="card-emoji">${hack.emoji}</span>
         <div class="card-title">${hack.title}</div>
         <div class="card-body">${hack.body}</div>
+        <hr class="card-divider">
+        <div class="card-expert">
+          <div>
+            <div class="card-expert-name">${hack.expert}</div>
+            <div class="card-expert-source">${hack.source}</div>
+          </div>
+        </div>
         <div class="card-action">${hack.action}</div>
       `;
       container.appendChild(card);
