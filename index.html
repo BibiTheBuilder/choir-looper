@@ -39,8 +39,6 @@
     background: #1a0a2e;
     color: #fff;
   }
-  /* Disco Inferno: near-black, mirror-ball light, gold + hot magenta */
-  body.theme-disco { background: #0d0a12; color: #f5d98a; }
   /* Deep Sea: abyssal navy, bioluminescent cyan */
   body.theme-deepsea { background: linear-gradient(180deg, #02101e 0%, #04263b 100%); background-attachment: fixed; color: #bff4ee; }
 
@@ -60,10 +58,8 @@
     display: none;
   }
   body.theme-chaos #chaosCanvas,
-  body.theme-disco #chaosCanvas,
   body.theme-deepsea #chaosCanvas { display: block; }
   body.theme-chaos .main-content,
-  body.theme-disco .main-content,
   body.theme-deepsea .main-content { position: relative; z-index: 1; }
 
   .main-content {
@@ -98,12 +94,6 @@
     animation: rainbowText 1.5s linear infinite; font-size: 2.6rem;
     text-shadow: none;
   }
-  .theme-disco h1 {
-    background: linear-gradient(90deg, #f5d98a, #fff6d8, #ff4fa3, #f5d98a);
-    background-size: 250% auto;
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    animation: rainbowText 4s linear infinite;
-  }
   .theme-deepsea h1 { color: #4ff2e9; text-shadow: 0 0 18px rgba(79,242,233,0.55); }
   @keyframes rainbowText { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
 
@@ -117,7 +107,6 @@
   .theme-dark .subtitle { background: rgba(255,255,255,0.1); color: #fff; }
   .theme-rainbow .subtitle { background: rgba(0,0,0,0.4); color: #fff; }
   .theme-chaos .subtitle { background: rgba(255,0,255,0.3); color: #0ff; font-size: 1.3rem; }
-  .theme-disco .subtitle { background: rgba(245,217,138,0.12); color: #f5d98a; }
   .theme-deepsea .subtitle { background: rgba(79,242,233,0.1); color: #bff4ee; }
 
   /* ===== LAYOUT ===== */
@@ -181,15 +170,6 @@
   .theme-chaos .btn.primary { background: #ff0066; color: #fff; border-color: #ff0; }
   .theme-chaos .btn.active { background: #ff0; color: #000; border-color: #ff0; }
 
-  .theme-disco .btn { background: #1c1526; color: #f5d98a; border-color: #f5d98a; }
-  .theme-disco .btn:hover { background: #2a1f38; }
-  .theme-disco .btn.primary {
-    background: linear-gradient(90deg, #ff4fa3, #f5d98a, #ff4fa3);
-    background-size: 200% auto; animation: rainbowText 4s linear infinite;
-    color: #1c0d18; border-color: #f5d98a;
-  }
-  .theme-disco .btn.active { background: #f5d98a; color: #1c0d18; border-color: #f5d98a; }
-
   .theme-deepsea .btn { background: rgba(255,255,255,0.07); color: #bff4ee; border-color: rgba(79,242,233,0.55); backdrop-filter: blur(4px); }
   .theme-deepsea .btn:hover { background: rgba(255,255,255,0.14); }
   .theme-deepsea .btn.primary { background: #0e7d74; color: #eafffc; border-color: #4ff2e9; box-shadow: 0 0 14px rgba(79,242,233,0.35); }
@@ -204,7 +184,6 @@
   .theme-dark .file-labels { color: #fff; }
   .theme-rainbow .file-labels { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.4); }
   .theme-chaos .file-labels { color: #0ff; text-shadow: 0 0 8px rgba(0,0,0,0.8); background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 6px; }
-  .theme-disco .file-labels { color: #f5d98a; }
   .theme-deepsea .file-labels { color: #bff4ee; }
 
   /* ===== STATUS / LOADING MESSAGES ===== */
@@ -231,7 +210,6 @@
   .theme-dark .waveform-wrap { background: #16213e; }
   .theme-rainbow .waveform-wrap { background: rgba(0,0,0,0.25); border: 2px solid rgba(255,255,255,0.2); }
   .theme-chaos .waveform-wrap { background: rgba(0,0,0,0.4); border: 2px solid #ff00ff; }
-  .theme-disco .waveform-wrap { background: #16101f; border: 2px solid rgba(245,217,138,0.5); }
   .theme-deepsea .waveform-wrap { background: rgba(2,16,30,0.75); border: 2px solid rgba(79,242,233,0.4); box-shadow: 0 0 20px rgba(79,242,233,0.15); }
 
   #waveformCanvas { width: 100%; height: 100%; display: block; }
@@ -241,7 +219,6 @@
   .theme-dark .selection-overlay { background: rgba(124,92,191,0.3); border-left: 2px solid #7c5cbf; border-right: 2px solid #7c5cbf; }
   .theme-rainbow .selection-overlay { background: rgba(255,255,255,0.2); border-left: 2px solid #fff; border-right: 2px solid #fff; }
   .theme-chaos .selection-overlay { background: rgba(255,0,255,0.3); border-left: 2px solid #0ff; border-right: 2px solid #0ff; }
-  .theme-disco .selection-overlay { background: rgba(255,79,163,0.25); border-left: 2px solid #ff4fa3; border-right: 2px solid #ff4fa3; }
   .theme-deepsea .selection-overlay { background: rgba(79,242,233,0.18); border-left: 2px solid #4ff2e9; border-right: 2px solid #4ff2e9; }
 
   .edge-handle { position: absolute; top: 0; height: 100%; width: 28px; cursor: ew-resize; z-index: 5; display: none; }
@@ -254,7 +231,6 @@
   .theme-dark .playhead { background: #ff6b6b; }
   .theme-rainbow .playhead { background: #fff; }
   .theme-chaos .playhead { background: #ff0; }
-  .theme-disco .playhead { background: #fff; box-shadow: 0 0 10px #fff, 0 0 20px #ff4fa3; }
   .theme-deepsea .playhead { background: #eafffc; box-shadow: 0 0 12px #4ff2e9; }
 
   /* ===== DRAG / OR HINTS ===== */
@@ -269,7 +245,6 @@
   .theme-chaos .drag-hint, .theme-chaos .or-hint { color: #0ff; text-shadow: 0 0 8px rgba(0,0,0,0.8); }
   .theme-chaos .drag-hint.visible, .theme-chaos .or-hint.visible { background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 6px; display: inline-block; }
   .theme-chaos .drag-hint.visible { border: 2px solid #ff0; }
-  .theme-disco .drag-hint, .theme-disco .or-hint { color: #f5d98a; }
   .theme-deepsea .drag-hint, .theme-deepsea .or-hint { color: #bff4ee; }
 
   /* ===== MANUAL TIME INPUT ===== */
@@ -289,8 +264,6 @@
   .theme-rainbow .time-input-row input { background: rgba(0,0,0,0.3); color: #fff; border-color: rgba(255,255,255,0.5); }
   .theme-chaos .time-input-row { color: #0ff; text-shadow: 0 0 8px rgba(0,0,0,0.8); background: rgba(0,0,0,0.5); padding: 6px 14px; border-radius: 6px; }
   .theme-chaos .time-input-row input { background: rgba(0,0,0,0.5); color: #ff0; border-color: #ff00ff; }
-  .theme-disco .time-input-row { color: #f5d98a; }
-  .theme-disco .time-input-row input { background: #1c1526; color: #f5d98a; border-color: rgba(245,217,138,0.6); }
   .theme-deepsea .time-input-row { color: #bff4ee; }
   .theme-deepsea .time-input-row input { background: rgba(2,16,30,0.7); color: #eafffc; border-color: rgba(79,242,233,0.55); }
 
@@ -309,8 +282,6 @@
   .theme-rainbow .speed-control input { accent-color: #ffff00; }
   .theme-chaos .speed-control { color: #0ff; text-shadow: 0 0 8px rgba(0,0,0,0.8); background: rgba(0,0,0,0.5); padding: 4px 12px; border-radius: 6px; border: 2px solid #ff0; }
   .theme-chaos .speed-control input { accent-color: #ff00ff; }
-  .theme-disco .speed-control { color: #f5d98a; }
-  .theme-disco .speed-control input { accent-color: #ff4fa3; }
   .theme-deepsea .speed-control { color: #bff4ee; }
   .theme-deepsea .speed-control input { accent-color: #4ff2e9; }
 
@@ -334,8 +305,6 @@
   .theme-dark .instructions strong { color: #fff; }
   .theme-rainbow .instructions strong { color: #ffff00; }
   .theme-chaos .instructions strong { color: #ff0; }
-  .theme-disco .instructions { background: #16101f; color: #f5d98a; border: 1px solid rgba(245,217,138,0.35); }
-  .theme-disco .instructions strong { color: #ff4fa3; }
   .theme-deepsea .instructions { background: rgba(2,16,30,0.7); color: #bff4ee; border: 1px solid rgba(79,242,233,0.3); }
   .theme-deepsea .instructions strong { color: #4ff2e9; }
 
@@ -361,10 +330,6 @@
     animation: chaosPickPulse 1s ease infinite alternate;
   }
   @keyframes chaosPickPulse { 0% { box-shadow: 0 0 4px #ff00ff; } 100% { box-shadow: 0 0 12px #00ffff; } }
-  .theme-pick.tp-disco {
-    background: radial-gradient(circle at 30% 30%, #fff 0 8%, transparent 9%), radial-gradient(circle at 70% 60%, #f5d98a 0 6%, transparent 7%), #14101c;
-    color: #f5d98a; border-color: #f5d98a;
-  }
   .theme-pick.tp-deepsea {
     background: linear-gradient(180deg, #04263b, #02101e);
     color: #4ff2e9; border-color: #4ff2e9; text-shadow: 0 0 6px rgba(79,242,233,0.7);
@@ -433,12 +398,11 @@
 </div>
 
 <div class="theme-switcher">
-<button class="theme-pick tp-pink active-theme" onclick="setTheme('pink')">Pink</button>
+<button class="theme-pick tp-deepsea" onclick="setTheme('deepsea')">Deep Sea</button>
   <button class="theme-pick tp-white" onclick="setTheme('white')">White</button>
-  <button class="theme-pick tp-dark" onclick="setTheme('dark')">Dark</button>
   <button class="theme-pick tp-rainbow" onclick="setTheme('rainbow')">Rainbow</button>
-  <button class="theme-pick tp-deepsea" onclick="setTheme('deepsea')">Deep Sea</button>
-  <button class="theme-pick tp-disco" onclick="setTheme('disco')">Disco Inferno</button>
+  <button class="theme-pick tp-dark" onclick="setTheme('dark')">Dark</button>
+  <button class="theme-pick tp-pink active-theme" onclick="setTheme('pink')">Pink</button>
   <button class="theme-pick tp-chaos" onclick="setTheme('chaos')">Chaos Kitten</button>
 </div>
 </div>
@@ -890,267 +854,6 @@ function startChaos() {
 }
 function stopChaos() { chaosRunning = false; }
 
-// ===== DISCO INFERNO SCENE =====
-// Full-on disco: mirror ball, sweeping spotlights, a pulsing dance floor and
-// a crowd of dancing people, cats and dinosaurs with music notes floating up.
-const discoFlecks = [];
-const dancers = [];
-const discoNotes = [];
-let discoPhase = 0;   // slow ambient motion (ball, flecks)
-let danceClock = 0;   // beat clock for the crowd + floor
-const NEON = ['#ff4fa3','#f5d98a','#4fd2ff','#9dff4f','#ff8c4f','#c74fff'];
-const FLOOR_HUES = [320, 45, 190, 270];
-
-function initDisco() {
-  discoFlecks.length = 0; dancers.length = 0; discoNotes.length = 0;
-  const FLECK_COLORS = ['255,255,255', '245,217,138', '255,79,163'];
-  for(let i=0;i<30;i++) {
-    discoFlecks.push({
-      baseAngle: Math.random()*Math.PI*2,
-      dist: 0.25 + Math.random()*0.85,
-      size: 12 + Math.random()*30,
-      rgb: FLECK_COLORS[Math.floor(Math.random()*FLECK_COLORS.length)],
-      alpha: 0.05 + Math.random()*0.12,
-      squish: 0.35 + Math.random()*0.45,
-      speed: 0.7 + Math.random()*0.7
-    });
-  }
-  // The crowd: a small back row and a big front row.
-  // Each row gets a guaranteed mix — people, cats AND dinosaurs, shuffled.
-  const rows = [
-    {row:0, pool: ['person','person','person','person','person','cat','cat','cat','dino','dino']},
-    {row:1, pool: ['person','person','person','cat','cat','dino','dino']}
-  ];
-  rows.forEach(r => {
-    const pool = r.pool.slice();
-    for(let i=pool.length-1; i>0; i--) {
-      const j = Math.floor(Math.random()*(i+1));
-      [pool[i], pool[j]] = [pool[j], pool[i]];
-    }
-    pool.forEach((type, i) => {
-      dancers.push({
-        type,
-        fx: (i + 0.15 + Math.random()*0.7) / pool.length,
-        row: r.row,
-        size: (r.row===0 ? 30 : 48) * (0.85 + Math.random()*0.3),
-        color: NEON[Math.floor(Math.random()*NEON.length)],
-        phase: Math.random()*Math.PI*2,
-        speed: 0.055 + Math.random()*0.05,
-        flip: Math.random()<0.5 ? -1 : 1
-      });
-    });
-  });
-}
-
-// Stick-figure in a Saturday Night Fever pose, one arm pumping up on the beat
-function drawPersonDancer(d, x, y) {
-  const s = d.size, c = cctx, sw = Math.sin(d.phase);
-  const bounce = Math.abs(Math.sin(d.phase))*s*0.12;
-  c.save(); c.translate(x, y - bounce); c.scale(d.flip, 1);
-  c.strokeStyle = d.color; c.fillStyle = d.color;
-  c.lineWidth = Math.max(2, s*0.09); c.lineCap = 'round';
-  c.shadowColor = d.color; c.shadowBlur = 8;
-  c.beginPath(); c.arc(0, -s*1.45, s*0.22, 0, Math.PI*2); c.fill();          // head
-  c.beginPath(); c.moveTo(0, -s*1.2); c.lineTo(0, -s*0.55); c.stroke();      // body
-  c.beginPath(); c.moveTo(0, -s*1.05); c.lineTo(s*0.32, -s*(1.05 + 0.5*sw)); c.stroke();  // point arm
-  c.beginPath(); c.moveTo(0, -s*1.0); c.lineTo(-s*0.35, -s*(0.8 - 0.2*sw)); c.stroke();   // other arm
-  c.beginPath(); c.moveTo(0, -s*0.55); c.lineTo(-s*0.25 + sw*s*0.08, 0); c.stroke();      // legs
-  c.beginPath(); c.moveTo(0, -s*0.55); c.lineTo(s*0.25 + sw*s*0.08, 0); c.stroke();
-  c.shadowBlur = 0; c.restore();
-}
-
-// Cat on hind legs, both paws in the air, tail swinging
-function drawCatDancer(d, x, y) {
-  const s = d.size, c = cctx, sw = Math.sin(d.phase);
-  const bounce = Math.abs(Math.sin(d.phase))*s*0.1;
-  c.save(); c.translate(x, y - bounce); c.scale(d.flip, 1);
-  c.strokeStyle = d.color; c.fillStyle = d.color;
-  c.lineWidth = Math.max(2, s*0.09); c.lineCap = 'round';
-  c.shadowColor = d.color; c.shadowBlur = 8;
-  c.beginPath(); c.arc(0, -s*1.35, s*0.24, 0, Math.PI*2); c.fill();          // head
-  c.beginPath(); c.moveTo(-s*0.2, -s*1.5); c.lineTo(-s*0.13, -s*1.72); c.lineTo(-s*0.04, -s*1.53); c.closePath(); c.fill();  // ears
-  c.beginPath(); c.moveTo(s*0.04, -s*1.53); c.lineTo(s*0.13, -s*1.72); c.lineTo(s*0.2, -s*1.5); c.closePath(); c.fill();
-  c.beginPath(); c.moveTo(0, -s*1.1); c.lineTo(0, -s*0.5); c.stroke();       // body
-  c.beginPath(); c.moveTo(0, -s*0.95); c.lineTo(-s*0.32, -s*(1.25 + 0.18*sw)); c.stroke(); // paws up
-  c.beginPath(); c.moveTo(0, -s*0.95); c.lineTo(s*0.32, -s*(1.25 - 0.18*sw)); c.stroke();
-  c.beginPath(); c.moveTo(0, -s*0.5); c.lineTo(-s*0.2 + sw*s*0.06, 0); c.stroke();         // legs
-  c.beginPath(); c.moveTo(0, -s*0.5); c.lineTo(s*0.2 + sw*s*0.06, 0); c.stroke();
-  c.beginPath(); c.moveTo(0, -s*0.5);                                        // tail
-  c.quadraticCurveTo(-s*0.55, -s*(0.45 + 0.2*sw), -s*0.6, -s*(0.85 + 0.25*sw));
-  c.stroke();
-  c.shadowBlur = 0; c.restore();
-}
-
-// Party T-rex: head thrown back, jaw chomping the beat, stomping feet
-function drawDinoDancer(d, x, y) {
-  const s = d.size*1.5, c = cctx, sw = Math.sin(d.phase);
-  const stomp = Math.abs(Math.sin(d.phase))*s*0.07;
-  c.save(); c.translate(x, y - stomp); c.scale(d.flip, 1);
-  c.fillStyle = d.color; c.strokeStyle = d.color; c.lineCap = 'round';
-  c.shadowColor = d.color; c.shadowBlur = 10;
-  c.beginPath();                                                             // tail
-  c.moveTo(-s*0.28, -s*0.62);
-  c.quadraticCurveTo(-s*0.75, -s*(0.55 + 0.12*sw), -s*0.95, -s*(0.75 + 0.2*sw));
-  c.quadraticCurveTo(-s*0.7, -s*(0.42 + 0.1*sw), -s*0.3, -s*0.4);
-  c.closePath(); c.fill();
-  c.beginPath(); c.ellipse(0, -s*0.55, s*0.34, s*0.42, -0.15, 0, Math.PI*2); c.fill();     // body
-  c.beginPath(); c.ellipse(s*0.28, -s*1.05, s*0.2, s*0.15, 0.15, 0, Math.PI*2); c.fill();  // head
-  const jaw = 0.15 + 0.25*Math.abs(Math.sin(d.phase*2));
-  c.beginPath(); c.moveTo(s*0.35, -s*1.0);                                   // open jaw
-  c.lineTo(s*0.62, -s*(1.0 - jaw*0.3)); c.lineTo(s*0.38, -s*0.92); c.closePath(); c.fill();
-  c.shadowBlur = 0; c.fillStyle = 'rgba(13,10,18,0.9)';                      // eye
-  c.beginPath(); c.arc(s*0.3, -s*1.08, s*0.035, 0, Math.PI*2); c.fill();
-  c.fillStyle = d.color; c.shadowColor = d.color; c.shadowBlur = 10;
-  c.lineWidth = Math.max(2, s*0.06);                                         // tiny arms
-  c.beginPath(); c.moveTo(s*0.18, -s*0.72); c.lineTo(s*0.34, -s*(0.78 + 0.1*sw)); c.stroke();
-  c.beginPath(); c.moveTo(s*0.22, -s*0.62); c.lineTo(s*0.38, -s*(0.62 - 0.1*sw)); c.stroke();
-  c.lineWidth = Math.max(3, s*0.12);                                         // stomping legs
-  const lift = Math.max(0, sw)*s*0.12, lift2 = Math.max(0, -sw)*s*0.12;
-  c.beginPath(); c.moveTo(-s*0.08, -s*0.3); c.lineTo(-s*0.12, -lift); c.stroke();
-  c.beginPath(); c.moveTo(s*0.12, -s*0.3); c.lineTo(s*0.16, -lift2); c.stroke();
-  c.shadowBlur = 0; c.restore();
-}
-
-function drawSpotlight(ox, baseAngle, phaseOff, hue) {
-  const w = chaosCanvas.width, h = chaosCanvas.height;
-  const ang = baseAngle + Math.sin(danceClock*0.13 + phaseOff)*0.32;
-  const len = Math.hypot(w, h);
-  const half = 0.11;
-  const x1 = ox + Math.cos(ang - half)*len, y1 = Math.sin(ang - half)*len;
-  const x2 = ox + Math.cos(ang + half)*len, y2 = Math.sin(ang + half)*len;
-  const g = cctx.createLinearGradient(ox, 0, (x1 + x2)/2, (y1 + y2)/2);
-  g.addColorStop(0, 'hsla(' + hue + ',90%,70%,0.15)');
-  g.addColorStop(1, 'hsla(' + hue + ',90%,70%,0)');
-  cctx.fillStyle = g;
-  cctx.beginPath(); cctx.moveTo(ox, 0); cctx.lineTo(x1, y1); cctx.lineTo(x2, y2); cctx.closePath(); cctx.fill();
-}
-
-function drawDisco() {
-  if(currentScene !== 'disco') return;
-  const w = chaosCanvas.width, h = chaosCanvas.height;
-  if(w < 2 || h < 2) { resizeChaos(); requestAnimationFrame(drawDisco); return; }
-  discoPhase += 0.0025;
-  danceClock += 0.045;
-  cctx.clearRect(0,0,w,h);
-
-  // Sweeping spotlights from the top corners
-  drawSpotlight(0, 0.9, 0, 320);
-  drawSpotlight(w, 2.25, 2.1, 190);
-
-  // Pulsing dance floor (checkerboard, colors rotate on the beat)
-  const floorY = h*0.7, floorH = h - floorY;
-  const beat = Math.floor(danceClock/1.6);
-  const cols = 14;
-  let ty = floorY;
-  [0.2, 0.32, 0.48].forEach((rowFrac, row) => {
-    const rh = floorH*rowFrac;
-    for(let col=0; col<cols; col++) {
-      const hue = FLOOR_HUES[(col + row + beat) % 4];
-      const bright = (col + row + beat) % 2 ? 0.09 : 0.2;
-      cctx.fillStyle = 'hsla(' + hue + ',90%,55%,' + bright + ')';
-      cctx.fillRect(col*w/cols + 1, ty + 1, w/cols - 2, rh - 2);
-    }
-    ty += rh;
-  });
-
-  // Warm glow rising from the floor
-  const floor = cctx.createRadialGradient(w/2, h*1.05, 0, w/2, h*1.05, h*0.8);
-  floor.addColorStop(0, 'rgba(255,79,163,0.12)');
-  floor.addColorStop(0.5, 'rgba(245,217,138,0.04)');
-  floor.addColorStop(1, 'rgba(0,0,0,0)');
-  cctx.fillStyle = floor;
-  cctx.fillRect(0,0,w,h);
-
-  // Sweeping light flecks (from the mirror ball)
-  const cx = w*0.85, cy = h*0.1, maxR = Math.hypot(w,h)*0.72;
-  discoFlecks.forEach(f => {
-    const a = f.baseAngle + discoPhase*f.speed;
-    const x = cx + Math.cos(a)*maxR*f.dist;
-    const y = cy + Math.abs(Math.sin(a))*maxR*f.dist*0.9;
-    const twinkle = 0.6 + 0.4*Math.sin(discoPhase*40*f.speed + f.baseAngle*7);
-    cctx.save();
-    cctx.translate(x,y);
-    cctx.rotate(Math.atan2(y-cy, x-cx));
-    const g = cctx.createRadialGradient(0,0,0,0,0,f.size);
-    g.addColorStop(0, 'rgba('+f.rgb+','+(f.alpha*twinkle)+')');
-    g.addColorStop(1, 'rgba('+f.rgb+',0)');
-    cctx.fillStyle = g;
-    cctx.beginPath();
-    cctx.ellipse(0,0,f.size,f.size*f.squish,0,0,Math.PI*2);
-    cctx.fill();
-    cctx.restore();
-  });
-
-  // Mirror ball
-  const br = Math.min(w,h)*0.055;
-  cctx.save();
-  cctx.translate(cx, cy);
-  cctx.strokeStyle = 'rgba(245,217,138,0.5)'; cctx.lineWidth = 2;
-  cctx.beginPath(); cctx.moveTo(0,-cy); cctx.lineTo(0,-br); cctx.stroke();
-  const ball = cctx.createRadialGradient(-br*0.3,-br*0.3,br*0.1,0,0,br);
-  ball.addColorStop(0,'#fff'); ball.addColorStop(0.4,'#cfc6de'); ball.addColorStop(1,'#565066');
-  cctx.fillStyle = ball;
-  cctx.beginPath(); cctx.arc(0,0,br,0,Math.PI*2); cctx.fill();
-  // Facets
-  cctx.save();
-  cctx.beginPath(); cctx.arc(0,0,br,0,Math.PI*2); cctx.clip();
-  cctx.strokeStyle = 'rgba(20,16,28,0.35)'; cctx.lineWidth = 1;
-  const facetStep = Math.max(2, br*0.25); // never 0 — a zero step would loop forever
-  const shift = (discoPhase*60) % (facetStep*2);
-  for(let gx=-br+shift-facetStep*2; gx<=br; gx+=facetStep) { cctx.beginPath(); cctx.moveTo(gx,-br); cctx.lineTo(gx,br); cctx.stroke(); }
-  for(let gy=-br; gy<=br; gy+=facetStep) { cctx.beginPath(); cctx.moveTo(-br,gy); cctx.lineTo(br,gy); cctx.stroke(); }
-  cctx.restore();
-  // Sparkles on the ball
-  for(let i=0;i<3;i++) {
-    const sa = discoPhase*30 + i*2.1;
-    cctx.fillStyle = 'rgba(255,255,255,'+(0.5+0.5*Math.sin(sa*3))+')';
-    cctx.beginPath();
-    cctx.arc(Math.cos(sa)*br*0.6, Math.sin(sa*1.3)*br*0.6, 1.6, 0, Math.PI*2);
-    cctx.fill();
-  }
-  cctx.restore();
-
-  // The crowd — back row first so the front row overlaps it
-  dancers.forEach(d => {
-    d.phase += d.speed;
-    const x = d.fx*w;
-    const y = d.row === 0 ? floorY + floorH*0.34 : floorY + floorH*0.85;
-    if(d.row === 0) cctx.globalAlpha = 0.75;
-    if(d.type === 'person') drawPersonDancer(d, x, y);
-    else if(d.type === 'cat') drawCatDancer(d, x, y);
-    else drawDinoDancer(d, x, y);
-    cctx.globalAlpha = 1;
-    if(Math.random() < 0.012) {
-      discoNotes.push({
-        x: x + (Math.random()-0.5)*d.size, y: y - d.size*1.8,
-        vx: (Math.random()-0.5)*0.5, vy: -(0.5 + Math.random()*0.7),
-        life: 130, maxLife: 130, size: 13 + Math.random()*14,
-        color: NEON[Math.floor(Math.random()*NEON.length)],
-        glyph: Math.random() < 0.5 ? '♪' : '♫',
-        rot: 0, spin: (Math.random()-0.5)*0.03
-      });
-    }
-  });
-
-  // Music notes floating up from the crowd
-  for(let i=discoNotes.length-1; i>=0; i--) {
-    const n = discoNotes[i];
-    n.x += n.vx; n.y += n.vy; n.rot += n.spin; n.life--;
-    if(n.life <= 0) { discoNotes.splice(i,1); continue; }
-    cctx.save();
-    cctx.globalAlpha = Math.min(1, n.life/n.maxLife * 1.4);
-    cctx.translate(n.x, n.y);
-    cctx.rotate(n.rot);
-    cctx.font = n.size + 'px "Nunito", sans-serif';
-    cctx.fillStyle = n.color;
-    cctx.shadowColor = n.color; cctx.shadowBlur = 6;
-    cctx.fillText(n.glyph, 0, 0);
-    cctx.restore();
-  }
-
-  requestAnimationFrame(drawDisco);
-}
-
 // ===== DEEP SEA SCENE =====
 // Bioluminescent jellyfish drifting up, plankton, light rays from the surface.
 const jellies = [];
@@ -1259,7 +962,6 @@ function startScene(name) {
   chaosRunning = false;
   currentScene = name;
   if(name === 'chaos') { currentScene = 'chaos'; startChaos(); }
-  else if(name === 'disco') { resizeChaos(); initDisco(); drawDisco(); }
   else if(name === 'deepsea') { resizeChaos(); initDeepsea(); drawDeepsea(); }
 }
 function stopScene() {
@@ -1275,10 +977,9 @@ const themeColors = {
   dark: { wave: '#6688cc', waveBg: '#16213e' },
   rainbow: { wave: '#fff', waveBg: 'rgba(0,0,0,0.2)' },
   chaos: { wave: '#ff00ff', waveBg: 'rgba(0,0,0,0.4)' },
-  disco: { wave: '#f5d98a', waveBg: '#16101f' },
   deepsea: { wave: '#4ff2e9', waveBg: 'rgba(2,16,30,0.75)' }
 };
-const CANVAS_THEMES = ['chaos','disco','deepsea'];
+const CANVAS_THEMES = ['chaos','deepsea'];
 let currentTheme = 'pink';
 
 function setTheme(name) {
@@ -1502,15 +1203,6 @@ function drawWaveform() {
       ctx.strokeStyle = 'hsl('+hue+',100%,60%)';
       ctx.beginPath(); ctx.moveTo(i,amp+mn*amp); ctx.lineTo(i,amp+mx*amp); ctx.stroke();
     }
-  } else if(currentTheme === 'disco') {
-    // Gold → magenta sweep
-    for(let i=0;i<rect.width;i++) {
-      const [mn,mx] = pixelPeaks(i, rect.width);
-      const f = i/rect.width;
-      const r = Math.round(245 + f*10), g = Math.round(217 - f*138), b = Math.round(138 + f*25);
-      ctx.strokeStyle = 'rgb('+r+','+g+','+b+')';
-      ctx.beginPath(); ctx.moveTo(i,amp+mn*amp); ctx.lineTo(i,amp+mx*amp); ctx.stroke();
-    }
   } else if(currentTheme === 'deepsea') {
     // Soft glow pass under a crisp cyan wave
     ctx.beginPath(); ctx.strokeStyle='rgba(79,242,233,0.25)'; ctx.lineWidth=3;
@@ -1691,7 +1383,6 @@ window.addEventListener('resize', () => {
   if(peaks) drawWaveform();
   if(currentScene) {
     resizeChaos();
-    if(currentScene === 'disco') initDisco();
     if(currentScene === 'deepsea') initDeepsea();
   }
 });
