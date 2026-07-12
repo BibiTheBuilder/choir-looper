@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Piano Sheet Maker</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #1a1035;
+    --card: #241748;
+    --card2: #2c1c58;
+    --text: #f3ecff;
+    --muted: #b9a9e6;
+    --line: #4a3a7a;
+    --accent: #ff6ec7;
+    --left: #4fd1ff;   /* left hand */
+    --right: #ffb14e;  /* right hand */
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: radial-gradient(1200px 600px at 50% -10%, #2a1a55 0%, var(--bg) 60%);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 80px;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 18px; }
+  h1 { font-size: 2rem; letter-spacing: 0.5px; }
+  h1 .em { color: var(--accent); }
+  .subtitle { color: var(--muted); margin-top: 6px; font-size: 0.98rem; }
+  .backlink { display:inline-block; margin-top:10px; color: var(--muted); font-size:0.9rem; text-decoration: none; border-bottom:1px dashed var(--line); }
+  .backlink:hover { color: var(--text); }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 18px;
+  }
+  .panel h2 { font-size: 1rem; color: var(--muted); font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .row + .row { margin-top: 10px; }
+  label.fld { display: flex; flex-direction: column; gap: 4px; font-size: 0.82rem; color: var(--muted); }
+  input[type=text], input[type=url], select {
+    background: #170e30; color: var(--text);
+    border: 1px solid var(--line); border-radius: 10px;
+    padding: 10px 12px; font-size: 0.98rem; font-family: inherit;
+    min-width: 0;
+  }
+  input[type=text]:focus, input[type=url]:focus, select:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+  .grow { flex: 1 1 220px; }
+
+  .btn {
+    background: #3a2870; color: var(--text);
+    border: 1px solid var(--line); border-radius: 10px;
+    padding: 10px 14px; font-size: 0.95rem; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+    transition: transform 0.08s, background 0.15s;
+  }
+  .btn:hover { background: #4a3390; }
+  .btn:active { transform: scale(0.96); }
+  .btn.primary { background: var(--accent); color: #2a0a1e; border-color: var(--accent); }
+  .btn.primary:hover { background: #ff86d1; }
+  .btn.ghost { background: transparent; }
+  .btn.sm { padding: 6px 10px; font-size: 0.85rem; }
+
+  /* Hand mode selector */
+  .modebar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .mode {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 8px 12px; border-radius: 10px; cursor: pointer;
+    border: 2px solid var(--line); background: #170e30; font-weight: 700; font-size: 0.9rem;
+    user-select: none;
+  }
+  .mode .dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
+  .mode[data-mode=left] .dot { background: var(--left); }
+  .mode[data-mode=right] .dot { background: var(--right); }
+  .mode[data-mode=erase] .dot { background: #6b5b95; }
+  .mode.active { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,110,199,0.25); }
+  .legend { color: var(--muted); font-size: 0.85rem; }
+
+  /* Video */
+  .video-frame { margin-top: 12px; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background:#000; display:none; }
+  .video-frame.show { display: block; }
+  .video-frame .ratio { position: relative; width: 100%; padding-top: 56.25%; }
+  .video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+  /* Sheet grid */
+  .sheet-head { display:flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .sheet-title { font-size: 1.15rem; font-weight: 800; }
+  .sheet { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+
+  .chip {
+    background: var(--card2);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 12px 12px 14px;
+    display: flex; flex-direction: column; gap: 9px;
+    position: relative;
+  }
+  .chip .cnum {
+    position: absolute; top: -9px; left: 12px;
+    background: var(--accent); color: #2a0a1e;
+    font-size: 0.72rem; font-weight: 800; border-radius: 999px;
+    padding: 2px 9px;
+  }
+  .chip .chord-in {
+    text-align: center; font-weight: 800; font-size: 1.1rem;
+    background: transparent; border: none; border-bottom: 1px dashed var(--line);
+    border-radius: 0; padding: 4px 2px;
+  }
+  .chip .chord-in::placeholder { color: var(--muted); font-weight: 600; }
+  .chip .lyric-in {
+    text-align: center; font-size: 0.9rem; color: var(--muted);
+    background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px;
+  }
+
+  /* Piano keyboard */
+  .kb {
+    position: relative; width: 100%; height: 84px;
+    background: #100a22; border-radius: 8px; padding: 6px 6px 8px;
+    user-select: none; touch-action: manipulation; overflow: hidden;
+  }
+  .kb .whites { position: absolute; inset: 6px 6px 8px; display: flex; gap: 2px; }
+  .wkey {
+    flex: 1 1 0; background: #f4f0ff; border-radius: 0 0 4px 4px;
+    position: relative; cursor: pointer; border: 1px solid #cbc0e6; border-top: none;
+  }
+  .wkey.sel-left  { background: var(--left); border-color: #2aa8d8; }
+  .wkey.sel-right { background: var(--right); border-color: #d88a20; }
+  .bkey {
+    position: absolute; top: 6px; height: 54%; border-radius: 0 0 3px 3px;
+    background: #241a3d; border: 1px solid #060312; cursor: pointer; z-index: 3;
+  }
+  .bkey.sel-left  { background: var(--left); border-color: #2aa8d8; }
+  .bkey.sel-right { background: var(--right); border-color: #d88a20; }
+  .klabel {
+    position: absolute; bottom: 2px; left: 0; right: 0; text-align: center;
+    font-size: 0.56rem; font-weight: 700; color: #4a3a7a; pointer-events: none;
+    line-height: 1;
+  }
+  .wkey.sel-left .klabel, .wkey.sel-right .klabel { color: #10233a; }
+  .bkey .klabel { color: #d9ccff; bottom: 3px; font-size: 0.5rem; }
+  .bkey.sel-left .klabel, .bkey.sel-right .klabel { color: #08202e; }
+
+  .chip .chip-tools { display: flex; justify-content: center; gap: 6px; }
+  .chip .chip-tools .btn.sm { padding: 5px 8px; font-size: 0.78rem; }
+
+  .empty { text-align: center; color: var(--muted); padding: 30px 10px; }
+
+  .toolbar { display:flex; flex-wrap: wrap; gap: 10px; }
+  .spacer { flex: 1 1 auto; }
+  .toast {
+    position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%);
+    background: #0c0720; border: 1px solid var(--accent); color: var(--text);
+    padding: 10px 16px; border-radius: 12px; font-size: 0.92rem;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 50;
+  }
+  .toast.show { opacity: 1; }
+
+  @media (max-width: 520px) {
+    .sheet { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    h1 { font-size: 1.6rem; }
+  }
+
+  /* ===== PRINT: clean sheet ===== */
+  @media print {
+    body { background: #fff; color: #000; padding: 0; }
+    .no-print { display: none !important; }
+    .panel { display: none; }
+    .wrap { max-width: none; }
+    .sheet { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .chip { border: 1px solid #999; background: #fff; break-inside: avoid; }
+    .chip .cnum { background: #000; color: #fff; }
+    .chip .chord-in, .chip .lyric-in { color: #000; border-color: #999; }
+    .kb { background: #eee; }
+    .wkey { background: #fff; border-color: #999; }
+    .wkey.sel-left  { background: #bfe9ff; }
+    .wkey.sel-right { background: #ffe0b3; }
+    .bkey { background: #333; }
+    .bkey.sel-left  { background: #2aa8d8; }
+    .bkey.sel-right { background: #d88a20; }
+    .print-title { display: block !important; text-align: center; font-size: 1.4rem; font-weight: 800; margin: 8px 0 14px; }
+  }
+  .print-title { display: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="no-print">
+    <h1>🎹 Piano <span class="em">Sheet</span> Maker</h1>
+    <p class="subtitle">Watch a tutorial, then build the song as piano-key diagrams — one chord/pattern at a time.</p>
+    <a class="backlink" href="index.html">← Back to Choir Loop Practice</a>
+  </header>
+
+  <!-- VIDEO PANEL -->
+  <div class="panel no-print">
+    <h2>Tutorial video</h2>
+    <div class="row">
+      <input type="url" id="ytUrl" class="grow" placeholder="Paste a YouTube link (the piano tutorial you're following)">
+      <button class="btn" id="ytLoad">Load video</button>
+      <button class="btn ghost" id="ytHide" style="display:none">Hide</button>
+    </div>
+    <div class="video-frame" id="videoFrame"><div class="ratio"><iframe id="ytFrame" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div></div>
+  </div>
+
+  <!-- BUILD PANEL -->
+  <div class="panel no-print">
+    <h2>Build</h2>
+    <div class="row">
+      <label class="fld grow"><span>Song title</span>
+        <input type="text" id="songTitle" placeholder="e.g. Für Elise (intro)">
+      </label>
+      <label class="fld"><span>Keyboard from</span>
+        <select id="startNote"></select>
+      </label>
+      <label class="fld"><span>Octaves</span>
+        <select id="octaves">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3" selected>3</option>
+          <option value="4">4</option>
+        </select>
+      </label>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <div class="modebar">
+        <span class="legend">Tap a key to mark it:</span>
+        <span class="mode active" data-mode="right"><span class="dot"></span>Right hand</span>
+        <span class="mode" data-mode="left"><span class="dot"></span>Left hand</span>
+        <span class="mode" data-mode="erase"><span class="dot"></span>Erase</span>
+      </div>
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn primary" id="addChip">+ Add chord / pattern</button>
+      <div class="spacer"></div>
+      <button class="btn" id="saveBtn">Save</button>
+      <select id="loadSel" title="Load a saved song"><option value="">Load saved…</option></select>
+      <button class="btn" id="printBtn">Print / PDF</button>
+      <button class="btn ghost" id="clearBtn">Clear all</button>
+    </div>
+  </div>
+
+  <!-- SHEET -->
+  <div class="sheet-head no-print">
+    <div class="sheet-title" id="sheetTitle">Your sheet</div>
+    <div class="legend"><span style="color:var(--right)">■</span> right hand &nbsp; <span style="color:var(--left)">■</span> left hand</div>
+  </div>
+  <div class="print-title" id="printTitle"></div>
+  <div class="sheet" id="sheet"></div>
+  <div class="empty no-print" id="emptyMsg">No chords yet — press “+ Add chord / pattern”, then tap the keys that are played.</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+// ---------- music helpers ----------
+const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const isBlack = m => NOTE_NAMES[m % 12].includes('#');
+const noteName = m => NOTE_NAMES[m % 12] + (Math.floor(m / 12) - 1);   // MIDI 60 => C4
+const noteShort = m => NOTE_NAMES[m % 12];
+
+// ---------- state ----------
+const state = {
+  title: '',
+  youtube: '',
+  startMidi: 48,   // C3
+  octaves: 3,
+  mode: 'right',
+  chips: []        // each: { sel: {midi: 'left'|'right'}, chord: '', lyric: '' }
+};
+
+const $ = id => document.getElementById(id);
+const sheetEl = $('sheet');
+
+// ---------- start-note dropdown ----------
+(function fillStartNotes(){
+  const sel = $('startNote');
+  for (let m = 24; m <= 72; m++) {                 // C1 .. C5
+    if (NOTE_NAMES[m % 12] === 'C') {
+      const o = document.createElement('option');
+      o.value = m; o.textContent = noteName(m);
+      sel.appendChild(o);
+    }
+  }
+  sel.value = state.startMidi;
+})();
+
+// ---------- keyboard builder ----------
+function buildKeyboard(chipIndex) {
+  const chip = state.chips[chipIndex];
+  const kb = document.createElement('div');
+  kb.className = 'kb';
+
+  const start = state.startMidi;
+  const end = start + state.octaves * 12;          // inclusive top C
+  const whites = [];
+  const blacks = [];
+  for (let m = start; m <= end; m++) {
+    (isBlack(m) ? blacks : whites).push(m);
+  }
+  const ww = 100 / whites.length;                  // white width %
+  const bw = ww * 0.62;                            // black width %
+
+  const wRow = document.createElement('div');
+  wRow.className = 'whites';
+
+  // map midi -> index of white keys placed before it (for black positioning)
+  let whiteCount = 0;
+  const whitesBefore = {};
+  for (let m = start; m <= end; m++) {
+    if (!isBlack(m)) { whitesBefore[m] = whiteCount; whiteCount++; }
+    else whitesBefore[m] = whiteCount;             // count of whites already placed
+  }
+
+  whites.forEach(m => {
+    const k = document.createElement('div');
+    k.className = 'wkey';
+    k.dataset.midi = m;
+    applySel(k, chip.sel[m]);
+    const lbl = document.createElement('span');
+    lbl.className = 'klabel';
+    k.appendChild(lbl);
+    updateLabel(k, m, chip.sel[m]);
+    wRow.appendChild(k);
+  });
+  kb.appendChild(wRow);
+
+  blacks.forEach(m => {
+    const k = document.createElement('div');
+    k.className = 'bkey';
+    k.dataset.midi = m;
+    k.style.width = bw + '%';
+    k.style.left = (whitesBefore[m] * ww - bw / 2) + '%';
+    applySel(k, chip.sel[m]);
+    const lbl = document.createElement('span');
+    lbl.className = 'klabel';
+    k.appendChild(lbl);
+    updateLabel(k, m, chip.sel[m]);
+    kb.appendChild(k);
+  });
+
+  kb.addEventListener('click', e => {
+    const key = e.target.closest('.wkey, .bkey');
+    if (!key) return;
+    const m = +key.dataset.midi;
+    const cur = chip.sel[m];
+    if (state.mode === 'erase') {
+      delete chip.sel[m];
+    } else if (cur === state.mode) {
+      delete chip.sel[m];                          // tap again to toggle off
+    } else {
+      chip.sel[m] = state.mode;
+    }
+    applySel(key, chip.sel[m]);
+    updateLabel(key, m, chip.sel[m]);
+    autosave();
+  });
+
+  return kb;
+}
+
+function applySel(el, hand) {
+  el.classList.remove('sel-left', 'sel-right');
+  if (hand) el.classList.add('sel-' + hand);
+}
+function updateLabel(el, m, hand) {
+  const lbl = el.querySelector('.klabel');
+  if (!lbl) return;
+  // show note letter on selected keys; always mark C notes for orientation
+  if (hand) lbl.textContent = noteShort(m);
+  else if (NOTE_NAMES[m % 12] === 'C' && !el.classList.contains('bkey')) lbl.textContent = noteName(m);
+  else lbl.textContent = '';
+}
+
+// ---------- render sheet ----------
+function render() {
+  sheetEl.innerHTML = '';
+  state.chips.forEach((chip, i) => {
+    const card = document.createElement('div');
+    card.className = 'chip';
+
+    const num = document.createElement('span');
+    num.className = 'cnum';
+    num.textContent = (i + 1);
+    card.appendChild(num);
+
+    const chord = document.createElement('input');
+    chord.className = 'chord-in'; chord.type = 'text';
+    chord.placeholder = 'Chord'; chord.value = chip.chord || '';
+    chord.addEventListener('input', () => { chip.chord = chord.value; autosave(); });
+    card.appendChild(chord);
+
+    card.appendChild(buildKeyboard(i));
+
+    const lyric = document.createElement('input');
+    lyric.className = 'lyric-in'; lyric.type = 'text';
+    lyric.placeholder = 'Lyrics (optional)'; lyric.value = chip.lyric || '';
+    lyric.addEventListener('input', () => { chip.lyric = lyric.value; autosave(); });
+    card.appendChild(lyric);
+
+    const tools = document.createElement('div');
+    tools.className = 'chip-tools no-print';
+    tools.innerHTML =
+      '<button class="btn sm ghost" data-act="left"  title="Move left">◀</button>' +
+      '<button class="btn sm ghost" data-act="clear" title="Clear keys">clear</button>' +
+      '<button class="btn sm ghost" data-act="copy"  title="Duplicate">copy</button>' +
+      '<button class="btn sm ghost" data-act="del"   title="Delete">✕</button>' +
+      '<button class="btn sm ghost" data-act="right" title="Move right">▶</button>';
+    tools.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      const act = b.dataset.act;
+      if (act === 'del') state.chips.splice(i, 1);
+      else if (act === 'clear') chip.sel = {};
+      else if (act === 'copy') state.chips.splice(i + 1, 0, { sel: { ...chip.sel }, chord: chip.chord, lyric: chip.lyric });
+      else if (act === 'left' && i > 0) { [state.chips[i-1], state.chips[i]] = [state.chips[i], state.chips[i-1]]; }
+      else if (act === 'right' && i < state.chips.length - 1) { [state.chips[i+1], state.chips[i]] = [state.chips[i], state.chips[i+1]]; }
+      render(); autosave();
+    });
+    card.appendChild(tools);
+
+    sheetEl.appendChild(card);
+  });
+  $('emptyMsg').style.display = state.chips.length ? 'none' : 'block';
+  $('printTitle').textContent = state.title || 'Piano Sheet';
+  $('sheetTitle').textContent = state.title ? state.title : 'Your sheet';
+}
+
+// ---------- toast ----------
+let toastT;
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ---------- persistence ----------
+const STORE = 'pianoSheets';
+const AUTO = 'pianoSheetAuto';
+
+function readStore() { try { return JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { return {}; } }
+function autosave() { try { localStorage.setItem(AUTO, JSON.stringify(state)); } catch (e) {} }
+
+function saveNamed() {
+  state.title = $('songTitle').value.trim();
+  if (!state.title) { toast('Give your song a title first'); $('songTitle').focus(); return; }
+  const all = readStore();
+  all[state.title] = JSON.parse(JSON.stringify({ youtube: state.youtube, startMidi: state.startMidi, octaves: state.octaves, chips: state.chips }));
+  try { localStorage.setItem(STORE, JSON.stringify(all)); } catch (e) { toast('Could not save (storage full?)'); return; }
+  refreshLoadList();
+  toast('Saved “' + state.title + '”');
+}
+
+function loadNamed(title) {
+  const all = readStore();
+  const s = all[title]; if (!s) return;
+  state.title = title;
+  state.youtube = s.youtube || '';
+  state.startMidi = s.startMidi || 48;
+  state.octaves = s.octaves || 3;
+  state.chips = (s.chips || []).map(c => ({ sel: { ...c.sel }, chord: c.chord || '', lyric: c.lyric || '' }));
+  $('songTitle').value = title;
+  $('startNote').value = state.startMidi;
+  $('octaves').value = state.octaves;
+  if (state.youtube) { $('ytUrl').value = state.youtube; embedVideo(state.youtube); }
+  render(); autosave();
+  toast('Loaded “' + title + '”');
+}
+
+function refreshLoadList() {
+  const sel = $('loadSel');
+  const all = readStore();
+  sel.innerHTML = '<option value="">Load saved…</option>';
+  Object.keys(all).sort().forEach(t => {
+    const o = document.createElement('option'); o.value = t; o.textContent = t; sel.appendChild(o);
+  });
+}
+
+// ---------- youtube ----------
+function ytId(url) {
+  if (!url) return '';
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtube\.com\/embed\/|youtu\.be\/|youtube\.com\/shorts\/|youtube\.com\/live\/)([A-Za-z0-9_-]{11})/,
+  ];
+  for (const p of patterns) { const m = url.match(p); if (m) return m[1]; }
+  const bare = url.trim().match(/^[A-Za-z0-9_-]{11}$/);
+  return bare ? bare[0] : '';
+}
+function embedVideo(url) {
+  const id = ytId(url);
+  if (!id) { toast('That doesn’t look like a YouTube link'); return; }
+  $('ytFrame').src = 'https://www.youtube-nocookie.com/embed/' + id;
+  $('videoFrame').classList.add('show');
+  $('ytHide').style.display = '';
+  state.youtube = url; autosave();
+}
+
+// ---------- events ----------
+$('addChip').addEventListener('click', () => {
+  state.chips.push({ sel: {}, chord: '', lyric: '' });
+  render(); autosave();
+  sheetEl.lastElementChild && sheetEl.lastElementChild.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+});
+$('startNote').addEventListener('change', e => { state.startMidi = +e.target.value; render(); autosave(); });
+$('octaves').addEventListener('change', e => { state.octaves = +e.target.value; render(); autosave(); });
+$('songTitle').addEventListener('input', e => { state.title = e.target.value; $('sheetTitle').textContent = state.title || 'Your sheet'; autosave(); });
+
+document.querySelectorAll('.mode').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.mode').forEach(m => m.classList.remove('active'));
+    el.classList.add('active');
+    state.mode = el.dataset.mode;
+  });
+});
+
+$('ytLoad').addEventListener('click', () => embedVideo($('ytUrl').value));
+$('ytUrl').addEventListener('keydown', e => { if (e.key === 'Enter') embedVideo($('ytUrl').value); });
+$('ytHide').addEventListener('click', () => {
+  $('videoFrame').classList.remove('show'); $('ytFrame').src = ''; $('ytHide').style.display = 'none';
+});
+
+$('saveBtn').addEventListener('click', saveNamed);
+$('loadSel').addEventListener('change', e => { if (e.target.value) loadNamed(e.target.value); e.target.value = ''; });
+$('printBtn').addEventListener('click', () => window.print());
+$('clearBtn').addEventListener('click', () => {
+  if (!state.chips.length || confirm('Clear all chords from this sheet?')) {
+    state.chips = []; render(); autosave();
+  }
+});
+
+// ---------- boot ----------
+(function boot(){
+  refreshLoadList();
+  try {
+    const auto = JSON.parse(localStorage.getItem(AUTO));
+    if (auto && auto.chips) {
+      Object.assign(state, auto);
+      state.chips = auto.chips.map(c => ({ sel: { ...c.sel }, chord: c.chord || '', lyric: c.lyric || '' }));
+      $('songTitle').value = state.title || '';
+      $('startNote').value = state.startMidi;
+      $('octaves').value = state.octaves;
+      if (state.youtube) { $('ytUrl').value = state.youtube; embedVideo(state.youtube); }
+      document.querySelectorAll('.mode').forEach(m => m.classList.toggle('active', m.dataset.mode === state.mode));
+    }
+  } catch (e) {}
+  if (!state.chips.length) state.chips.push({ sel: {}, chord: '', lyric: '' });
+  render();
+})();
+</script>
+</body>
+</html>
