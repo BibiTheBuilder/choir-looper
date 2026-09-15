@@ -188,12 +188,19 @@
   .track-wave canvas { width: 100%; height: 100%; display: block; }
 
   .sel-overlay { position: absolute; top: 0; height: 100%; pointer-events: none; display: none; }
-  .theme-white .sel-overlay { background: rgba(0,100,200,0.2); border-left: 2px solid #0066cc; border-right: 2px solid #0066cc; }
-  .theme-dark .sel-overlay { background: rgba(124,92,191,0.3); border-left: 2px solid #7c5cbf; border-right: 2px solid #7c5cbf; }
-  .theme-rainbow .sel-overlay { background: rgba(255,255,255,0.2); border-left: 2px solid #fff; border-right: 2px solid #fff; }
-  .theme-deepsea .sel-overlay { background: rgba(79,242,233,0.18); border-left: 2px solid #4ff2e9; border-right: 2px solid #4ff2e9; }
-  .theme-chaos .sel-overlay { background: rgba(255,0,255,0.3); border-left: 2px solid #0ff; border-right: 2px solid #0ff; }
-  .theme-lofi .sel-overlay { background: rgba(240,177,132,0.2); border-left: 2px solid #f0b184; border-right: 2px solid #f0b184; }
+  /* grab handles on both edges of the section */
+  .sel-overlay::before, .sel-overlay::after {
+    content: ''; position: absolute; top: 50%; width: 8px; height: 26px; margin-top: -13px;
+    border-radius: 4px; background: currentColor; box-shadow: 0 0 0 1px rgba(0,0,0,0.35);
+  }
+  .sel-overlay::before { left: -5px; }
+  .sel-overlay::after { right: -5px; }
+  .theme-white .sel-overlay { color: #0066cc; background: rgba(0,100,200,0.2); border-left: 2px solid #0066cc; border-right: 2px solid #0066cc; }
+  .theme-dark .sel-overlay { color: #7c5cbf; background: rgba(124,92,191,0.3); border-left: 2px solid #7c5cbf; border-right: 2px solid #7c5cbf; }
+  .theme-rainbow .sel-overlay { color: #fff; background: rgba(255,255,255,0.2); border-left: 2px solid #fff; border-right: 2px solid #fff; }
+  .theme-deepsea .sel-overlay { color: #4ff2e9; background: rgba(79,242,233,0.18); border-left: 2px solid #4ff2e9; border-right: 2px solid #4ff2e9; }
+  .theme-chaos .sel-overlay { color: #0ff; background: rgba(255,0,255,0.3); border-left: 2px solid #0ff; border-right: 2px solid #0ff; }
+  .theme-lofi .sel-overlay { color: #f0b184; background: rgba(240,177,132,0.2); border-left: 2px solid #f0b184; border-right: 2px solid #f0b184; }
 
   .ph { position: absolute; top: 0; height: 100%; width: 2px; pointer-events: none; display: none; }
   .theme-white .ph { background: #ff3333; }
@@ -314,7 +321,7 @@
   <div class="empty-hint" id="emptyHint">No parts yet. Add your soprano, alto, tenor and bass files, or drop them anywhere on this page.</div>
 </div>
 
-<div class="drag-hint" id="dragHint">Drag across any wave to pick a section</div>
+<div class="drag-hint" id="dragHint">Drag across any wave to pick a section, drag its edges to adjust</div>
 
 <div class="time-input-row" id="timeInputRow">
   <label for="startInput">Start:</label>
@@ -339,7 +346,7 @@
 <div class="instructions">
   <strong>How to use</strong>
   1. Add one file per voice part<br>
-  2. Drag across any wave to pick a section<br>
+  2. Drag across any wave to pick a section, then drag its edges to fine-tune<br>
   3. Press Play, then Loop to repeat it<br>
   4. Use M to mute a part, S to hear one part alone
 </div>
@@ -1293,7 +1300,7 @@ function drawTrack(tr) {
 }
 
 /* ---------- selection ---------- */
-let dragging = false, dragTrack = null, dragAnchor = 0, dragMoved = false, prevSel = [null, null];
+let dragging = false, dragTrack = null, dragAnchor = 0, tapAt = 0, dragMoved = false, prevSel = [null, null];
 
 function attachDrag(waveEl) {
   waveEl.addEventListener('pointerdown', e => {
@@ -1301,14 +1308,23 @@ function attachDrag(waveEl) {
     waveEl.setPointerCapture(e.pointerId);
     dragging = true; dragMoved = false; dragTrack = waveEl;
     prevSel = [selStart, selEnd];
-    dragAnchor = xToTime(waveEl, e.clientX);
+    tapAt = xToTime(waveEl, e.clientX);
+    const edge = edgeAt(waveEl, e);
+    if(edge) {
+      // grabbed an edge of the section: keep the other edge where it is
+      dragAnchor = edge === 'start' ? selEnd : selStart;
+      return;
+    }
+    dragAnchor = tapAt;
     selStart = selEnd = dragAnchor;
     updateSelectionUI();
   });
   waveEl.addEventListener('pointermove', e => {
-    if(!dragging || dragTrack !== waveEl) return;
+    if(!dragging) { waveEl.style.cursor = edgeAt(waveEl, e) ? 'ew-resize' : ''; return; }
+    if(dragTrack !== waveEl) return;
     const t = xToTime(waveEl, e.clientX);
-    if(Math.abs(t - dragAnchor) > 0.08) dragMoved = true;
+    if(Math.abs(t - tapAt) > 0.08) dragMoved = true;
+    if(!dragMoved) return;
     selStart = Math.min(dragAnchor, t);
     selEnd = Math.max(dragAnchor, t);
     updateSelectionUI();
@@ -1321,12 +1337,25 @@ function attachDrag(waveEl) {
       selStart = prevSel[0]; selEnd = prevSel[1];
       updateSelectionUI();
       updateTimeInputs();
-      seek(dragAnchor);
+      seek(tapAt);
       return;
     }
     updateTimeInputs();
     if(isPlaying && loopActive()) startPlayback(selStart);
   }));
+  waveEl.addEventListener('pointerleave', () => { if(!dragging) waveEl.style.cursor = ''; });
+}
+
+// which edge of the current section (if any) is under the pointer
+function edgeAt(waveEl, e) {
+  if(!hasSel()) return null;
+  const r = waveEl.getBoundingClientRect();
+  const grab = e.pointerType === 'touch' ? 22 : 10;
+  const sx = r.left + selStart / duration * r.width;
+  const ex = r.left + selEnd / duration * r.width;
+  const ds = Math.abs(e.clientX - sx), de = Math.abs(e.clientX - ex);
+  if(Math.min(ds, de) > grab) return null;
+  return ds <= de ? 'start' : 'end';
 }
 
 function xToTime(waveEl, clientX) {
