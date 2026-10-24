@@ -1,7 +1,7 @@
 // Choir Loop Practice — offline support.
 // App shell is cached on install; Google Fonts are cached as they're fetched,
 // so after one online visit the app works fully offline in the rehearsal room.
-const CACHE = 'choir-loop-v4';
+const CACHE = 'choir-loop-v5';
 const SHELL = ['./', 'index.html', 'multitrack.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', e => {

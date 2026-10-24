@@ -171,6 +171,8 @@
   .theme-deepsea .mini { border-color: rgba(79,242,233,0.5); }
   .theme-chaos .mini { border-color: #ff0; }
   .theme-lofi .mini { border-color: rgba(240,177,132,0.5); }
+  .mini.mute { display: inline-flex; align-items: center; justify-content: center; }
+  .mini svg { width: 18px; height: 18px; display: block; }
   .mini.on { background: #ff3d68; color: #fff; border-color: #ff3d68; }
   .mini.on.solo { background: #ffcc00; color: #222; border-color: #ffcc00; }
   .vol { width: 88px; accent-color: currentColor; }
@@ -286,17 +288,39 @@
   .theme-pick.active-theme { outline: 3px solid #fff; outline-offset: 2px; }
   .theme-white .theme-pick.active-theme { outline-color: #111; }
 
+  /* no sticky hover-zoom on touch screens */
+  @media (hover: none) {
+    .btn:hover, .theme-pick:hover { transform: none; }
+  }
+
   /* ===== MOBILE ===== */
   @media (max-width: 700px) {
+    body { padding-left: calc(12px + env(safe-area-inset-left)); padding-right: calc(12px + env(safe-area-inset-right)); }
     h1 { font-size: 1.5rem; letter-spacing: 2px; }
-    .subtitle { font-size: 0.95rem; }
+    .subtitle { font-size: 0.95rem; margin-bottom: 12px; }
     .btn { padding: 12px 16px; font-size: 0.95rem; min-height: 46px; }
-    .track { grid-template-columns: 128px 1fr; gap: 8px; padding: 6px; }
-    .track-name { font-size: 0.85rem; }
-    .mini { padding: 4px 7px; font-size: 0.78rem; }
-    .vol { width: 100%; }
-    .track-wave { height: 60px; }
-    .speed-control input[type="range"] { width: 84px; }
+
+    /* name + buttons on top, the wave gets the full width underneath */
+    .track { grid-template-columns: 1fr; gap: 6px; padding: 8px; }
+    .track-head { flex-direction: row; align-items: center; gap: 8px; }
+    .track-name { flex: 1; font-size: 0.95rem; }
+    .track-btns { gap: 6px; flex-shrink: 0; }
+    .mini { min-width: 40px; height: 40px; padding: 0 8px; font-size: 0.95rem; border-radius: 8px; }
+    .vol { width: 64px; height: 40px; }
+    .track-wave { height: 76px; }
+
+    /* transport stays on screen while you scroll through the parts */
+    .controls {
+      position: sticky; bottom: 0; z-index: 5; width: calc(100% + 24px); margin: 14px -12px 0;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); gap: 8px;
+      border-radius: 14px 14px 0 0; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      background: rgba(0,0,0,0.55); box-shadow: 0 -4px 18px rgba(0,0,0,0.25);
+    }
+    .theme-white .controls { background: rgba(245,245,245,0.92); }
+    .controls #playBtn { flex: 1 1 100%; font-size: 1.15rem; min-height: 54px; }
+    .controls #loopBtn, .controls #clearSelBtn { flex: 1 1 40%; white-space: nowrap; }
+    .speed-control { flex: 1 1 auto; }
+    .speed-control input[type="range"] { flex: 1; width: auto; min-width: 80px; }
     .theme-pick { padding: 6px 12px; font-size: 0.85rem; }
   }
 </style>
@@ -348,7 +372,7 @@
   1. Add one file per voice part<br>
   2. Drag across any wave to pick a section, then drag its edges to fine-tune<br>
   3. Press Play, then Loop to repeat it<br>
-  4. Use M to mute a part, S to hear one part alone
+  4. Tap the speaker to mute a part, S to hear one part alone
 </div>
 
 <p class="other-link"><a href="index.html">Single track version</a></p>
@@ -1017,6 +1041,10 @@ const WAVE_COLOR = { white:'#0066cc', dark:'#9d80d8', rainbow:'#ffffff', deepsea
 const THEMES = ['lofi','deepsea','white','rainbow','dark','chaos'];
 const CANVAS_THEMES = ['chaos','deepsea','lofi'];
 const PEAK_BUCKETS = 4000;
+const SVG_OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+const SPEAKER_BODY = '<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/>';
+const ICON_SPEAKER = SVG_OPEN + SPEAKER_BODY + '<path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+const ICON_MUTED = SVG_OPEN + SPEAKER_BODY + '<path d="M17 9l5 6M22 9l-5 6"/></svg>';
 
 let ctx = null;
 let tracks = [];          // { id, name, buffer, gain, peaks, volume, muted, solo, src, els }
@@ -1067,12 +1095,14 @@ function setTheme(name) {
 /* ---------- settings ---------- */
 function saveSettings() {
   try {
-    localStorage.setItem('choirMultitrack', JSON.stringify({ theme, speed, isLooping }));
+    localStorage.setItem('choirMultitrack', JSON.stringify({ theme, speed, isLooping, selStart, selEnd }));
   } catch(e) {}
 }
+let savedSel = null;   // applied once the saved parts have loaded
 function restoreSettings() {
   try {
     const s = JSON.parse(localStorage.getItem('choirMultitrack') || '{}');
+    if(typeof s.selStart === 'number' && typeof s.selEnd === 'number') savedSel = [s.selStart, s.selEnd];
     setTheme(s.theme && THEMES.indexOf(s.theme) !== -1 ? s.theme : 'lofi');
     if(s.speed) { speed = s.speed; speedSlider.value = speed; speedValue.textContent = speed.toFixed(2) + 'x'; }
     if(s.isLooping) { isLooping = true; loopBtn.textContent = 'Loop: On'; loopBtn.classList.add('active'); }
@@ -1081,9 +1111,104 @@ function restoreSettings() {
 
 /* ---------- loading ---------- */
 function ensureCtx() {
+  // iPhone: play through the silent switch like a music app would
+  try { if(navigator.audioSession) navigator.audioSession.type = 'playback'; } catch(e) {}
   if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
   if(ctx.state === 'suspended') ctx.resume();
   return ctx;
+}
+
+/* Older iPhones have no audioSession API. Web Audio follows the silent
+   switch there, but a playing <audio> element does not, and while one is
+   playing the whole page is treated as media. So loop a silent clip
+   alongside playback. */
+const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
+              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+let silentEl = null;
+function silentWavUrl() {
+  const sr = 8000, n = sr / 2, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+  const str = (o, s) => { for(let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  str(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); str(8, 'WAVE'); str(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  str(36, 'data'); v.setUint32(40, n * 2, true);
+  return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+}
+function startSilentKeeper() {
+  if(!isIOS || navigator.audioSession) return;
+  if(!silentEl) {
+    silentEl = document.createElement('audio');
+    silentEl.src = silentWavUrl();
+    silentEl.loop = true;
+    silentEl.setAttribute('playsinline', '');
+    silentEl.setAttribute('x-webkit-airplay', 'deny');
+  }
+  silentEl.play().catch(() => {});
+}
+function stopSilentKeeper() { if(silentEl) silentEl.pause(); }
+
+/* ---------- saved parts (stay on this device between visits) ----------
+   Audio bytes live in IndexedDB; names, volume, mute and solo in localStorage. */
+const DB_NAME = 'choirMultitrack', STORE = 'audio', META_KEY = 'choirMultitrackParts';
+let dbPromise = null;
+function openDB() {
+  if(!dbPromise) dbPromise = new Promise((resolve, reject) => {
+    if(!window.indexedDB) { reject(new Error('no indexedDB')); return; }
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = () => req.result.createObjectStore(STORE);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  return dbPromise;
+}
+function dbDo(mode, fn) {
+  return openDB().then(db => new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE, mode);
+    const req = fn(tx.objectStore(STORE));
+    tx.oncomplete = () => resolve(req && req.result);
+    tx.onerror = tx.onabort = () => reject(tx.error);
+  }));
+}
+function storeAudio(id, bytes) {
+  return dbDo('readwrite', s => s.put(bytes, id)).catch(() => {
+    showStatus('This part will not be remembered: the device is out of storage space.', 'error', 6000);
+  });
+}
+function deleteAudio(id) { return dbDo('readwrite', s => s.delete(id)).catch(() => {}); }
+function clearAudio() { return dbDo('readwrite', s => s.clear()).catch(() => {}); }
+function loadAudio(id) { return dbDo('readonly', s => s.get(id)); }
+
+function saveParts() {
+  try {
+    localStorage.setItem(META_KEY, JSON.stringify(tracks.map(t =>
+      ({ id: t.id, name: t.name, volume: t.volume, muted: t.muted, solo: t.solo }))));
+  } catch(e) {}
+}
+
+async function restoreParts() {
+  let meta = [];
+  try { meta = JSON.parse(localStorage.getItem(META_KEY) || '[]'); } catch(e) {}
+  if(!meta.length) return;
+  showStatus('Loading your saved parts...', 'info');
+  ensureCtx();
+  let restored = 0;
+  for(const m of meta) {
+    try {
+      const bytes = await loadAudio(m.id);
+      if(!bytes) continue;
+      const buffer = await ctx.decodeAudioData(bytes.slice(0));
+      addTrack(m.name, buffer, m);
+      restored++;
+    } catch(e) {}
+  }
+  nextId = tracks.reduce((mx, t) => Math.max(mx, t.id + 1), nextId);
+  saveParts();
+  refreshDuration();
+  if(savedSel && savedSel[1] <= duration) { selStart = savedSel[0]; selEnd = savedSel[1]; saveSettings(); }
+  layoutAll();
+  updateTimeInputs();
+  if(restored) showStatus('Welcome back: ' + restored + ' part' + (restored > 1 ? 's' : '') + ' ready', 'info', 3000);
+  else hideStatus();
 }
 
 addBtn.addEventListener('click', () => { ensureCtx(); fileInput.click(); });
@@ -1106,29 +1231,36 @@ async function addFiles(files) {
   for(const file of files) {
     try {
       const arr = await file.arrayBuffer();
+      const keep = arr.slice(0);   // decodeAudioData empties the original
       const buffer = await ctx.decodeAudioData(arr);
-      addTrack(file.name.replace(/\.[^.]+$/, ''), buffer);
+      const tr = addTrack(file.name.replace(/\.[^.]+$/, ''), buffer);
+      storeAudio(tr.id, keep);
     } catch(err) {
       failed.push(file.name);
     }
   }
+  saveParts();
+  if(navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
   refreshDuration();
   layoutAll();
   if(failed.length) showStatus('Could not read: ' + failed.join(', '), 'error', 8000);
   else showStatus(tracks.length + ' part' + (tracks.length>1?'s':'') + ' loaded', 'info', 2500);
 }
 
-function addTrack(name, buffer) {
+function addTrack(name, buffer, saved) {
   const gain = ctx.createGain();
   gain.connect(ctx.destination);
+  const s = saved || {};
   const tr = {
-    id: nextId++, name, buffer, gain, src: null,
+    id: s.id || nextId++, name, buffer, gain, src: null,
     peaks: computePeaks(buffer),
-    volume: 1, muted: false, solo: false, els: null
+    volume: typeof s.volume === 'number' ? s.volume : 1,
+    muted: !!s.muted, solo: !!s.solo, els: null
   };
   tracks.push(tr);
   buildTrackRow(tr);
   applyGains();
+  return tr;
 }
 
 function computePeaks(buffer) {
@@ -1187,9 +1319,9 @@ function buildTrackRow(tr) {
     '<div class="track-head">' +
       '<div class="track-name" title="Click to rename"></div>' +
       '<div class="track-btns">' +
-        '<button class="mini mute" title="Mute">M</button>' +
-        '<button class="mini solo" title="Solo">S</button>' +
-        '<input type="range" class="vol" min="0" max="1" step="0.01" value="1" title="Volume">' +
+        '<button class="mini mute" title="Mute" aria-label="Mute" aria-pressed="false">' + ICON_SPEAKER + '</button>' +
+        '<button class="mini solo" title="Solo" aria-label="Solo" aria-pressed="false">S</button>' +
+        '<input type="range" class="vol" min="0" max="1" step="0.01" value="' + tr.volume + '" title="Volume" aria-label="Volume">' +
         '<button class="mini kill" title="Remove">&#10005;</button>' +
       '</div>' +
     '</div>' +
@@ -1209,12 +1341,13 @@ function buildTrackRow(tr) {
 
   nameEl.addEventListener('click', () => {
     const v = prompt('Name this part', tr.name);
-    if(v !== null && v.trim()) { tr.name = v.trim(); nameEl.textContent = tr.name; }
+    if(v !== null && v.trim()) { tr.name = v.trim(); nameEl.textContent = tr.name; saveParts(); }
   });
-  muteBtn.addEventListener('click', () => { tr.muted = !tr.muted; applyGains(); });
-  soloBtn.addEventListener('click', () => { tr.solo = !tr.solo; applyGains(); });
+  muteBtn.addEventListener('click', () => { tr.muted = !tr.muted; applyGains(); saveParts(); });
+  soloBtn.addEventListener('click', () => { tr.solo = !tr.solo; applyGains(); saveParts(); });
   volEl.addEventListener('input', () => { tr.volume = parseFloat(volEl.value); applyGains(); });
-  killBtn.addEventListener('click', () => removeTrack(tr));
+  volEl.addEventListener('change', saveParts);
+  killBtn.addEventListener('click', () => { if(confirm('Remove "' + tr.name + '"?')) removeTrack(tr); });
   attachDrag(waveEl);
 
   tracksEl.appendChild(row);
@@ -1227,6 +1360,8 @@ function removeTrack(tr) {
   try { tr.gain.disconnect(); } catch(e) {}
   tr.els.row.remove();
   tracks = tracks.filter(t => t !== tr);
+  deleteAudio(tr.id);
+  saveParts();
   refreshDuration();
   layoutAll();
   applyGains();
@@ -1240,6 +1375,9 @@ removeAllBtn.addEventListener('click', () => {
   tracks.forEach(t => { try { t.gain.disconnect(); } catch(e) {} t.els.row.remove(); });
   tracks = [];
   selStart = selEnd = null; pausedAt = 0;
+  clearAudio();
+  saveParts();
+  saveSettings();
   refreshDuration();
   hideStatus();
 });
@@ -1252,7 +1390,10 @@ function applyGains() {
     if(ctx) tr.gain.gain.setTargetAtTime(g, ctx.currentTime, 0.01);
     else tr.gain.gain.value = g;
     tr.els.muteBtn.classList.toggle('on', tr.muted);
+    tr.els.muteBtn.innerHTML = tr.muted ? ICON_MUTED : ICON_SPEAKER;
+    tr.els.muteBtn.setAttribute('aria-pressed', tr.muted);
     tr.els.soloBtn.classList.toggle('on', tr.solo);
+    tr.els.soloBtn.setAttribute('aria-pressed', tr.solo);
     tr.els.row.classList.toggle('dim', !audible);
   });
 }
@@ -1341,6 +1482,7 @@ function attachDrag(waveEl) {
       return;
     }
     updateTimeInputs();
+    saveSettings();
     if(isPlaying && loopActive()) startPlayback(selStart);
   }));
   waveEl.addEventListener('pointerleave', () => { if(!dragging) waveEl.style.cursor = ''; });
@@ -1395,6 +1537,7 @@ setTimeBtn.addEventListener('click', () => {
   }
   selStart = s; selEnd = Math.min(e, duration);
   updateSelectionUI();
+  saveSettings();
   if(isPlaying && loopActive()) startPlayback(selStart);
 });
 
@@ -1402,6 +1545,7 @@ clearSelBtn.addEventListener('click', () => {
   selStart = selEnd = null;
   updateSelectionUI();
   updateTimeInputs();
+  saveSettings();
 });
 
 /* ---------- transport ---------- */
@@ -1450,6 +1594,7 @@ function startPlayback(from) {
   playStartCtx = when;
   isPlaying = true;
   playBtn.textContent = 'Pause';
+  startSilentKeeper();
   acquireWakeLock();
 }
 
@@ -1458,6 +1603,7 @@ function stopPlayback() {
   stopSources();
   isPlaying = false;
   playBtn.textContent = 'Play';
+  stopSilentKeeper();
   releaseWakeLock();
 }
 
@@ -1554,6 +1700,7 @@ window.addEventListener('resize', () => {
 
 restoreSettings();
 refreshDuration();
+restoreParts();
 
 if('serviceWorker' in navigator) {
   window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
