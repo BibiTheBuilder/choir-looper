@@ -1413,7 +1413,6 @@ function removeTrack(tr) {
 
 removeAllBtn.addEventListener('click', () => {
   if(!tracks.length) return;
-  if(!confirm('Remove all parts?')) return;
   stopPlayback();
   tracks.forEach(t => { try { t.gain.disconnect(); } catch(e) {} t.els.row.remove(); });
   tracks = [];
