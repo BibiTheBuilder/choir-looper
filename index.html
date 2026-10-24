@@ -1254,7 +1254,6 @@ async function addFiles(files) {
     }
   }
   saveParts();
-  if(navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(() => {});
   refreshDuration();
   layoutAll();
   if(failed.length) showStatus('Could not read: ' + failed.join(', '), 'error', 8000);
