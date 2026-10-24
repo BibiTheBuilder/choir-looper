@@ -236,6 +236,8 @@
   .controls.visible { display: flex; }
   .speed-control { display: flex; align-items: center; gap: 8px; font-size: 1.05rem; font-weight: 800; }
   .speed-control input[type="range"] { width: 110px; accent-color: currentColor; }
+  #restartBtn { display: inline-flex; align-items: center; justify-content: center; }
+  #restartBtn svg { width: 22px; height: 22px; }
   .clock { font-weight: 800; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
 
   /* ===== INSTRUCTIONS + FOOTER ===== */
@@ -321,7 +323,8 @@
       background: rgba(0,0,0,0.55); box-shadow: 0 -4px 18px rgba(0,0,0,0.25);
     }
     .theme-white .controls { background: rgba(245,245,245,0.92); }
-    .controls #playBtn, .controls #loopBtn { flex: 1 1 40%; white-space: nowrap; }
+    .controls #playBtn, .controls #loopBtn { flex: 1 1 35%; white-space: nowrap; }
+    .controls #restartBtn { flex: 0 0 52px; padding: 0; }
     .speed-control { flex: 1 1 auto; }
     .time-input-row { gap: 6px; font-size: 0.95rem; }
     .time-input-row input[type="text"] { width: 56px; padding: 6px 4px; font-size: 0.95rem; }
@@ -371,6 +374,7 @@
 </div>
 
 <div class="controls" id="controls">
+  <button class="btn" id="restartBtn" title="Back to the start" aria-label="Back to the start"></button>
   <button class="btn primary" id="playBtn">Play</button>
   <button class="btn" id="loopBtn">Loop: Off</button>
   <div class="speed-control">
@@ -1070,7 +1074,7 @@ let theme = 'lofi';
 const $ = id => document.getElementById(id);
 const tracksEl = $('tracks'), emptyHint = $('emptyHint'), statusMsg = $('statusMsg');
 const addBtn = $('addBtn'), removeAllBtn = $('removeAllBtn'), fileInput = $('fileInput');
-const playBtn = $('playBtn'), loopBtn = $('loopBtn'), clearSelBtn = $('clearSelBtn');
+const restartBtn = $('restartBtn'), playBtn = $('playBtn'), loopBtn = $('loopBtn'), clearSelBtn = $('clearSelBtn');
 const speedSlider = $('speedSlider'), speedValue = $('speedValue'), clock = $('clock');
 const controls = $('controls'), dragHint = $('dragHint'), timeInputRow = $('timeInputRow');
 const startInput = $('startInput'), endInput = $('endInput'), setTimeBtn = $('setTimeBtn');
@@ -1460,6 +1464,8 @@ function attachDrag(waveEl) {
     dragging = true; dragMoved = false; dragTrack = waveEl;
     prevSel = [selStart, selEnd];
     tapAt = xToTime(waveEl, e.clientX);
+    // a tap right at the left edge means the very start
+    if(e.clientX - waveEl.getBoundingClientRect().left < 14) tapAt = 0;
     const edge = edgeAt(waveEl, e);
     if(edge) {
       // grabbed an edge of the section: keep the other edge where it is
@@ -1624,6 +1630,13 @@ function seek(t) {
   else { stopSources(); updatePlayheads(); updateClock(); }
 }
 
+// back to the start of the section when looping, otherwise of the song
+restartBtn.innerHTML = SVG_OPEN + '<path d="M6 5v14"/><path d="M19 5L9 12l10 7z" fill="currentColor"/></svg>';
+restartBtn.addEventListener('click', () => {
+  if(!tracks.length) return;
+  seek(loopActive() ? selStart : 0);
+});
+
 playBtn.addEventListener('click', () => {
   if(!tracks.length) return;
   if(isPlaying) stopPlayback();
@@ -1698,6 +1711,7 @@ document.addEventListener('keydown', e => {
   const tag = (e.target.tagName || '').toLowerCase();
   if(tag === 'input' || tag === 'textarea') return;
   if(e.code === 'Space') { e.preventDefault(); playBtn.click(); }
+  else if(e.key === 'Home' || e.key === '0') restartBtn.click();
   else if(e.key === 'l' || e.key === 'L') loopBtn.click();
 });
 
