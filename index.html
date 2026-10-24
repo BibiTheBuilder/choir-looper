@@ -25,12 +25,19 @@
   /* ===== THEMES ===== */
   body.theme-white { background: #f5f5f5; color: #111; }
   body.theme-dark { background: #0b0c10; color: #d9dce3; }
-  body.theme-rainbow {
-    background: linear-gradient(135deg, #ff0000, #ff7700, #ffff00, #00ff00, #0077ff, #8800ff, #ff0088);
-    background-size: 400% 400%; animation: rainbowBg 4s ease infinite; color: #fff;
+  /* The full spectrum is always on screen: the gradient holds two rainbows
+     and slides by exactly one, so the loop is seamless. It lives on a fixed
+     layer so it covers the screen however long the page is. */
+  body.theme-rainbow { background: #8800ff; color: #fff; }
+  body.theme-rainbow::before {
+    content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: linear-gradient(135deg,
+      #ff1a1a 0%, #ff8a00 8.33%, #ffd400 16.67%, #22c55e 25%, #1d8cff 33.33%, #8b2cff 41.67%,
+      #ff1a1a 50%, #ff8a00 58.33%, #ffd400 66.67%, #22c55e 75%, #1d8cff 83.33%, #8b2cff 91.67%, #ff1a1a 100%);
+    background-size: 200% 200%; animation: rainbowBg 12s linear infinite;
   }
   body.theme-deepsea { background: linear-gradient(180deg, #02101e 0%, #04263b 100%); background-attachment: fixed; color: #bff4ee; }
-  @keyframes rainbowBg { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+  @keyframes rainbowBg { from { background-position: 0% 0%; } to { background-position: 100% 100%; } }
 
   body.theme-chaos { background: #1a0a2e; color: #fff; }
   /* Lofi Girl: warm dusk study room, rain on the window */
