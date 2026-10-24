@@ -330,7 +330,8 @@
     .time-input-row input[type="text"] { width: 56px; padding: 6px 4px; font-size: 0.95rem; }
     .time-input-row .btn { padding: 8px 10px !important; min-height: 40px; }
     .speed-control input[type="range"] { flex: 1; width: auto; min-width: 80px; }
-    .theme-pick { padding: 6px 12px; font-size: 0.85rem; }
+    .theme-switcher { gap: 4px; }
+    .theme-pick { padding: 5px 8px; font-size: 0.8rem; white-space: nowrap; }
   }
 </style>
 </head>
@@ -342,12 +343,12 @@
 <h1>Choir Looper</h1>
 <p class="subtitle">Loop it. Nail it. Sing it. &#10084;&#65039;&#129505;&#128155;&#128154;&#128153;&#128156;</p>
 <div class="theme-switcher" id="themeSwitcher">
-  <button class="theme-pick tp-lofi active-theme" onclick="setTheme('lofi')">Lofi Girl</button>
-  <button class="theme-pick tp-deepsea" onclick="setTheme('deepsea')">Deep Sea</button>
+  <button class="theme-pick tp-lofi active-theme" onclick="setTheme('lofi')">Lofi</button>
+  <button class="theme-pick tp-deepsea" onclick="setTheme('deepsea')">Sea</button>
   <button class="theme-pick tp-white" onclick="setTheme('white')">White</button>
   <button class="theme-pick tp-rainbow" onclick="setTheme('rainbow')">Rainbow</button>
   <button class="theme-pick tp-dark" onclick="setTheme('dark')">Dark</button>
-  <button class="theme-pick tp-chaos" onclick="setTheme('chaos')">Chaos Kitten</button>
+  <button class="theme-pick tp-chaos" onclick="setTheme('chaos')">Chaos</button>
 </div>
 
 <div class="upload-row">
