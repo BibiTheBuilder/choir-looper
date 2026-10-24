@@ -896,6 +896,97 @@ function updateAndDrawPlanets(w, groundY) {
   });
 }
 
+// ===== TARDIGRADES =====
+// Mid-size water bears drifting through the air: plump segmented bodies,
+// eight stubby clawed legs paddling, a round mouth and tiny eye spots.
+const tardigrades = [];
+const TARDI_HUES = [22, 340, 35, 12, 300];
+
+function initTardigrades() {
+  const w = chaosCanvas.width, h = chaosCanvas.height, scale = Math.min(w, h);
+  tardigrades.length = 0;
+  for(let i = 0; i < (w < 700 ? 3 : 5); i++) {
+    tardigrades.push({
+      x: Math.random() * w, y: h * (0.08 + Math.random() * 0.55),
+      len: scale * (0.13 + Math.random() * 0.07),
+      vx: (Math.random() < 0.5 ? -1 : 1) * (0.15 + Math.random() * 0.25),
+      vy: (Math.random() - 0.5) * 0.15,
+      rot: Math.random() * Math.PI * 2, vrot: (Math.random() - 0.5) * 0.004,
+      phase: Math.random() * 10, hue: TARDI_HUES[i % TARDI_HUES.length]
+    });
+  }
+}
+
+function drawTardigrade(t) {
+  const c = cctx, L = t.len, H = L * 0.48;
+  const skin = a => `hsla(${t.hue},50%,78%,${a})`;
+  const shade = a => `hsla(${t.hue},40%,52%,${a})`;
+  c.save();
+  c.translate(t.x, t.y);
+  c.rotate(t.rot);
+
+  // legs: three pairs underneath, one pair at the back, slowly paddling
+  const legXs = [0.22, 0.02, -0.18, -0.38];
+  c.lineCap = 'round';
+  legXs.forEach((lx, i) => {
+    [0, 1].forEach(far => {
+      const swing = Math.sin(t.phase + i * 1.3 + far * Math.PI) * L * 0.05;
+      const x0 = (lx + (far ? 0.05 : 0)) * L, y0 = H * 0.25;
+      const back = i === 3;
+      const x1 = x0 + (back ? -L * 0.12 : swing), y1 = back ? H * 0.42 + swing * 0.5 : H * 0.62;
+      c.strokeStyle = far ? shade(0.75) : skin(0.95);
+      c.lineWidth = L * 0.085;
+      c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke();
+      // tiny claws
+      c.strokeStyle = 'rgba(60,40,30,0.7)'; c.lineWidth = Math.max(1, L * 0.012);
+      for(let k = -1; k <= 1; k++) {
+        c.beginPath(); c.moveTo(x1, y1 + L * 0.03); c.lineTo(x1 + k * L * 0.025, y1 + L * 0.065); c.stroke();
+      }
+    });
+  });
+
+  // plump, segmented body
+  const g = c.createRadialGradient(L * 0.05, -H * 0.2, L * 0.05, 0, 0, L * 0.55);
+  g.addColorStop(0, skin(0.95)); g.addColorStop(1, shade(0.9));
+  c.fillStyle = g;
+  for(let i = 0; i < 5; i++) {
+    const cx = (-0.34 + i * 0.17) * L;
+    const r = (i === 0 || i === 4) ? 0.8 : 1;
+    c.beginPath(); c.ellipse(cx, 0, L * 0.15, H * 0.42 * r, 0, 0, Math.PI * 2); c.fill();
+  }
+  // segment creases
+  c.strokeStyle = shade(0.55); c.lineWidth = Math.max(1, L * 0.012);
+  for(let i = 0; i < 4; i++) {
+    const cx = (-0.255 + i * 0.17) * L;
+    c.beginPath(); c.moveTo(cx, -H * 0.36); c.quadraticCurveTo(cx + L * 0.025, 0, cx, H * 0.36); c.stroke();
+  }
+  // round mouth at the front
+  c.fillStyle = shade(0.9);
+  c.beginPath(); c.ellipse(L * 0.47, -H * 0.02, L * 0.045, H * 0.11, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = 'rgba(70,40,40,0.8)';
+  c.beginPath(); c.ellipse(L * 0.49, -H * 0.02, L * 0.02, H * 0.06, 0, 0, Math.PI * 2); c.fill();
+  // eye spots
+  c.fillStyle = 'rgba(40,25,25,0.85)';
+  c.beginPath(); c.arc(L * 0.37, -H * 0.17, L * 0.014, 0, Math.PI * 2); c.fill();
+  // speckled skin
+  c.fillStyle = 'rgba(255,255,255,0.25)';
+  for(let i = 0; i < 6; i++) {
+    c.beginPath(); c.arc((-0.3 + i * 0.12) * L, -H * (0.15 + (i % 2) * 0.1), L * 0.012, 0, Math.PI * 2); c.fill();
+  }
+  c.restore();
+}
+
+function updateAndDrawTardigrades() {
+  const w = chaosCanvas.width, h = chaosCanvas.height;
+  tardigrades.forEach(t => {
+    t.phase += 0.06;
+    t.x += t.vx; t.y += t.vy + Math.sin(t.phase * 0.25) * 0.12; t.rot += t.vrot;
+    if(t.x < -t.len) t.x = w + t.len; if(t.x > w + t.len) t.x = -t.len;
+    if(t.y < h * 0.05 || t.y > h * 0.7) t.vy = -t.vy;
+    drawTardigrade(t);
+  });
+}
+
 // ===== GIANT TITAN =====
 // A towering lizard monster that stomps in from one side, walks all the way
 // across the city and off the other edge. Each footstep shakes the screen,
@@ -1133,24 +1224,58 @@ function drawOctopus() {
     c.beginPath(); c.arc(head.x + dx * s, head.y + dy * s, r * s, 0, Math.PI * 2); c.fill();
   });
 
-  // eyes follow the nearest kitten, glow on the beat
+  // eyes: raised bumps with a golden iris, a horizontal bar pupil and heavy
+  // lids, like a real octopus; the pupil drifts slightly toward the nearest kitten
   const target = kittens.reduce((best, k) => {
     const d = Math.hypot(k.x - head.x, k.y - head.y);
     return !best || d < best.d ? { k, d } : best;
   }, null);
+  const lidCover = o.blink ? 1 : 0.22 + 0.04 * Math.sin(o.phase * 0.2);
   [-1, 1].forEach(side => {
-    const ex = head.x + side * s * 0.12, ey = head.y - s * 0.05, er = s * 0.075;
-    c.fillStyle = '#fff';
-    c.beginPath(); c.ellipse(ex, ey, er, o.blink ? er * 0.15 : er, 0, 0, Math.PI * 2); c.fill();
-    c.shadowBlur = 0;
-    if(!o.blink) {
-      let px = 0, py = 0;
-      if(target) { const a = Math.atan2(target.k.y - ey, target.k.x - ex); px = Math.cos(a) * er * 0.45; py = Math.sin(a) * er * 0.45; }
-      c.fillStyle = '#111';
-      c.beginPath(); c.arc(ex + px, ey + py, er * 0.45, 0, Math.PI * 2); c.fill();
-      c.fillStyle = '#fff';
-      c.beginPath(); c.arc(ex + px - er * 0.15, ey + py - er * 0.18, er * 0.14, 0, Math.PI * 2); c.fill();
+    const ex = head.x + side * s * 0.15, ey = head.y - s * 0.06, er = s * 0.06;
+    // raised bump the eye sits in
+    const bump = c.createRadialGradient(ex, ey - er * 0.4, er * 0.2, ex, ey, er * 1.45);
+    bump.addColorStop(0, belly); bump.addColorStop(1, body);
+    c.fillStyle = bump;
+    c.beginPath(); c.ellipse(ex, ey, er * 1.45, er * 1.3, 0, 0, Math.PI * 2); c.fill();
+
+    c.save();
+    c.beginPath(); c.ellipse(ex, ey, er, er * 0.85, 0, 0, Math.PI * 2); c.clip();
+    // amber iris
+    const iris = c.createRadialGradient(ex, ey, er * 0.1, ex, ey, er);
+    iris.addColorStop(0, '#f1d27a'); iris.addColorStop(0.55, '#c08d2e'); iris.addColorStop(1, '#4a2f10');
+    c.fillStyle = iris;
+    c.fillRect(ex - er, ey - er, er * 2, er * 2);
+    // fine flecks in the iris
+    c.strokeStyle = 'rgba(90,55,15,0.35)'; c.lineWidth = Math.max(1, er * 0.04);
+    for(let i = 0; i < 14; i++) {
+      const a = i / 14 * Math.PI * 2;
+      c.beginPath(); c.moveTo(ex + Math.cos(a) * er * 0.35, ey + Math.sin(a) * er * 0.3);
+      c.lineTo(ex + Math.cos(a) * er * 0.9, ey + Math.sin(a) * er * 0.78); c.stroke();
     }
+    // horizontal bar pupil, slowly widening and narrowing
+    let px = 0, py = 0;
+    if(target) { const a = Math.atan2(target.k.y - ey, target.k.x - ex); px = Math.cos(a) * er * 0.15; py = Math.sin(a) * er * 0.08; }
+    const pw = er * (1.0 + 0.2 * Math.sin(o.phase * 0.3)), ph = er * 0.26;
+    c.fillStyle = '#0a0806';
+    c.beginPath(); c.ellipse(ex + px, ey + py, pw / 2, ph / 2, 0, 0, Math.PI * 2); c.fill();
+    c.fillRect(ex + px - pw * 0.4, ey + py - ph / 2, pw * 0.8, ph);
+    // faint wet sheen
+    c.fillStyle = 'rgba(255,255,255,0.18)';
+    c.beginPath(); c.ellipse(ex - er * 0.3, ey - er * 0.35, er * 0.35, er * 0.15, -0.3, 0, Math.PI * 2); c.fill();
+    // heavy upper lid
+    const lidY = ey - er * 0.85 + er * 1.7 * lidCover;
+    c.fillStyle = body;
+    c.beginPath();
+    c.moveTo(ex - er * 1.1, ey - er * 1.1); c.lineTo(ex + er * 1.1, ey - er * 1.1);
+    c.lineTo(ex + er * 1.1, lidY); c.quadraticCurveTo(ex, lidY + er * 0.15, ex - er * 1.1, lidY);
+    c.closePath(); c.fill();
+    c.strokeStyle = dark; c.lineWidth = Math.max(1, er * 0.08);
+    c.beginPath(); c.moveTo(ex - er * 1.1, lidY); c.quadraticCurveTo(ex, lidY + er * 0.15, ex + er * 1.1, lidY); c.stroke();
+    c.restore();
+    // socket rim
+    c.strokeStyle = dark; c.lineWidth = Math.max(1, er * 0.06);
+    c.beginPath(); c.ellipse(ex, ey, er, er * 0.85, 0, 0, Math.PI * 2); c.stroke();
   });
   // little smile, bigger on the beat
   c.strokeStyle = dark; c.lineWidth = Math.max(2, s * 0.012);
@@ -1161,6 +1286,7 @@ function initChaosScene() {
   buildings.length = 0; trees.length = 0;
   octopus = null; nextOctopusAt = performance.now() + 4000;   // first visit soon after picking Chaos
   initSky();
+  initTardigrades();
   titan = null; nextTitanAt = performance.now() + 12000;   // first walk-through ~12 s in
   kittens.length = 0; kaijus.length = 0; particles.length = 0; lasers.length = 0;
   const w = chaosCanvas.width, h = chaosCanvas.height;
@@ -1267,6 +1393,9 @@ function drawChaos() {
   // the titan walks through the city, in front of the planets
   updateTitan(groundY);
   drawTitan(groundY);
+
+  // water bears float in front of the titan
+  updateAndDrawTardigrades();
 
   // Spawn
   if(Math.random() < 0.05 + groove.level*0.12) spawnKitten();
