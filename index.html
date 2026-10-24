@@ -812,17 +812,12 @@ function drawSky(w, h, groundY) {
   sky.addColorStop(1, '#1a1240');
   cctx.fillStyle = sky;
   cctx.fillRect(0, 0, w, h);
-  if(groove.flash > 0.02) {   // soft pulse on the beat
-    cctx.fillStyle = `hsla(${(bgPhase*120)%360},90%,60%,${(groove.flash*0.1).toFixed(3)})`;
-    cctx.fillRect(0, 0, w, h);
-  }
-
-  // twinkling stars, brighter when the music is louder
+  // twinkling stars, a touch brighter when the music is louder (smoothly, never flashing)
   skyStars.forEach(st => {
     st.tw += st.sp;
-    const a = Math.min(1, (0.35 + 0.65 * Math.abs(Math.sin(st.tw))) * (0.75 + groove.level * 0.6));
+    const a = Math.min(1, (0.35 + 0.65 * Math.abs(Math.sin(st.tw))) * (0.85 + groove.level * 0.25));
     cctx.fillStyle = `rgba(255,255,240,${a.toFixed(2)})`;
-    cctx.beginPath(); cctx.arc(st.x, st.y, st.r * (1 + groove.flash * 0.6), 0, Math.PI * 2); cctx.fill();
+    cctx.beginPath(); cctx.arc(st.x, st.y, st.r, 0, Math.PI * 2); cctx.fill();
   });
 
   // a shooting star now and then
@@ -899,6 +894,158 @@ function updateAndDrawPlanets(w, groundY) {
     if(p.ring) drawRing(p, 'front');
     p.moons.forEach(m => drawMoon(m, p, false));
   });
+}
+
+// ===== GIANT TITAN =====
+// A towering lizard monster that stomps in from one side, walks all the way
+// across the city and off the other edge. Each footstep shakes the screen,
+// its back spikes flare on the beat, and now and then it fires a breath beam.
+let titan = null, nextTitanAt = 0, shake = 0;
+// people who turn on "reduce motion" on their device get no shaking and no music reactions
+const reducedMotion = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+function spawnTitan() {
+  const w = chaosCanvas.width, h = chaosCanvas.height;
+  const size = Math.min(h * 0.72, w * 1.3);
+  const dir = Math.random() < 0.5 ? 1 : -1;            // 1 = walks left to right
+  titan = { dir, size, x: dir > 0 ? -size * 0.5 : w + size * 0.5,
+            speed: (w + size * 1.6) / 1900,             // about 30 s to cross
+            phase: 0, lastPlant: 0, glow: 0, beam: 0, beamCool: 300 };
+}
+
+function titanHead() {
+  const t = titan, h = chaosCanvas.height, S = t.size;
+  return { x: t.x + t.dir * 0.3 * S, y: h * 0.75 - 0.84 * S };
+}
+
+function updateTitan(groundY) {
+  const now = performance.now(), w = chaosCanvas.width;
+  if(!titan) { if(now > nextTitanAt) spawnTitan(); return; }
+  const t = titan;
+  t.x += t.dir * t.speed * (1 + groove.level * 0.6);
+  t.phase += 0.075 * (1 + groove.level * 0.6);
+  // a foot lands twice per stride
+  const plant = Math.floor(t.phase / Math.PI);
+  if(plant !== t.lastPlant) { t.lastPlant = plant; if(!reducedMotion) shake = Math.max(shake, t.size * 0.012); }
+  // spikes charge up smoothly before and during the beam
+  t.glow += ((t.beam > 0 ? 1 : 0) - t.glow) * 0.05;
+  if(t.beam > 0) t.beam--;
+  else if(--t.beamCool <= 0 && (Math.random() < 0.004 || (groove.beat > 0.95 && Math.random() < 0.2))) {
+    t.beam = 110; t.beamCool = 420 + Math.random() * 300;
+  }
+  const gone = t.dir > 0 ? t.x > w + t.size * 1.0 : t.x < -t.size * 1.0;
+  if(gone) { titan = null; nextTitanAt = now + 35000 + Math.random() * 35000; }
+}
+
+function drawTitan(groundY) {
+  if(!titan) return;
+  const t = titan, c = cctx, S = t.size;
+  const skin = '#2f4038', skinDark = '#1f2b26', belly = '#5d6f5f';
+  const charge = t.glow;
+  const bob = Math.abs(Math.sin(t.phase)) * 0.015 * S;
+
+  c.save();
+  c.translate(t.x, groundY + 2);
+  c.scale(t.dir * S, S);                               // draw facing right in units of its height
+  c.translate(0, -bob / S);
+  c.lineJoin = 'round';
+  c.lineWidth = 0.006;
+  c.strokeStyle = '#0c120f';
+
+  // one leg: thigh from the hip down to a stomping foot
+  const leg = (offset, col) => {
+    const sw = Math.sin(t.phase + offset);
+    const fx = sw * 0.14, lift = Math.max(0, Math.cos(t.phase + offset)) * 0.06;
+    c.fillStyle = col;
+    c.beginPath();
+    c.moveTo(-0.1, -0.42); c.lineTo(0.1, -0.42);
+    c.quadraticCurveTo(0.12 + fx * 0.5, -0.2, fx + 0.08, -lift - 0.03);
+    c.lineTo(fx - 0.08, -lift - 0.03);
+    c.quadraticCurveTo(-0.12 + fx * 0.5, -0.2, -0.1, -0.42);
+    c.fill(); c.stroke();
+    c.beginPath(); c.ellipse(fx + 0.02, -lift - 0.02, 0.11, 0.035, 0, 0, Math.PI * 2); c.fill(); c.stroke();
+  };
+  leg(Math.PI, skinDark);                              // far leg
+
+  // tail, swaying as it walks
+  const sway = Math.sin(t.phase * 0.5) * 0.05;
+  c.fillStyle = skin;
+  c.beginPath();
+  c.moveTo(-0.08, -0.55);
+  c.quadraticCurveTo(-0.45, -0.45 + sway, -0.9, -0.04 + sway);
+  c.quadraticCurveTo(-0.45, -0.22 + sway * 0.5, -0.04, -0.3);
+  c.fill(); c.stroke();
+
+  // back spikes, glowing with the beat or before the beam
+  const P0 = [-0.6, -0.12], P1 = [-0.25, -0.72], P2 = [0.14, -0.9];
+  for(let i = 0; i <= 11; i++) {
+    const u = i / 11, v = 1 - u;
+    const x = v*v*P0[0] + 2*v*u*P1[0] + u*u*P2[0], y = v*v*P0[1] + 2*v*u*P1[1] + u*u*P2[1];
+    const tx = 2*v*(P1[0]-P0[0]) + 2*u*(P2[0]-P1[0]), ty = 2*v*(P1[1]-P0[1]) + 2*u*(P2[1]-P1[1]);
+    const tl = Math.hypot(tx, ty), nx = ty / tl, ny = -tx / tl;   // points up and back
+    const len = 0.05 + Math.sin(u * Math.PI) * 0.08;
+    c.fillStyle = charge > 0.05 ? `rgba(${120 + 135*charge|0},${230},${255},1)` : '#3e5248';
+    if(charge > 0.05) { c.shadowColor = '#7df9ff'; c.shadowBlur = 30 * charge * S / 400; }
+    c.beginPath();
+    c.moveTo(x - tx/tl * 0.035, y - ty/tl * 0.035);
+    c.lineTo(x + nx * len, y + ny * len);
+    c.lineTo(x + tx/tl * 0.035, y + ty/tl * 0.035);
+    c.fill();
+    c.shadowBlur = 0;
+  }
+
+  // torso, leaning forward
+  c.fillStyle = skin;
+  c.beginPath(); c.ellipse(0.02, -0.58, 0.19, 0.3, -0.3, 0, Math.PI * 2); c.fill(); c.stroke();
+  c.fillStyle = belly;
+  c.beginPath(); c.ellipse(0.1, -0.52, 0.08, 0.2, -0.3, 0, Math.PI * 2); c.fill();
+
+  leg(0, skin);                                        // near leg
+
+  // little arms
+  c.fillStyle = skin;
+  c.beginPath(); c.moveTo(0.12, -0.66); c.lineTo(0.27, -0.58); c.lineTo(0.25, -0.54); c.lineTo(0.12, -0.6); c.fill(); c.stroke();
+
+  // head and jaw (opens for the beam)
+  const open = t.beam > 0 ? 0.06 : 0.01;
+  c.fillStyle = skin;
+  c.beginPath();
+  c.moveTo(0.1, -0.86); c.quadraticCurveTo(0.22, -0.97, 0.4, -0.85);
+  c.lineTo(0.4, -0.81); c.lineTo(0.14, -0.79); c.closePath();
+  c.fill(); c.stroke();
+  c.beginPath();
+  c.moveTo(0.14, -0.79); c.lineTo(0.37, -0.8 + open); c.lineTo(0.36, -0.77 + open); c.lineTo(0.12, -0.74);
+  c.closePath(); c.fill(); c.stroke();
+  c.fillStyle = '#fff';                                // teeth
+  for(let i = 0; i < 4; i++) { const tx = 0.2 + i * 0.045; c.beginPath(); c.moveTo(tx, -0.81); c.lineTo(tx + 0.01, -0.79); c.lineTo(tx + 0.02, -0.81); c.fill(); }
+  c.fillStyle = charge > 0.3 ? '#7df9ff' : '#ffb000'; // eye
+  c.shadowColor = c.fillStyle; c.shadowBlur = 12 * S / 400;
+  c.beginPath(); c.ellipse(0.27, -0.875, 0.018, 0.011, -0.2, 0, Math.PI * 2); c.fill();
+  c.shadowBlur = 0;
+  c.restore();
+
+  // breath beam straight ahead
+  if(t.beam > 0) {
+    const hd = titanHead(), w = chaosCanvas.width;
+    const bx = hd.x + t.dir * 0.08 * S, by = hd.y + 0.05 * S;
+    const reach = (t.dir > 0 ? w - bx : bx) + 50;
+    const fade = Math.min(1, t.beam / 20, (110 - t.beam) / 10 + 0.2);
+    const wob = Math.sin(t.beam * 0.7) * 0.012 * S;
+    const g = c.createLinearGradient(bx, by, bx + t.dir * reach, by);
+    g.addColorStop(0, `rgba(230,255,255,${fade})`);
+    g.addColorStop(0.15, `rgba(90,220,255,${0.9 * fade})`);
+    g.addColorStop(1, `rgba(60,120,255,${0.15 * fade})`);
+    c.fillStyle = g;
+    c.shadowColor = '#5cf'; c.shadowBlur = 25;
+    c.beginPath();
+    c.moveTo(bx, by - 0.012 * S);
+    c.lineTo(bx + t.dir * reach, by - 0.06 * S + wob);
+    c.lineTo(bx + t.dir * reach, by + 0.06 * S + wob);
+    c.lineTo(bx, by + 0.012 * S);
+    c.fill();
+    c.shadowBlur = 0;
+    if(Math.random() < 0.5) spawnParticle(bx + t.dir * Math.random() * reach, by + (Math.random() - 0.5) * 0.08 * S, '#9ff');
+  }
 }
 
 // ===== GIANT OCTOPUS =====
@@ -993,7 +1140,6 @@ function drawOctopus() {
   }, null);
   [-1, 1].forEach(side => {
     const ex = head.x + side * s * 0.12, ey = head.y - s * 0.05, er = s * 0.075;
-    if(o.flex > 0.3) { c.shadowColor = '#ff0'; c.shadowBlur = 20 * o.flex; }
     c.fillStyle = '#fff';
     c.beginPath(); c.ellipse(ex, ey, er, o.blink ? er * 0.15 : er, 0, 0, Math.PI * 2); c.fill();
     c.shadowBlur = 0;
@@ -1015,6 +1161,7 @@ function initChaosScene() {
   buildings.length = 0; trees.length = 0;
   octopus = null; nextOctopusAt = performance.now() + 4000;   // first visit soon after picking Chaos
   initSky();
+  titan = null; nextTitanAt = performance.now() + 12000;   // first walk-through ~12 s in
   kittens.length = 0; kaijus.length = 0; particles.length = 0; lasers.length = 0;
   const w = chaosCanvas.width, h = chaosCanvas.height;
   for(let i=0;i<14;i++) buildings.push({x:(w/14)*i, w:25+Math.random()*55, h:80+Math.random()*180, hue:Math.random()*360});
@@ -1029,10 +1176,10 @@ let bgPhase = 0;
    waiting for a kick drum. */
 let analyser = null, freqData = null;
 let shortRms = 0, longRms = 0, lastBeatAt = 0, loudMax = 0.02, beatArmed = true;
-const groove = { level: 0, beat: 0, flash: 0 };   // beat and flash decay each frame
+const groove = { level: 0, beat: 0 };   // beat decays each frame
 
 function listen() {
-  if(!analyser || !isPlaying) { groove.level *= 0.9; groove.beat *= 0.85; groove.flash *= 0.85; return; }
+  if(!analyser || !isPlaying || reducedMotion) { groove.level *= 0.9; groove.beat *= 0.85; return; }
   analyser.getByteTimeDomainData(freqData);
   let sq = 0;
   for(let i = 0; i < freqData.length; i++) { const v = (freqData[i] - 128) / 128; sq += v * v; }
@@ -1049,10 +1196,10 @@ function listen() {
   if(shortRms < longRms * 1.15) beatArmed = true;
   if(beatArmed && shortRms > longRms * 1.3 && shortRms > loudMax * 0.3 && now - lastBeatAt > 280) {
     lastBeatAt = now; beatArmed = false;
-    groove.beat = 1; groove.flash = 1;
+    groove.beat = 1;
     onBeat();
   }
-  groove.beat *= 0.88; groove.flash *= 0.82;
+  groove.beat *= 0.88;
 }
 
 function onBeat() {
@@ -1068,6 +1215,10 @@ function onBeat() {
 
 function drawChaos() {
   if(!chaosRunning) return;
+  // footsteps shake everything a little
+  cctx.save();
+  if(shake > 0.3) cctx.translate((Math.random() - 0.5) * shake, (Math.random() - 0.5) * shake);
+  shake *= 0.85;
   const w = chaosCanvas.width, h = chaosCanvas.height;
   listen();
   bgPhase += 0.003 + groove.level * 0.01;
@@ -1099,7 +1250,7 @@ function drawChaos() {
   buildings.forEach(b => {
     cctx.fillStyle = `hsl(${b.hue},40%,20%)`;
     cctx.fillRect(b.x, groundY-b.h, b.w, b.h);
-    cctx.fillStyle = `hsla(${50 + groove.flash*250},100%,${70 + groove.flash*20}%,${(0.5 + groove.flash*0.5).toFixed(2)})`;
+    cctx.fillStyle = `hsla(50,100%,70%,0.5)`;
     for(let wy=groundY-b.h+10;wy<groundY-10;wy+=18)
       for(let wx=b.x+4;wx<b.x+b.w-4;wx+=10)
         cctx.fillRect(wx,wy,5,7);
@@ -1112,6 +1263,10 @@ function drawChaos() {
   cctx.fillRect(0,groundY,w,h-groundY);
 
   updateAndDrawPlanets(w, groundY);
+
+  // the titan walks through the city, in front of the planets
+  updateTitan(groundY);
+  drawTitan(groundY);
 
   // Spawn
   if(Math.random() < 0.05 + groove.level*0.12) spawnKitten();
@@ -1145,6 +1300,7 @@ function drawChaos() {
     if(k.power==='laser' && Math.random()<0.04) {
       const foes = kaijus.slice();
       if(octopus && octopus.rise > 0.5) { const hd = octopusHead(); foes.push({ x: hd.x, y: hd.y - octopus.size * 0.15 }); }
+      if(titan) { const hd = titanHead(); foes.push({ x: titan.x, y: hd.y + titan.size * 0.3 }); }
       const closest = foes.reduce((best,kj)=>{const d=Math.hypot(k.x-kj.x,k.y-kj.y);return d<(best?best.d:999)?{kj,d}:best;},null);
       if(closest) {
         spawnLaser(k.x, k.y-k.size*0.4, closest.kj.x, closest.kj.y);
@@ -1185,6 +1341,7 @@ function drawChaos() {
   }
   cctx.globalAlpha = 1;
 
+  cctx.restore();
   requestAnimationFrame(drawChaos);
 }
 
