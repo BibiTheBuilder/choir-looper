@@ -317,9 +317,11 @@
       background: rgba(0,0,0,0.55); box-shadow: 0 -4px 18px rgba(0,0,0,0.25);
     }
     .theme-white .controls { background: rgba(245,245,245,0.92); }
-    .controls #playBtn { flex: 1 1 100%; font-size: 1.15rem; min-height: 54px; }
-    .controls #loopBtn, .controls #clearSelBtn { flex: 1 1 40%; white-space: nowrap; }
+    .controls #playBtn, .controls #loopBtn { flex: 1 1 40%; white-space: nowrap; }
     .speed-control { flex: 1 1 auto; }
+    .time-input-row { gap: 6px; font-size: 0.95rem; }
+    .time-input-row input[type="text"] { width: 56px; padding: 6px 4px; font-size: 0.95rem; }
+    .time-input-row .btn { padding: 8px 10px !important; min-height: 40px; }
     .speed-control input[type="range"] { flex: 1; width: auto; min-width: 80px; }
     .theme-pick { padding: 6px 12px; font-size: 0.85rem; }
   }
@@ -353,12 +355,12 @@
   <label for="endInput">End:</label>
   <input type="text" id="endInput" placeholder="0:00">
   <button class="btn" id="setTimeBtn" style="padding:8px 14px; font-size:0.95rem;">Set</button>
+  <button class="btn" id="clearSelBtn" style="padding:8px 14px; font-size:0.95rem;">Clear</button>
 </div>
 
 <div class="controls" id="controls">
   <button class="btn primary" id="playBtn">Play</button>
   <button class="btn" id="loopBtn">Loop: Off</button>
-  <button class="btn" id="clearSelBtn">Clear section</button>
   <div class="speed-control">
     <span>Speed:</span>
     <input type="range" id="speedSlider" min="0.5" max="1.5" step="0.05" value="1">
@@ -1347,7 +1349,7 @@ function buildTrackRow(tr) {
   soloBtn.addEventListener('click', () => { tr.solo = !tr.solo; applyGains(); saveParts(); });
   volEl.addEventListener('input', () => { tr.volume = parseFloat(volEl.value); applyGains(); });
   volEl.addEventListener('change', saveParts);
-  killBtn.addEventListener('click', () => { if(confirm('Remove "' + tr.name + '"?')) removeTrack(tr); });
+  killBtn.addEventListener('click', () => removeTrack(tr));
   attachDrag(waveEl);
 
   tracksEl.appendChild(row);
