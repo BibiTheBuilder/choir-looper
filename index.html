@@ -216,21 +216,40 @@
   .empty-hint { text-align: center; font-weight: 800; font-size: 1.1rem; padding: 26px 10px; opacity: 0.85; }
 
   /* ===== HINTS + TIME INPUTS ===== */
-  .drag-hint { display: none; text-align: center; font-weight: 800; font-size: 1.1rem; margin-top: 10px; }
-  .drag-hint.visible { display: block; }
-
-  .time-input-row { display: none; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; font-size: 1.05rem; font-weight: 800; margin-top: 8px; }
-  .time-input-row.visible { display: flex; }
-  .time-input-row input[type="text"] {
-    width: 72px; padding: 6px 10px; border-radius: 6px; border: 2px solid;
-    font-size: 1.05rem; font-weight: 800; font-family: 'Nunito', sans-serif; text-align: center;
+  /* instruction above the waves; hides once a section is picked */
+  .drag-hint {
+    display: none; text-align: center; font-weight: 800; font-size: 1rem;
+    padding: 6px 16px; border-radius: 20px; margin-top: 12px;
   }
-  .theme-white .time-input-row input { background: #fff; color: #111; border-color: #999; }
-  .theme-dark .time-input-row input { background: #2a2a4a; color: #fff; border-color: #666; }
-  .theme-rainbow .time-input-row input { background: rgba(0,0,0,0.3); color: #fff; border-color: rgba(255,255,255,0.5); }
-  .theme-deepsea .time-input-row input { background: rgba(2,16,30,0.7); color: #eafffc; border-color: rgba(79,242,233,0.55); }
-  .theme-chaos .time-input-row input { background: rgba(0,0,0,0.5); color: #ff0; border-color: #ff00ff; }
-  .theme-lofi .time-input-row input { background: rgba(24,15,18,0.7); color: #f3dcc4; border-color: rgba(240,177,132,0.5); }
+  .drag-hint.visible { display: inline-block; }
+  .theme-white .drag-hint { background: rgba(0,0,0,0.07); color: #111; }
+  .theme-dark .drag-hint { background: rgba(255,255,255,0.1); color: #fff; }
+  .theme-rainbow .drag-hint { background: rgba(0,0,0,0.5); color: #fff; }
+  .theme-deepsea .drag-hint { background: rgba(2,16,30,0.75); color: #bff4ee; }
+  .theme-chaos .drag-hint { background: rgba(0,0,0,0.7); color: #0ff; }
+  .theme-lofi .drag-hint { background: rgba(0,0,0,0.4); color: #f3dcc4; }
+
+  /* section readout in the transport: "Section 0:22 – 0:27 x" or "Whole song" */
+  .section-line { display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 1rem; }
+  .section-line .sec-label { opacity: 0.8; }
+  .section-line .sec-times { display: none; align-items: center; gap: 6px; }
+  .section-line.has-sel .sec-times, .section-line.editing .sec-times { display: inline-flex; }
+  .section-line.has-sel .whole-song, .section-line.editing .whole-song { display: none; }
+  .whole-song {
+    background: none; border: none; color: inherit; font: inherit; cursor: pointer; padding: 6px 2px;
+    text-decoration: underline dotted; text-underline-offset: 4px; -webkit-tap-highlight-color: transparent;
+  }
+  .section-line input[type="text"] {
+    width: 62px; height: 36px; padding: 0 4px; border-radius: 6px; border: 2px solid;
+    font-size: 1rem; font-weight: 800; font-family: 'Nunito', sans-serif; text-align: center;
+  }
+  .section-line .mini { min-width: 36px; height: 36px; padding: 0; }
+  .theme-white .section-line input { background: #fff; color: #111; border-color: #999; }
+  .theme-dark .section-line input { background: #2a2a4a; color: #fff; border-color: #666; }
+  .theme-rainbow .section-line input { background: rgba(0,0,0,0.45); color: #fff; border-color: rgba(255,255,255,0.6); }
+  .theme-deepsea .section-line input { background: rgba(2,16,30,0.85); color: #eafffc; border-color: rgba(79,242,233,0.55); }
+  .theme-chaos .section-line input { background: rgba(0,0,0,0.7); color: #ff0; border-color: #ff00ff; }
+  .theme-lofi .section-line input { background: rgba(24,15,18,0.85); color: #f3dcc4; border-color: rgba(240,177,132,0.5); }
 
   /* ===== CONTROLS ===== */
   .controls { display: none; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
@@ -333,9 +352,11 @@
     .controls #playBtn, .controls #loopBtn { flex: 1 1 35%; white-space: nowrap; }
     .controls #restartBtn { flex: 0 0 52px; padding: 0; }
     .speed-control { flex: 1 1 auto; }
-    .time-input-row { gap: 6px; font-size: 0.95rem; }
-    .time-input-row input[type="text"] { width: 56px; padding: 6px 4px; font-size: 0.95rem; }
-    .time-input-row .btn { padding: 8px 10px !important; min-height: 40px; }
+    .drag-hint { font-size: 0.95rem; padding: 6px 14px; }
+    .controls .section-line { order: 4; flex: 1 1 auto; font-size: 0.95rem; }
+    .controls .clock { order: 5; font-size: 0.95rem; }
+    .controls .speed-control { order: 6; flex: 1 1 100%; }
+    .section-line input[type="text"] { width: 54px; font-size: 0.95rem; }
     .speed-control input[type="range"] { flex: 1; width: auto; min-width: 80px; }
     .theme-switcher { gap: 4px; }
     .theme-pick { padding: 5px 8px; font-size: 0.8rem; white-space: nowrap; }
@@ -366,25 +387,28 @@
 
 <div class="status-msg" id="statusMsg" role="status" aria-live="polite"></div>
 
+<div class="drag-hint" id="dragHint">Drag across a wave to pick a section</div>
+
 <div class="tracks" id="tracks">
   <div class="empty-hint" id="emptyHint">No parts yet. Add your soprano, mezzo, alto, tenor and bass files, or drop them anywhere on this page.</div>
 </div>
 
-<div class="drag-hint" id="dragHint">Drag on a wave to pick a section</div>
 
-<div class="time-input-row" id="timeInputRow">
-  <label for="startInput">Start:</label>
-  <input type="text" id="startInput" placeholder="0:00">
-  <label for="endInput">End:</label>
-  <input type="text" id="endInput" placeholder="0:00">
-  <button class="btn" id="setTimeBtn" style="padding:8px 14px; font-size:0.95rem;">Set</button>
-  <button class="btn" id="clearSelBtn" style="padding:8px 14px; font-size:0.95rem;">Clear</button>
-</div>
 
 <div class="controls" id="controls">
   <button class="btn" id="restartBtn" title="Back to the start" aria-label="Back to the start"></button>
   <button class="btn primary" id="playBtn">Play</button>
   <button class="btn" id="loopBtn">Loop: Off</button>
+  <div class="section-line" id="sectionLine">
+    <span class="sec-label">Section</span>
+    <button class="whole-song" id="wholeSongBtn" title="Type a start and end time">Whole song</button>
+    <span class="sec-times">
+      <input type="text" id="startInput" placeholder="0:00" aria-label="Section start" autocomplete="off">
+      <span aria-hidden="true">&ndash;</span>
+      <input type="text" id="endInput" placeholder="0:00" aria-label="Section end" autocomplete="off">
+      <button class="mini" id="clearSelBtn" title="Clear section" aria-label="Clear section">&#10005;</button>
+    </span>
+  </div>
   <div class="speed-control">
     <span>Speed:</span>
     <input type="range" id="speedSlider" min="0.5" max="1.5" step="0.05" value="1">
@@ -1084,8 +1108,8 @@ const tracksEl = $('tracks'), emptyHint = $('emptyHint'), statusMsg = $('statusM
 const addBtn = $('addBtn'), removeAllBtn = $('removeAllBtn'), fileInput = $('fileInput');
 const restartBtn = $('restartBtn'), playBtn = $('playBtn'), loopBtn = $('loopBtn'), clearSelBtn = $('clearSelBtn');
 const speedSlider = $('speedSlider'), speedValue = $('speedValue'), clock = $('clock');
-const controls = $('controls'), dragHint = $('dragHint'), timeInputRow = $('timeInputRow');
-const startInput = $('startInput'), endInput = $('endInput'), setTimeBtn = $('setTimeBtn');
+const controls = $('controls'), dragHint = $('dragHint'), sectionLine = $('sectionLine'), wholeSongBtn = $('wholeSongBtn');
+const startInput = $('startInput'), endInput = $('endInput');
 
 /* ---------- small helpers ---------- */
 function fmt(s) { if(isNaN(s) || s < 0) return '0:00'; return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0'); }
@@ -1313,9 +1337,7 @@ function refreshDuration() {
   const has = tracks.length > 0;
   emptyHint.style.display = has ? 'none' : 'block';
   controls.className = has ? 'controls visible' : 'controls';
-  dragHint.className = has ? 'drag-hint visible' : 'drag-hint';
-  timeInputRow.className = has ? 'time-input-row visible' : 'time-input-row';
-  updateTimeInputs();
+  updateSelectionUI();
   updateClock();
 }
 
@@ -1543,30 +1565,58 @@ function updateSelectionUI() {
     el.style.left = (selStart / duration * 100) + '%';
     el.style.width = ((selEnd - selStart) / duration * 100) + '%';
   });
+  dragHint.classList.toggle('visible', tracks.length > 0 && !show);
+  sectionLine.classList.toggle('has-sel', show);
+  updateTimeInputs();
 }
 
 function updateTimeInputs() {
-  if(hasSel()) { startInput.value = fmt(selStart); endInput.value = fmt(selEnd); }
-  else { startInput.value = ''; endInput.value = ''; }
+  if(sectionLine.classList.contains('editing') && !hasSel()) return;
+  // leave a box alone while someone is typing in it
+  if(document.activeElement !== startInput) startInput.value = hasSel() ? fmt(selStart) : '';
+  if(document.activeElement !== endInput) endInput.value = hasSel() ? fmt(selEnd) : '';
 }
 
-setTimeBtn.addEventListener('click', () => {
-  if(!duration) return;
+// typed times apply as soon as both make sense; no Set button needed
+function readTimeInputs() {
+  if(!startInput.value.trim() || !endInput.value.trim()) return null;
   const s = parseTime(startInput.value), e = parseTime(endInput.value);
-  const bad = isNaN(s) || isNaN(e) || e <= s || s < 0 || e > duration + 0.5;
-  if(bad) {
-    [startInput, endInput].forEach(i => i.classList.add('invalid'));
-    timeInputRow.classList.add('shake');
-    setTimeout(() => {
-      [startInput, endInput].forEach(i => i.classList.remove('invalid'));
-      timeInputRow.classList.remove('shake');
-    }, 500);
-    return;
-  }
-  selStart = s; selEnd = Math.min(e, duration);
+  if(isNaN(s) || isNaN(e) || e <= s || s < 0 || e > duration + 0.5) return null;
+  return [s, Math.min(e, duration)];
+}
+function applyTimeInputs() {
+  if(!duration) return;
+  const r = readTimeInputs();
+  [startInput, endInput].forEach(i => i.classList.toggle('invalid', !r));
+  if(!r) return;
+  selStart = r[0]; selEnd = r[1];
+  sectionLine.classList.remove('editing');
   updateSelectionUI();
   saveSettings();
   if(isPlaying && loopActive()) startPlayback(selStart);
+}
+[startInput, endInput].forEach(inp => {
+  inp.addEventListener('change', applyTimeInputs);
+  inp.addEventListener('keydown', e => { if(e.key === 'Enter') { e.preventDefault(); inp.blur(); } });
+});
+// leaving the boxes with times that don't work: put back what was there
+sectionLine.addEventListener('focusout', () => setTimeout(() => {
+  if(sectionLine.contains(document.activeElement)) return;
+  if(startInput.classList.contains('invalid')) {
+    sectionLine.classList.add('shake');
+    setTimeout(() => sectionLine.classList.remove('shake'), 400);
+  }
+  [startInput, endInput].forEach(i => i.classList.remove('invalid'));
+  sectionLine.classList.remove('editing');
+  updateSelectionUI();
+}, 0));
+wholeSongBtn.addEventListener('click', () => {
+  if(!duration) return;
+  sectionLine.classList.add('editing');
+  startInput.value = '0:00';
+  endInput.value = fmt(duration);
+  startInput.focus();
+  startInput.select();
 });
 
 clearSelBtn.addEventListener('click', () => {
