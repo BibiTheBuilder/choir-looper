@@ -490,7 +490,10 @@ function drawKitten(k) {
   const flip = k.vx < 0 ? -1 : 1;
   c.save();
   c.translate(k.x, k.y);
-  c.scale(flip, 1);
+  // hop up and pop bigger on the beat
+  const pop = 1 + (k.hop || 0) * 0.35;
+  c.translate(0, -(k.hop || 0) * s * 0.5);
+  c.scale(flip * pop, pop);
 
   // Cape / trail
   c.fillStyle = k.capeColor;
@@ -738,7 +741,7 @@ function spawnKaiju() {
     y: h*0.45 + Math.random()*h*0.2,
     color: KAIJU_COLORS[Math.floor(Math.random()*KAIJU_COLORS.length)],
     spineColor: `hsl(${Math.random()*60+160},80%,50%)`,
-    size: 350 + Math.random()*250,
+    size: Math.min(w, h) * (0.45 + Math.random() * 0.3),   // scales with the screen
     life: 300 + Math.random()*400,
     vx: (Math.random()-0.5)*0.8,
     vy: (Math.random()-0.5)*0.3,
@@ -764,8 +767,254 @@ function spawnLaser(x, y, tx, ty) {
   lasers.push({ x, y, tx, ty, life: 8, color: `hsl(${Math.random()*360},100%,60%)` });
 }
 
+
+// ===== NIGHT SKY: twinkling stars, shooting stars, bouncing planets with moons =====
+const skyStars = [], planets = [];
+let shootingStar = null;
+const PLANET_LOOKS = [
+  { hue: 18,  bands: true,  ring: false },   // rusty gas giant
+  { hue: 200, bands: false, ring: true  },   // icy ringed planet
+  { hue: 300, bands: true,  ring: false },   // candy purple
+  { hue: 140, bands: false, ring: false },   // little green one
+  { hue: 45,  bands: true,  ring: true  }    // golden ringed
+];
+
+function initSky() {
+  const w = chaosCanvas.width, h = chaosCanvas.height;
+  skyStars.length = 0; planets.length = 0; shootingStar = null;
+  const count = Math.round(w * h / 5000);
+  for(let i = 0; i < count; i++) {
+    skyStars.push({ x: Math.random() * w, y: Math.random() * h * 0.8,
+                    r: Math.random() < 0.9 ? 0.4 + Math.random() * 1.1 : 1.5 + Math.random() * 1.2,
+                    tw: Math.random() * Math.PI * 2, sp: 0.02 + Math.random() * 0.05 });
+  }
+  const scale = Math.min(w, h);
+  const looks = PLANET_LOOKS.slice().sort(() => Math.random() - 0.5).slice(0, w < 700 ? 3 : 4);
+  looks.forEach((look, i) => {
+    const r = scale * (0.04 + Math.random() * 0.05);
+    const moons = [];
+    for(let m = 0; m < 1 + Math.floor(Math.random() * 2); m++) {
+      moons.push({ dist: r * (1.6 + m * 0.7 + Math.random() * 0.3), ang: Math.random() * Math.PI * 2,
+                   speed: 0.015 + Math.random() * 0.02, r: r * (0.16 + Math.random() * 0.1) });
+    }
+    planets.push({ ...look, r, moons, squash: 0,
+      x: w * (0.15 + 0.7 * (i + 0.5) / looks.length), y: h * (0.15 + Math.random() * 0.3),
+      vx: (Math.random() < 0.5 ? -1 : 1) * (0.4 + Math.random() * 0.6), vy: 0,
+      hop: 7 + Math.random() * 4 });
+  });
+}
+
+function drawSky(w, h, groundY) {
+  // deep midnight, a little lighter toward the horizon
+  const sky = cctx.createLinearGradient(0, 0, 0, h);
+  sky.addColorStop(0, '#03020b');
+  sky.addColorStop(0.6, '#0b0a24');
+  sky.addColorStop(1, '#1a1240');
+  cctx.fillStyle = sky;
+  cctx.fillRect(0, 0, w, h);
+  if(groove.flash > 0.02) {   // soft pulse on the beat
+    cctx.fillStyle = `hsla(${(bgPhase*120)%360},90%,60%,${(groove.flash*0.1).toFixed(3)})`;
+    cctx.fillRect(0, 0, w, h);
+  }
+
+  // twinkling stars, brighter when the music is louder
+  skyStars.forEach(st => {
+    st.tw += st.sp;
+    const a = Math.min(1, (0.35 + 0.65 * Math.abs(Math.sin(st.tw))) * (0.75 + groove.level * 0.6));
+    cctx.fillStyle = `rgba(255,255,240,${a.toFixed(2)})`;
+    cctx.beginPath(); cctx.arc(st.x, st.y, st.r * (1 + groove.flash * 0.6), 0, Math.PI * 2); cctx.fill();
+  });
+
+  // a shooting star now and then
+  if(!shootingStar && Math.random() < 0.006) {
+    shootingStar = { x: Math.random() * w * 0.7, y: Math.random() * h * 0.3, life: 40,
+                     vx: 9 + Math.random() * 5, vy: 3 + Math.random() * 2 };
+  }
+  if(shootingStar) {
+    const ss = shootingStar;
+    ss.x += ss.vx; ss.y += ss.vy; ss.life--;
+    const tail = cctx.createLinearGradient(ss.x, ss.y, ss.x - ss.vx * 8, ss.y - ss.vy * 8);
+    tail.addColorStop(0, `rgba(255,255,255,${(ss.life / 40).toFixed(2)})`);
+    tail.addColorStop(1, 'rgba(255,255,255,0)');
+    cctx.strokeStyle = tail; cctx.lineWidth = 2;
+    cctx.beginPath(); cctx.moveTo(ss.x, ss.y); cctx.lineTo(ss.x - ss.vx * 8, ss.y - ss.vy * 8); cctx.stroke();
+    if(ss.life <= 0) shootingStar = null;
+  }
+}
+
+function drawMoon(m, p, behind) {
+  const tilt = 0.35;
+  const mx = p.x + Math.cos(m.ang) * m.dist, my = p.y + Math.sin(m.ang) * m.dist * tilt;
+  if((Math.sin(m.ang) < 0) !== behind) return;
+  const g = cctx.createRadialGradient(mx - m.r * 0.3, my - m.r * 0.3, m.r * 0.1, mx, my, m.r);
+  g.addColorStop(0, '#f4f1e8'); g.addColorStop(1, '#8d8a9e');
+  cctx.fillStyle = g;
+  cctx.beginPath(); cctx.arc(mx, my, m.r, 0, Math.PI * 2); cctx.fill();
+}
+
+function drawRing(p, half) {
+  // half: 'back' draws the far side of the ring, 'front' the near side
+  cctx.strokeStyle = `hsla(${p.hue + 30},70%,75%,0.8)`;
+  cctx.lineWidth = Math.max(2, p.r * 0.14);
+  cctx.beginPath();
+  if(half === 'back') cctx.ellipse(p.x, p.y, p.r * 1.8, p.r * 0.45, -0.25, Math.PI, Math.PI * 2);
+  else cctx.ellipse(p.x, p.y, p.r * 1.8, p.r * 0.45, -0.25, 0, Math.PI);
+  cctx.stroke();
+}
+
+function updateAndDrawPlanets(w, groundY) {
+  planets.forEach(p => {
+    // bounce along the skyline like balls; each beat sends them higher
+    p.vy += 0.18;
+    p.x += p.vx; p.y += p.vy;
+    if(p.x < p.r) { p.x = p.r; p.vx = Math.abs(p.vx); }
+    if(p.x > w - p.r) { p.x = w - p.r; p.vx = -Math.abs(p.vx); }
+    const floor = groundY - p.r * (1 - p.squash * 0.25);
+    if(p.y > floor) { p.y = floor; p.vy = -p.hop; p.squash = 1; }
+    if(groove.beat > 0.95 && p.vy > -2) p.vy = -p.hop * 1.25;
+    p.squash *= 0.85;
+    p.moons.forEach(m => { m.ang += m.speed * (1 + groove.level); });
+
+    p.moons.forEach(m => drawMoon(m, p, true));
+    if(p.ring) drawRing(p, 'back');
+
+    cctx.save();
+    cctx.translate(p.x, p.y);
+    cctx.scale(1 + p.squash * 0.2, 1 - p.squash * 0.2);   // squish on landing
+    const g = cctx.createRadialGradient(-p.r * 0.35, -p.r * 0.35, p.r * 0.1, 0, 0, p.r);
+    g.addColorStop(0, `hsl(${p.hue},85%,75%)`);
+    g.addColorStop(0.7, `hsl(${p.hue},70%,50%)`);
+    g.addColorStop(1, `hsl(${p.hue},70%,28%)`);
+    cctx.fillStyle = g;
+    cctx.beginPath(); cctx.arc(0, 0, p.r, 0, Math.PI * 2); cctx.fill();
+    if(p.bands) {
+      cctx.save();
+      cctx.beginPath(); cctx.arc(0, 0, p.r, 0, Math.PI * 2); cctx.clip();
+      cctx.fillStyle = `hsla(${p.hue + 15},70%,35%,0.35)`;
+      [-0.45, -0.1, 0.3].forEach(b => cctx.fillRect(-p.r, b * p.r, p.r * 2, p.r * 0.16));
+      cctx.restore();
+    }
+    cctx.restore();
+
+    if(p.ring) drawRing(p, 'front');
+    p.moons.forEach(m => drawMoon(m, p, false));
+  });
+}
+
+// ===== GIANT OCTOPUS =====
+// Rises from the bottom now and then, waves eight tentacles, watches the
+// kittens with big eyes, and curls along with the beat before sinking away.
+let octopus = null, nextOctopusAt = 0;
+
+function spawnOctopus() {
+  const w = chaosCanvas.width, h = chaosCanvas.height;
+  octopus = {
+    x: w * (0.3 + Math.random() * 0.4),
+    size: Math.min(w, h) * (0.5 + Math.random() * 0.15),
+    hue: [285, 320, 345, 15][Math.floor(Math.random() * 4)],
+    rise: 0, state: 'rising', stay: 900 + Math.random() * 600,
+    phase: Math.random() * 10, flex: 0, blink: 0
+  };
+}
+
+function updateOctopus() {
+  const now = performance.now();
+  if(!octopus) {
+    if(now > nextOctopusAt) spawnOctopus();
+    return;
+  }
+  const o = octopus;
+  o.phase += 0.02 + groove.level * 0.05;
+  if(groove.beat > 0.95) o.flex = 1;
+  o.flex *= 0.93;
+  if(o.blink > 0) o.blink--; else if(Math.random() < 0.004) o.blink = 8;
+  if(o.state === 'rising') { o.rise += 0.006; if(o.rise >= 1) { o.rise = 1; o.state = 'staying'; } }
+  else if(o.state === 'staying') { if(--o.stay <= 0) o.state = 'sinking'; }
+  else { o.rise -= 0.005; if(o.rise <= 0) { octopus = null; nextOctopusAt = now + 20000 + Math.random() * 25000; } }
+}
+
+function octopusHead() {
+  const o = octopus, h = chaosCanvas.height;
+  const ease = o.rise * o.rise * (3 - 2 * o.rise);   // smooth in and out
+  return { x: o.x + Math.sin(o.phase * 0.5) * o.size * 0.08,
+           y: h + o.size * 0.55 - ease * o.size * 1.05 };
+}
+
+function drawOctopus() {
+  if(!octopus) return;
+  const o = octopus, c = cctx, s = o.size;
+  const head = octopusHead();
+  const body = `hsl(${o.hue},70%,${48 + o.flex * 10}%)`;
+  const dark = `hsl(${o.hue},70%,32%)`;
+  const belly = `hsl(${o.hue + 20},80%,72%)`;
+
+  // tentacles: chains of segments that taper and curl
+  const segs = 22, len = s * 1.15;
+  for(let t = 0; t < 8; t++) {
+    const spread = (t - 3.5) / 3.5;                      // -1 .. 1
+    let ang = Math.PI / 2 + spread * 1.35;               // fan out downwards and sideways
+    let x = head.x + spread * s * 0.22, y = head.y + s * 0.18;
+    const curl = 0.07 + groove.level * 0.05 + o.flex * 0.12;
+    const pts = [[x, y]];
+    for(let i = 0; i < segs; i++) {
+      ang += Math.sin(o.phase * 2 + t * 0.9 + i * 0.35) * curl - spread * 0.03;
+      x += Math.cos(ang) * len / segs;
+      y += Math.sin(ang) * len / segs;
+      pts.push([x, y]);
+    }
+    c.lineCap = 'round';
+    for(let i = 0; i < segs; i++) {
+      const thick = s * 0.09 * (1 - i / segs) + 2;
+      c.strokeStyle = body; c.lineWidth = thick;
+      c.beginPath(); c.moveTo(pts[i][0], pts[i][1]); c.lineTo(pts[i+1][0], pts[i+1][1]); c.stroke();
+      if(i % 3 === 1 && thick > 6) {                     // suckers
+        c.fillStyle = belly;
+        c.beginPath(); c.arc(pts[i][0], pts[i][1], thick * 0.22, 0, Math.PI * 2); c.fill();
+      }
+    }
+  }
+
+  // head
+  const squash = 1 + o.flex * 0.06;
+  const g = c.createRadialGradient(head.x - s * 0.1, head.y - s * 0.25, s * 0.05, head.x, head.y, s * 0.45);
+  g.addColorStop(0, belly); g.addColorStop(0.5, body); g.addColorStop(1, dark);
+  c.fillStyle = g;
+  c.beginPath(); c.ellipse(head.x, head.y - s * 0.12, s * 0.3 * squash, s * 0.38 / squash, 0, 0, Math.PI * 2); c.fill();
+  // spots
+  c.fillStyle = `hsla(${o.hue},70%,30%,0.45)`;
+  [[-0.12,-0.33,0.04],[0.1,-0.38,0.03],[0.15,-0.22,0.025],[-0.17,-0.18,0.03]].forEach(([dx,dy,r]) => {
+    c.beginPath(); c.arc(head.x + dx * s, head.y + dy * s, r * s, 0, Math.PI * 2); c.fill();
+  });
+
+  // eyes follow the nearest kitten, glow on the beat
+  const target = kittens.reduce((best, k) => {
+    const d = Math.hypot(k.x - head.x, k.y - head.y);
+    return !best || d < best.d ? { k, d } : best;
+  }, null);
+  [-1, 1].forEach(side => {
+    const ex = head.x + side * s * 0.12, ey = head.y - s * 0.05, er = s * 0.075;
+    if(o.flex > 0.3) { c.shadowColor = '#ff0'; c.shadowBlur = 20 * o.flex; }
+    c.fillStyle = '#fff';
+    c.beginPath(); c.ellipse(ex, ey, er, o.blink ? er * 0.15 : er, 0, 0, Math.PI * 2); c.fill();
+    c.shadowBlur = 0;
+    if(!o.blink) {
+      let px = 0, py = 0;
+      if(target) { const a = Math.atan2(target.k.y - ey, target.k.x - ex); px = Math.cos(a) * er * 0.45; py = Math.sin(a) * er * 0.45; }
+      c.fillStyle = '#111';
+      c.beginPath(); c.arc(ex + px, ey + py, er * 0.45, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#fff';
+      c.beginPath(); c.arc(ex + px - er * 0.15, ey + py - er * 0.18, er * 0.14, 0, Math.PI * 2); c.fill();
+    }
+  });
+  // little smile, bigger on the beat
+  c.strokeStyle = dark; c.lineWidth = Math.max(2, s * 0.012);
+  c.beginPath(); c.arc(head.x, head.y + s * 0.05, s * (0.04 + o.flex * 0.03), 0.15 * Math.PI, 0.85 * Math.PI); c.stroke();
+}
+
 function initChaosScene() {
   buildings.length = 0; trees.length = 0;
+  octopus = null; nextOctopusAt = performance.now() + 4000;   // first visit soon after picking Chaos
+  initSky();
   kittens.length = 0; kaijus.length = 0; particles.length = 0; lasers.length = 0;
   const w = chaosCanvas.width, h = chaosCanvas.height;
   for(let i=0;i<14;i++) buildings.push({x:(w/14)*i, w:25+Math.random()*55, h:80+Math.random()*180, hue:Math.random()*360});
@@ -773,29 +1022,59 @@ function initChaosScene() {
 }
 
 let bgPhase = 0;
+/* ----- listening to the music (Chaos dances along) -----
+   All parts feed one analyser after their volume/mute/solo, so the scene
+   reacts only to what you can hear. A "beat" is a sudden rise in loudness
+   compared with the moment before, which suits choir singing better than
+   waiting for a kick drum. */
+let analyser = null, freqData = null;
+let shortRms = 0, longRms = 0, lastBeatAt = 0, loudMax = 0.02, beatArmed = true;
+const groove = { level: 0, beat: 0, flash: 0 };   // beat and flash decay each frame
+
+function listen() {
+  if(!analyser || !isPlaying) { groove.level *= 0.9; groove.beat *= 0.85; groove.flash *= 0.85; return; }
+  analyser.getByteTimeDomainData(freqData);
+  let sq = 0;
+  for(let i = 0; i < freqData.length; i++) { const v = (freqData[i] - 128) / 128; sq += v * v; }
+  const rms = Math.sqrt(sq / freqData.length);
+  // compare with the loudest moment lately, so quiet recordings dance too
+  loudMax = Math.max(rms, loudMax * 0.998, 0.02);
+  groove.level += (rms / loudMax - groove.level) * 0.25;
+  // a beat = the last ~50 ms clearly louder than the last ~1 s,
+  // so vibrato and long held notes don't count
+  shortRms += (rms - shortRms) * 0.3;
+  longRms += (rms - longRms) * 0.02;
+  const now = performance.now();
+  // each entry counts once: the sound has to settle before the next beat can fire
+  if(shortRms < longRms * 1.15) beatArmed = true;
+  if(beatArmed && shortRms > longRms * 1.3 && shortRms > loudMax * 0.3 && now - lastBeatAt > 280) {
+    lastBeatAt = now; beatArmed = false;
+    groove.beat = 1; groove.flash = 1;
+    onBeat();
+  }
+  groove.beat *= 0.88; groove.flash *= 0.82;
+}
+
+function onBeat() {
+  kittens.forEach(k => { k.hop = 1; });
+  // sparks from a few kittens
+  for(let i = 0; i < Math.min(4, kittens.length); i++) {
+    const k = kittens[Math.floor(Math.random()*kittens.length)];
+    for(let p = 0; p < 6; p++) spawnParticle(k.x, k.y, k.capeColor);
+  }
+  if(Math.random() < 0.5) spawnKitten();
+  kaijus.forEach(kj => { if(Math.random() < 0.35) { kj.blasting = true; kj.blastTimer = 40; } });
+}
+
 function drawChaos() {
   if(!chaosRunning) return;
   const w = chaosCanvas.width, h = chaosCanvas.height;
-  bgPhase += 0.003;
+  listen();
+  bgPhase += 0.003 + groove.level * 0.01;
 
-  // Morphing sky
-  const cityAmount = (Math.sin(bgPhase)+1)/2;
-  const grad = cctx.createLinearGradient(0,0,0,h);
-  grad.addColorStop(0, `hsl(${(bgPhase*30)%360},40%,${8+cityAmount*5}%)`);
-  grad.addColorStop(1, `hsl(${((bgPhase*30)+180)%360},30%,${12+cityAmount*10}%)`);
-  cctx.fillStyle = grad;
-  cctx.fillRect(0,0,w,h);
-
-  // Stars
-  cctx.fillStyle = 'rgba(255,255,255,0.4)';
-  for(let i=0;i<30;i++) {
-    const sx = (Math.sin(i*127.1+bgPhase*0.5)*0.5+0.5)*w;
-    const sy = (Math.sin(i*311.7)*0.5+0.5)*h*0.5;
-    const ss = 1+Math.sin(bgPhase*2+i)*0.8;
-    cctx.beginPath(); cctx.arc(sx,sy,ss,0,Math.PI*2); cctx.fill();
-  }
-
+  const cityAmount = (Math.sin(bgPhase)+1)/2;   // city and forest still take turns on the horizon
   const groundY = h*0.75;
+  drawSky(w, h, groundY);
 
   // Mountains (forest phase)
   cctx.globalAlpha = 1-cityAmount;
@@ -820,7 +1099,7 @@ function drawChaos() {
   buildings.forEach(b => {
     cctx.fillStyle = `hsl(${b.hue},40%,20%)`;
     cctx.fillRect(b.x, groundY-b.h, b.w, b.h);
-    cctx.fillStyle = `hsla(50,100%,70%,0.5)`;
+    cctx.fillStyle = `hsla(${50 + groove.flash*250},100%,${70 + groove.flash*20}%,${(0.5 + groove.flash*0.5).toFixed(2)})`;
     for(let wy=groundY-b.h+10;wy<groundY-10;wy+=18)
       for(let wx=b.x+4;wx<b.x+b.w-4;wx+=10)
         cctx.fillRect(wx,wy,5,7);
@@ -832,9 +1111,11 @@ function drawChaos() {
   cctx.fillStyle = `hsl(${gHue},25%,12%)`;
   cctx.fillRect(0,groundY,w,h-groundY);
 
+  updateAndDrawPlanets(w, groundY);
+
   // Spawn
-  if(Math.random()<0.05) spawnKitten();
-  if(Math.random()<0.008 && kaijus.length<2) spawnKaiju();
+  if(Math.random() < 0.05 + groove.level*0.12) spawnKitten();
+  if(Math.random() < 0.008 + groove.level*0.01 && kaijus.length<2) spawnKaiju();
 
   // Update & draw kaijus
   for(let i=kaijus.length-1;i>=0;i--) {
@@ -846,18 +1127,25 @@ function drawChaos() {
     drawKaiju(k);
   }
 
+  // Octopus rises in front of the city, behind the kittens
+  updateOctopus();
+  drawOctopus();
+
   // Update & draw kittens
   for(let i=kittens.length-1;i>=0;i--) {
     const k = kittens[i];
-    k.wobble += 0.08;
-    k.x += k.vx; k.y += k.vy + Math.sin(k.wobble)*0.6; k.life--;
+    k.wobble += 0.08 + groove.level*0.35;
+    k.hop = (k.hop || 0) * 0.86;
+    k.x += k.vx * (1 + groove.level*1.5); k.y += k.vy + Math.sin(k.wobble)*0.6; k.life--;
     if(k.life<=0||k.x<-70||k.x>w+70||k.y<-70||k.y>h+70) { kittens.splice(i,1); continue; }
     drawKitten(k);
     // Superpowers
     if(Math.random()<0.06) spawnParticle(k.x, k.y, k.capeColor);
     // Laser eyes at nearest kaiju
     if(k.power==='laser' && Math.random()<0.04) {
-      const closest = kaijus.reduce((best,kj)=>{const d=Math.hypot(k.x-kj.x,k.y-kj.y);return d<(best?best.d:999)?{kj,d}:best;},null);
+      const foes = kaijus.slice();
+      if(octopus && octopus.rise > 0.5) { const hd = octopusHead(); foes.push({ x: hd.x, y: hd.y - octopus.size * 0.15 }); }
+      const closest = foes.reduce((best,kj)=>{const d=Math.hypot(k.x-kj.x,k.y-kj.y);return d<(best?best.d:999)?{kj,d}:best;},null);
       if(closest) {
         spawnLaser(k.x, k.y-k.size*0.4, closest.kj.x, closest.kj.y);
         for(let p=0;p<4;p++) spawnParticle(closest.kj.x+(Math.random()-0.5)*30, closest.kj.y+(Math.random()-0.5)*30, '#ff0');
@@ -1114,7 +1402,7 @@ const SPEAKER_BODY = '<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/>';
 const ICON_SPEAKER = SVG_OPEN + SPEAKER_BODY + '<path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
 const ICON_MUTED = SVG_OPEN + SPEAKER_BODY + '<path d="M17 9l5 6M22 9l-5 6"/></svg>';
 
-let ctx = null;
+let ctx = null, mixBus = null;
 let tracks = [];          // { id, name, buffer, gain, peaks, volume, muted, solo, src, els }
 let duration = 0;         // longest track, in seconds
 let selStart = null, selEnd = null;
@@ -1183,7 +1471,16 @@ function restoreSettings() {
 function ensureCtx() {
   // iPhone: play through the silent switch like a music app would
   try { if(navigator.audioSession) navigator.audioSession.type = 'playback'; } catch(e) {}
-  if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+  if(!ctx) {
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    // every part -> mixBus -> analyser -> speakers
+    mixBus = ctx.createGain();
+    analyser = ctx.createAnalyser();
+    analyser.fftSize = 2048;   // ~45 ms: long enough to smooth chords and vibrato
+    freqData = new Uint8Array(analyser.fftSize);
+    mixBus.connect(analyser);
+    analyser.connect(ctx.destination);
+  }
   if(ctx.state === 'suspended') ctx.resume();
   return ctx;
 }
@@ -1319,7 +1616,7 @@ async function addFiles(files) {
 
 function addTrack(name, buffer, saved) {
   const gain = ctx.createGain();
-  gain.connect(ctx.destination);
+  gain.connect(mixBus);
   const s = saved || {};
   const tr = {
     id: s.id || nextId++, name, buffer, gain, src: null,
