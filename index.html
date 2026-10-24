@@ -179,7 +179,8 @@
 
   .track-wave {
     position: relative; height: 72px; border-radius: 8px; overflow: hidden;
-    cursor: crosshair; touch-action: none; -webkit-user-select: none; user-select: none;
+    /* vertical swipes scroll the page; sideways drags pick a section */
+    cursor: crosshair; touch-action: pan-y; -webkit-user-select: none; user-select: none;
   }
   .theme-white .track-wave { background: #d5d5d5; }
   .theme-dark .track-wave { background: #0f1830; }
@@ -1460,7 +1461,7 @@ let dragging = false, dragTrack = null, dragAnchor = 0, tapAt = 0, dragMoved = f
 function attachDrag(waveEl) {
   waveEl.addEventListener('pointerdown', e => {
     if(!duration) return;
-    waveEl.setPointerCapture(e.pointerId);
+    try { waveEl.setPointerCapture(e.pointerId); } catch(err) {}
     dragging = true; dragMoved = false; dragTrack = waveEl;
     prevSel = [selStart, selEnd];
     tapAt = xToTime(waveEl, e.clientX);
@@ -1472,9 +1473,7 @@ function attachDrag(waveEl) {
       dragAnchor = edge === 'start' ? selEnd : selStart;
       return;
     }
-    dragAnchor = tapAt;
-    selStart = selEnd = dragAnchor;
-    updateSelectionUI();
+    dragAnchor = tapAt;   // the section only changes once the finger moves sideways
   });
   waveEl.addEventListener('pointermove', e => {
     if(!dragging) { waveEl.style.cursor = edgeAt(waveEl, e) ? 'ew-resize' : ''; return; }
@@ -1486,7 +1485,14 @@ function attachDrag(waveEl) {
     selEnd = Math.max(dragAnchor, t);
     updateSelectionUI();
   });
-  ['pointerup','pointercancel'].forEach(ev => waveEl.addEventListener(ev, () => {
+  // the browser took the touch over to scroll the page: undo, don't jump
+  waveEl.addEventListener('pointercancel', () => {
+    if(!dragging) return;
+    dragging = false;
+    selStart = prevSel[0]; selEnd = prevSel[1];
+    updateSelectionUI();
+  });
+  ['pointerup'].forEach(ev => waveEl.addEventListener(ev, () => {
     if(!dragging) return;
     dragging = false;
     if(!dragMoved) {
