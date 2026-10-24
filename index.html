@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Choir Looper Multitrack</title>
+<title>Choir Looper</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -263,14 +263,7 @@
   .other-link a { color: inherit; }
 
   /* ===== THEME SWITCHER ===== */
-  .theme-switcher { display: none; gap: 8px; align-items: center; justify-content: center; margin: 0 0 14px; flex-wrap: wrap; max-width: 560px; }
-  .theme-switcher.open { display: flex; }
-  .theme-toggle {
-    margin: -6px 0 14px; padding: 6px 14px; border-radius: 20px; border: 2px solid currentColor;
-    background: transparent; color: inherit; font-family: 'Nunito', sans-serif; font-weight: 800;
-    font-size: 0.95rem; cursor: pointer; opacity: 0.85; -webkit-tap-highlight-color: transparent;
-  }
-  .theme-toggle:hover, .theme-toggle[aria-expanded="true"] { opacity: 1; }
+  .theme-switcher { display: flex; gap: 8px; align-items: center; justify-content: center; margin: 0 0 14px; flex-wrap: wrap; max-width: 560px; }
   .theme-pick {
     padding: 8px 16px; border-radius: 20px; font-size: 0.95rem; font-weight: 800;
     cursor: pointer; border: 2px solid; font-family: 'Nunito', sans-serif; transition: transform 0.15s;
@@ -343,9 +336,8 @@
 <canvas id="sceneCanvas"></canvas>
 
 <div class="main-content">
-<h1>Choir Looper Multitrack</h1>
+<h1>Choir Looper</h1>
 <p class="subtitle">All the parts at once, in sync</p>
-<button class="theme-toggle" id="themeToggle" aria-expanded="false" aria-controls="themeSwitcher">&#127912; Theme</button>
 <div class="theme-switcher" id="themeSwitcher">
   <button class="theme-pick tp-lofi active-theme" onclick="setTheme('lofi')">Lofi Girl</button>
   <button class="theme-pick tp-deepsea" onclick="setTheme('deepsea')">Deep Sea</button>
@@ -405,7 +397,7 @@
 
 <script>
 /* ============================================================
-   Choir Looper Multitrack
+   Choir Looper
    Several audio files play together on one Web Audio clock, so
    the parts stay locked to each other. Loop region, speed, and
    per-track volume / mute / solo apply to everything at once.
@@ -1108,12 +1100,7 @@ function setTheme(name) {
   saveSettings();
 }
 
-const themeToggle = $('themeToggle'), themeSwitcher = $('themeSwitcher');
 document.querySelector('.instructions .inline-icon').innerHTML = ICON_SPEAKER;
-themeToggle.addEventListener('click', () => {
-  const open = themeSwitcher.classList.toggle('open');
-  themeToggle.setAttribute('aria-expanded', open);
-});
 
 /* ---------- settings ---------- */
 function saveSettings() {
