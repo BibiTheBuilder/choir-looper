@@ -25,19 +25,18 @@
   /* ===== THEMES ===== */
   body.theme-white { background: #f5f5f5; color: #111; }
   body.theme-dark { background: #0b0c10; color: #d9dce3; }
-  /* The full spectrum is always on screen: the gradient holds two rainbows
-     and slides by exactly one, so the loop is seamless. It lives on a fixed
-     layer so it covers the screen however long the page is. */
-  body.theme-rainbow { background: #8800ff; color: #fff; }
+  /* Pride: the six flag colours as soft bands sized to the screen, so the
+     whole rainbow always shows. A fixed layer covers any page length and
+     drifts very slowly up and down. */
+  body.theme-rainbow { background: #732982; color: #fff; }
   body.theme-rainbow::before {
     content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-    background: linear-gradient(135deg,
-      #ff1a1a 0%, #ff8a00 8.33%, #ffd400 16.67%, #22c55e 25%, #1d8cff 33.33%, #8b2cff 41.67%,
-      #ff1a1a 50%, #ff8a00 58.33%, #ffd400 66.67%, #22c55e 75%, #1d8cff 83.33%, #8b2cff 91.67%, #ff1a1a 100%);
-    background-size: 200% 200%; animation: rainbowBg 12s linear infinite;
+    background: linear-gradient(180deg,
+      #e40303 0%, #ff8c00 20%, #ffed00 40%, #008026 60%, #004dff 80%, #750787 100%);
+    background-size: 100% 115%; animation: rainbowBg 30s ease-in-out infinite alternate;
   }
   body.theme-deepsea { background: linear-gradient(180deg, #02101e 0%, #04263b 100%); background-attachment: fixed; color: #bff4ee; }
-  @keyframes rainbowBg { from { background-position: 0% 0%; } to { background-position: 100% 100%; } }
+  @keyframes rainbowBg { from { background-position: 50% 0%; } to { background-position: 50% 100%; } }
 
   body.theme-chaos { background: #1a0a2e; color: #fff; }
   /* Lofi Girl: warm dusk study room, rain on the window */
@@ -67,7 +66,7 @@
   .theme-rainbow h1 {
     background: linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff00, #0077ff, #8800ff);
     background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    animation: rainbowText 2s linear infinite;
+    animation: rainbowText 12s linear infinite;
   }
   .theme-deepsea h1 { color: #4ff2e9; text-shadow: 0 0 18px rgba(79,242,233,0.55); }
   .theme-chaos h1 {
@@ -113,7 +112,7 @@
   .theme-rainbow .btn { background: rgba(0,0,0,0.3); color: #fff; border-color: rgba(255,255,255,0.5); }
   .theme-rainbow .btn.primary {
     background: linear-gradient(90deg, #ff0055, #ff9900, #ffff00, #00cc44, #0088ff, #7700ff);
-    background-size: 200% auto; animation: rainbowText 3s linear infinite;
+    background-size: 200% auto; animation: rainbowText 12s linear infinite;
     color: #fff; border-color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5);
   }
   .theme-rainbow .btn.active { background: rgba(255,255,255,0.25); color: #fff; border-color: #fff; }
