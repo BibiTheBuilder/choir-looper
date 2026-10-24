@@ -223,7 +223,22 @@
   .theme-chaos .ph { background: #ff0; }
   .theme-lofi .ph { background: #fff1e0; box-shadow: 0 0 10px rgba(240,177,132,0.8); }
 
-  .empty-hint { text-align: center; font-weight: 800; font-size: 1.1rem; padding: 26px 10px; opacity: 0.85; }
+  /* empty state doubles as a drop zone; tapping it opens the file picker */
+  .empty-hint {
+    display: block; width: 100%; text-align: center; font-family: 'Nunito', sans-serif;
+    font-weight: 800; font-size: 1.05rem; line-height: 1.5; padding: 26px 18px;
+    border-radius: 12px; border: 2px dashed; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .empty-hint strong { display: block; font-size: 1.25rem; margin-bottom: 4px; }
+  .theme-white .empty-hint { background: #e8e8e8; color: #111; border-color: #999; }
+  .theme-dark .empty-hint { background: #12141a; color: #d9dce3; border-color: #343a46; }
+  .theme-rainbow .empty-hint { background: rgba(0,0,0,0.45); color: #fff; border-color: rgba(255,255,255,0.75); }
+  .theme-deepsea .empty-hint { background: rgba(2,16,30,0.75); color: #bff4ee; border-color: rgba(79,242,233,0.5); }
+  .theme-chaos .empty-hint { background: rgba(0,0,0,0.7); color: #fff; border-color: #ff00ff; }
+  .theme-chaos .empty-hint strong { color: #ff0; }
+  .theme-lofi .empty-hint { background: rgba(0,0,0,0.35); color: #f3dcc4; border-color: rgba(240,177,132,0.5); }
+  .theme-lofi .empty-hint strong { color: #f0b184; }
+  .theme-deepsea .empty-hint strong { color: #4ff2e9; }
 
   /* ===== HINTS + TIME INPUTS ===== */
   /* instruction above the waves; hides once a section is picked */
@@ -400,7 +415,7 @@
 <div class="drag-hint" id="dragHint">Drag across a wave to pick a section</div>
 
 <div class="tracks" id="tracks">
-  <div class="empty-hint" id="emptyHint">No parts yet. Add your soprano, mezzo, alto, tenor and bass files, or drop them anywhere on this page.</div>
+  <button type="button" class="empty-hint" id="emptyHint"><strong>No parts yet</strong>Add your soprano, mezzo, alto, tenor and bass files, or drop them here.</button>
 </div>
 
 
@@ -1268,6 +1283,7 @@ async function restoreParts() {
 }
 
 addBtn.addEventListener('click', () => { ensureCtx(); fileInput.click(); });
+emptyHint.addEventListener('click', () => addBtn.click());
 fileInput.addEventListener('change', () => {
   if(fileInput.files && fileInput.files.length) addFiles(Array.from(fileInput.files));
   fileInput.value = '';
