@@ -24,7 +24,7 @@
 
   /* ===== THEMES ===== */
   body.theme-white { background: #f5f5f5; color: #111; }
-  body.theme-dark { background: #1a1a2e; color: #fff; }
+  body.theme-dark { background: #0b0c10; color: #d9dce3; }
   body.theme-rainbow {
     background: linear-gradient(135deg, #ff0000, #ff7700, #ffff00, #00ff00, #0077ff, #8800ff, #ff0088);
     background-size: 400% 400%; animation: rainbowBg 4s ease infinite; color: #fff;
@@ -56,7 +56,7 @@
     text-transform: uppercase; letter-spacing: 3px; text-align: center;
   }
   .theme-white h1 { color: #111; }
-  .theme-dark h1 { color: #fff; }
+  .theme-dark h1 { color: #e6e8ee; }
   .theme-rainbow h1 {
     background: linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff00, #0077ff, #8800ff);
     background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -76,7 +76,7 @@
     padding: 8px 20px; border-radius: 6px; display: inline-block;
   }
   .theme-white .subtitle { background: rgba(0,0,0,0.07); color: #111; }
-  .theme-dark .subtitle { background: rgba(255,255,255,0.1); color: #fff; }
+  .theme-dark .subtitle { background: rgba(255,255,255,0.06); color: #c9cdd6; }
   .theme-rainbow .subtitle { background: rgba(0,0,0,0.4); color: #fff; }
   .theme-deepsea .subtitle { background: rgba(79,242,233,0.1); color: #bff4ee; }
   .theme-chaos .subtitle { background: rgba(255,0,255,0.3); color: #0ff; }
@@ -98,10 +98,10 @@
   .theme-white .btn.primary { background: #0066cc; color: #fff; border-color: #0066cc; }
   .theme-white .btn.active { background: #0066cc; color: #fff; }
 
-  .theme-dark .btn { background: #2a2a4a; color: #fff; border-color: #666; }
-  .theme-dark .btn:hover { background: #3a3a5a; }
-  .theme-dark .btn.primary { background: #7c5cbf; color: #fff; border-color: #7c5cbf; }
-  .theme-dark .btn.active { background: #5a9a5a; color: #fff; }
+  .theme-dark .btn { background: #171a21; color: #d9dce3; border-color: #343a46; }
+  .theme-dark .btn:hover { background: #1f232c; }
+  .theme-dark .btn.primary { background: #2f3d55; color: #e8ecf4; border-color: #4a5b78; }
+  .theme-dark .btn.active { background: #8aa2c8; color: #0b0c10; border-color: #8aa2c8; }
 
   .theme-rainbow .btn { background: rgba(0,0,0,0.3); color: #fff; border-color: rgba(255,255,255,0.5); }
   .theme-rainbow .btn.primary {
@@ -146,7 +146,7 @@
     border-radius: 10px; padding: 8px 10px;
   }
   .theme-white .track { background: #e8e8e8; }
-  .theme-dark .track { background: #16213e; }
+  .theme-dark .track { background: #12141a; border: 1px solid #1e222b; }
   .theme-rainbow .track { background: rgba(0,0,0,0.3); }
   .theme-deepsea .track { background: rgba(2,16,30,0.6); border: 1px solid rgba(79,242,233,0.22); }
   .theme-chaos .track { background: rgba(0,0,0,0.5); border: 1px solid #ff00ff; }
@@ -166,7 +166,9 @@
     padding: 4px 9px; cursor: pointer; -webkit-tap-highlight-color: transparent;
   }
   .theme-white .mini { border-color: #888; }
-  .theme-dark .mini { border-color: #666; }
+  .theme-dark .mini { border-color: #343a46; }
+  .theme-dark .mini.on { background: #a85a6c; border-color: #a85a6c; color: #f3eef0; }
+  .theme-dark .mini.on.solo { background: #c9a85a; border-color: #c9a85a; color: #0b0c10; }
   .theme-rainbow .mini { border-color: rgba(255,255,255,0.6); }
   .theme-deepsea .mini { border-color: rgba(79,242,233,0.5); }
   .theme-chaos .mini { border-color: #ff0; }
@@ -183,7 +185,8 @@
     cursor: crosshair; touch-action: pan-y; -webkit-user-select: none; user-select: none;
   }
   .theme-white .track-wave { background: #d5d5d5; }
-  .theme-dark .track-wave { background: #0f1830; }
+  .theme-dark .track-wave { background: #0e1015; }
+  .theme-dark input[type="range"] { accent-color: #8aa2c8; }
   .theme-rainbow .track-wave { background: rgba(0,0,0,0.35); }
   .theme-deepsea .track-wave { background: rgba(2,16,30,0.85); }
   .theme-chaos .track-wave { background: rgba(0,0,0,0.55); }
@@ -199,7 +202,7 @@
   .sel-overlay::before { left: -5px; }
   .sel-overlay::after { right: -5px; }
   .theme-white .sel-overlay { color: #0066cc; background: rgba(0,100,200,0.2); border-left: 2px solid #0066cc; border-right: 2px solid #0066cc; }
-  .theme-dark .sel-overlay { color: #7c5cbf; background: rgba(124,92,191,0.3); border-left: 2px solid #7c5cbf; border-right: 2px solid #7c5cbf; }
+  .theme-dark .sel-overlay { color: #8aa2c8; background: rgba(138,162,200,0.16); border-left: 2px solid #8aa2c8; border-right: 2px solid #8aa2c8; }
   .theme-rainbow .sel-overlay { color: #fff; background: rgba(255,255,255,0.2); border-left: 2px solid #fff; border-right: 2px solid #fff; }
   .theme-deepsea .sel-overlay { color: #4ff2e9; background: rgba(79,242,233,0.18); border-left: 2px solid #4ff2e9; border-right: 2px solid #4ff2e9; }
   .theme-chaos .sel-overlay { color: #0ff; background: rgba(255,0,255,0.3); border-left: 2px solid #0ff; border-right: 2px solid #0ff; }
@@ -207,7 +210,7 @@
 
   .ph { position: absolute; top: 0; height: 100%; width: 2px; pointer-events: none; display: none; }
   .theme-white .ph { background: #ff3333; }
-  .theme-dark .ph { background: #ff6b6b; }
+  .theme-dark .ph { background: #e3c08d; }
   .theme-rainbow .ph { background: #fff; }
   .theme-deepsea .ph { background: #eafffc; box-shadow: 0 0 12px #4ff2e9; }
   .theme-chaos .ph { background: #ff0; }
@@ -223,7 +226,7 @@
   }
   .drag-hint.visible { display: inline-block; }
   .theme-white .drag-hint { background: rgba(0,0,0,0.07); color: #111; }
-  .theme-dark .drag-hint { background: rgba(255,255,255,0.1); color: #fff; }
+  .theme-dark .drag-hint { background: rgba(255,255,255,0.06); color: #c9cdd6; }
   .theme-rainbow .drag-hint { background: rgba(0,0,0,0.5); color: #fff; }
   .theme-deepsea .drag-hint { background: rgba(2,16,30,0.75); color: #bff4ee; }
   .theme-chaos .drag-hint { background: rgba(0,0,0,0.7); color: #0ff; }
@@ -245,7 +248,7 @@
   }
   .section-line .mini { min-width: 36px; height: 36px; padding: 0; }
   .theme-white .section-line input { background: #fff; color: #111; border-color: #999; }
-  .theme-dark .section-line input { background: #2a2a4a; color: #fff; border-color: #666; }
+  .theme-dark .section-line input { background: #171a21; color: #e6e8ee; border-color: #343a46; }
   .theme-rainbow .section-line input { background: rgba(0,0,0,0.45); color: #fff; border-color: rgba(255,255,255,0.6); }
   .theme-deepsea .section-line input { background: rgba(2,16,30,0.85); color: #eafffc; border-color: rgba(79,242,233,0.55); }
   .theme-chaos .section-line input { background: rgba(0,0,0,0.7); color: #ff0; border-color: #ff00ff; }
@@ -266,7 +269,7 @@
     font-size: 1.05rem; font-weight: 700; line-height: 1.9; text-align: center; margin-top: 18px;
   }
   .theme-white .instructions { background: #e0e0e0; color: #111; }
-  .theme-dark .instructions { background: #16213e; color: #fff; }
+  .theme-dark .instructions { background: #12141a; color: #c9cdd6; border: 1px solid #1e222b; }
   .theme-rainbow .instructions { background: rgba(0,0,0,0.3); color: #fff; }
   .theme-deepsea .instructions { background: rgba(2,16,30,0.7); color: #bff4ee; border: 1px solid rgba(79,242,233,0.3); }
   .theme-chaos .instructions { background: rgba(0,0,0,0.55); color: #0ff; border: 1px solid #ff00ff; }
@@ -292,7 +295,7 @@
   }
   .theme-pick:hover { transform: scale(1.08); }
   .theme-pick.tp-white { background: #f5f5f5; color: #111; border-color: #999; }
-  .theme-pick.tp-dark { background: #1a1a2e; color: #fff; border-color: #555; }
+  .theme-pick.tp-dark { background: #0b0c10; color: #d9dce3; border-color: #343a46; }
   .theme-pick.tp-rainbow {
     background: linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff00, #0077ff, #8800ff);
     color: #0b1d5e; border-color: #fff; text-shadow: 0 0 3px rgba(255,255,255,0.7);
@@ -1081,7 +1084,7 @@ function restartScene() {
   startScene(n);
 }
 
-const WAVE_COLOR = { white:'#0066cc', dark:'#9d80d8', rainbow:'#ffffff', deepsea:'#4ff2e9', chaos:'#ff5cf5', lofi:'#f0b184' };
+const WAVE_COLOR = { white:'#0066cc', dark:'#7f93b5', rainbow:'#ffffff', deepsea:'#4ff2e9', chaos:'#ff5cf5', lofi:'#f0b184' };
 const THEMES = ['lofi','deepsea','white','rainbow','dark','chaos'];
 const CANVAS_THEMES = ['chaos','deepsea','lofi'];
 const PEAK_BUCKETS = 4000;
