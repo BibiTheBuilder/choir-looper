@@ -1898,6 +1898,7 @@ async function restoreParts() {
   updateTimeInputs();
   if(restored) showStatus('Welcome back: ' + restored + ' part' + (restored > 1 ? 's' : '') + ' ready', 'info', 3000);
   else hideStatus();
+  if(restored && speed !== 1) applySpeed(speed);
 }
 
 addBtn.addEventListener('click', () => { ensureCtx(); fileInput.click(); });
@@ -1934,6 +1935,7 @@ async function addFiles(files) {
   layoutAll();
   if(failed.length) showStatus('Could not read: ' + failed.join(', '), 'error', 8000);
   else showStatus(tracks.length + ' part' + (tracks.length>1?'s':'') + ' loaded', 'info', 2500);
+  if(speed !== 1) applySpeed(speed);
 }
 
 function addTrack(name, buffer, saved) {
@@ -1995,6 +1997,7 @@ function padTracks() {
     for(let c = 0; c < tr.buffer.numberOfChannels; c++) nb.copyToChannel(tr.buffer.getChannelData(c), c, 0);
     tr.realDuration = tr.realDuration || tr.buffer.duration;
     tr.buffer = nb;
+    tr.stretched = null;
   });
 }
 
@@ -2302,14 +2305,19 @@ function startPlayback(from) {
 
   const when = ctx.currentTime + 0.08;
   tracks.forEach(tr => {
+    const { buf, made } = playSource(tr);
+    const k = 1 / made;   // song seconds -> seconds in this buffer
     const s = ctx.createBufferSource();
-    s.buffer = tr.buffer;
-    s.playbackRate.value = speed;
+    s.buffer = buf;
+    s.playbackRate.value = speed / made;
     s.connect(tr.gain);
-    if(lp) { s.loop = true; s.loopStart = selStart; s.loopEnd = Math.min(selEnd, tr.buffer.duration); }
-    s.start(when, Math.min(from, tr.buffer.duration - 0.001));
+    if(lp) { s.loop = true; s.loopStart = selStart * k; s.loopEnd = Math.min(selEnd * k, buf.duration); }
+    s.start(when, Math.min(from * k, buf.duration - 0.001));
     tr.src = s;
+    tr.srcMade = made;
   });
+  // a part without its stretched copy yet (just added, or speed restored on load)
+  if(speed !== 1 && stretchTarget === null && tracks.some(t => !(t.stretched && t.stretched.speed === speed))) applySpeed(speed);
 
   playOffset = from;
   playStartCtx = when;
@@ -2405,7 +2413,7 @@ function setSpeed(v) {
     speed = v;
     playOffset = pos;
     playStartCtx = ctx.currentTime;
-    tracks.forEach(tr => { if(tr.src) tr.src.playbackRate.value = v; });
+    tracks.forEach(tr => { if(tr.src) tr.src.playbackRate.value = v / (tr.srcMade || 1); });
   } else {
     speed = v;
   }
@@ -2413,7 +2421,150 @@ function setSpeed(v) {
   saveSettings();
 }
 
-speedSlider.addEventListener('input', () => setSpeed(parseFloat(speedSlider.value)));
+/* ---------- keep the pitch when the speed changes ----------
+   Playing a buffer faster also makes it sound higher. So for any speed
+   other than 1x every part is time-stretched once, in a background worker,
+   and the stretched copy plays at normal rate: new tempo, original pitch,
+   and all parts still start together on the one clock. The old speed keeps
+   playing until the new copies are ready. */
+const STRETCH_LANES = 2;   // two parts at a time: faster, without holding every copy in memory at once
+let stretchWorkers = [], stretchSeq = 0, stretchJob = 0, stretchTarget = null;
+const stretchWaiting = new Map();
+
+function stretchBuffer(buffer, rate, lane = 0) {
+  if(!stretchWorkers[lane]) {
+    const src = '(' + stretchWorkerMain.toString() + ')()';
+    const w = new Worker(URL.createObjectURL(new Blob([src], { type: 'text/javascript' })));
+    w.onmessage = e => {
+      const done = stretchWaiting.get(e.data.id);
+      stretchWaiting.delete(e.data.id);
+      done(e.data.chans);
+    };
+    stretchWorkers[lane] = w;
+  }
+  const stretchWorker = stretchWorkers[lane];
+  const id = ++stretchSeq;
+  const chans = [];
+  for(let c = 0; c < buffer.numberOfChannels; c++) chans.push(buffer.getChannelData(c).slice());
+  return new Promise(res => {
+    stretchWaiting.set(id, res);
+    stretchWorker.postMessage({ id, chans, sr: buffer.sampleRate, rate }, chans.map(c => c.buffer));
+  });
+}
+
+// the buffer a part should play now, and the speed it was made for
+function playSource(tr) {
+  if(speed !== 1 && tr.stretched && tr.stretched.speed === speed) return { buf: tr.stretched.buffer, made: speed };
+  return { buf: tr.buffer, made: 1 };
+}
+
+async function applySpeed(target) {
+  if(stretchTarget === target) return;   // already being prepared
+  const job = ++stretchJob;
+  stretchTarget = null;
+  if(target !== 1 && tracks.length) {
+    ensureCtx();
+    padTracks();
+    const todo = tracks.filter(tr => !(tr.stretched && tr.stretched.speed === target));
+    if(todo.length) {
+      stretchTarget = target;
+      showStatus('Keeping the pitch at ' + target.toFixed(2) + 'x...', 'info');
+      const ready = [], queue = todo.slice();
+      const lane = async n => {
+        while(queue.length && job === stretchJob) {
+          const tr = queue.shift();
+          const chans = await stretchBuffer(tr.buffer, target, n);
+          const b = ctx.createBuffer(chans.length, chans[0].length, tr.buffer.sampleRate);
+          chans.forEach((c, i) => b.copyToChannel(c, i));
+          ready.push([tr, b]);
+        }
+      };
+      await Promise.all(Array.from({ length: STRETCH_LANES }, (_, n) => lane(n)));
+      if(job !== stretchJob) return;
+      ready.forEach(([tr, b]) => { tr.stretched = { speed: target, buffer: b }; });
+      stretchTarget = null;
+      hideStatus();
+    }
+  }
+  setSpeed(target);
+  tracks.forEach(tr => { if(tr.stretched && tr.stretched.speed !== target) tr.stretched = null; });
+  if(isPlaying && tracks.some(tr => tr.srcMade !== playSource(tr).made)) startPlayback(currentPos());
+}
+
+// while dragging only the number moves; the speed changes when you let go
+speedSlider.addEventListener('input', () => { speedValue.textContent = parseFloat(speedSlider.value).toFixed(2) + 'x'; });
+speedSlider.addEventListener('change', () => applySpeed(parseFloat(speedSlider.value)));
+
+/* Runs inside the worker (turned into its source text above).
+   WSOLA: the audio is rebuilt from short overlapping grains taken at the new
+   tempo; each grain is nudged by a few milliseconds so its waveform lines up
+   with the one before it, which keeps sung notes smooth. */
+function stretchWorkerMain() {
+  onmessage = e => {
+    const { id, chans, sr, rate } = e.data;
+    const out = timeStretch(chans, sr, rate);
+    postMessage({ id, chans: out }, out.map(c => c.buffer));
+  };
+
+  function timeStretch(chans, sr, rate) {
+    const len = chans[0].length, C = chans.length;
+    const N = 2 * Math.round(sr * 0.023);   // ~46 ms grains, half overlapping
+    const H = N / 2;
+    const tol = Math.round(sr * 0.012);     // how far a grain may be nudged
+    const D = 8;                            // coarse search on a downsampled mix
+    const outLen = Math.ceil(len / rate);
+    const out = [];
+    for(let c = 0; c < C; c++) out.push(new Float32Array(outLen));
+    const win = new Float32Array(N);
+    for(let i = 0; i < N; i++) win[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / N);
+
+    const mono = new Float32Array(len);
+    for(let c = 0; c < C; c++) { const x = chans[c]; for(let i = 0; i < len; i++) mono[i] += x[i]; }
+    const dl = Math.floor(len / D), dec = new Float32Array(dl);
+    for(let j = 0; j < dl; j++) { let v = 0; for(let q = 0; q < D; q++) v += mono[j * D + q]; dec[j] = v; }
+    const Hd = Math.floor(H / D);
+
+    let prev = 0;
+    for(let k = 0; k * H < outLen; k++) {
+      const o = k * H;
+      let pos = Math.round(o * rate);
+      if(k > 0) {
+        const nat = prev + H;   // where the previous grain would naturally carry on
+        const lo = Math.max(0, pos - tol), hi = Math.min(len - N, pos + tol);
+        if(nat + H <= len && hi >= lo) {
+          const nd = Math.floor(nat / D);
+          let best = lo, bestScore = -Infinity;
+          for(let cd = Math.ceil(lo / D); cd * D <= hi; cd++) {
+            let xc = 0, en = 1e-9;
+            for(let i = 0; i < Hd; i++) { const v = dec[cd + i]; xc += v * dec[nd + i]; en += v * v; }
+            const sc = xc / Math.sqrt(en);
+            if(sc > bestScore) { bestScore = sc; best = cd * D; }
+          }
+          const flo = Math.max(lo, best - D), fhi = Math.min(hi, best + D);
+          bestScore = -Infinity; pos = best;
+          for(let c2 = flo; c2 <= fhi; c2++) {
+            let xc = 0, en = 1e-9;
+            for(let i = 0; i < H; i += 2) { const v = mono[c2 + i]; xc += v * mono[nat + i]; en += v * v; }
+            const sc = xc / Math.sqrt(en);
+            if(sc > bestScore) { bestScore = sc; pos = c2; }
+          }
+        } else {
+          pos = Math.max(0, Math.min(pos, len - N));
+        }
+      }
+      for(let c = 0; c < C; c++) {
+        const x = chans[c], y = out[c];
+        for(let i = 0; i < N; i++) {
+          const p = pos + i, q = o + i;
+          if(p >= len || q >= outLen) break;
+          y[q] += x[p] * (k === 0 && i < H ? 1 : win[i]);
+        }
+      }
+      prev = pos;
+    }
+    return out;
+  }
+}
 
 /* ---------- playhead + clock ---------- */
 function updatePlayheads() {
