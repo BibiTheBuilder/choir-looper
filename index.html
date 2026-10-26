@@ -278,10 +278,22 @@
   /* ===== CONTROLS ===== */
   .controls { display: none; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
   .controls.visible { display: flex; }
-  .speed-control { display: flex; align-items: center; gap: 8px; font-size: 1.05rem; font-weight: 800; }
-  .speed-control input[type="range"] { width: 110px; accent-color: currentColor; }
-  #restartBtn { display: inline-flex; align-items: center; justify-content: center; }
-  #restartBtn svg { width: 22px; height: 22px; }
+  /* section line, then speed on its own line underneath */
+  /* top line: where you are in the song, next to the section */
+  .status-row { order: -1; flex: 1 1 100%; display: flex; align-items: center; justify-content: center; gap: 8px 32px; flex-wrap: wrap; min-height: 36px; }
+  /* the timer sits in its own soft pill so it reads as separate from the section */
+  .controls .clock { padding: 6px 14px; border-radius: 20px; background: rgba(255,255,255,0.09); }
+  .theme-white .controls .clock { background: rgba(0,0,0,0.07); }
+  .theme-rainbow .controls .clock { background: rgba(0,0,0,0.35); }
+  .speed-control { order: 5; flex: 1 1 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem; font-weight: 800; }
+  .speed-control .sec-label { opacity: 0.8; }
+  .speed-control input[type="range"] { width: 150px; accent-color: currentColor; }
+  #speedValue { min-width: 3.2em; text-align: right; font-variant-numeric: tabular-nums; }
+  #restartBtn, #playBtn, .skip { display: inline-flex; align-items: center; justify-content: center; }
+  #restartBtn svg, .skip svg { width: 22px; height: 22px; }
+  .skip { touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+  #playBtn { min-width: 64px; }
+  #playBtn svg { width: 26px; height: 26px; }
   .clock { font-weight: 800; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
 
   /* ===== INSTRUCTIONS + FOOTER ===== */
@@ -343,6 +355,19 @@
     .btn:hover, .theme-pick:hover { transform: none; }
   }
 
+  /* small phones: the part name gets its own line so it isn't squeezed to "S..." */
+  @media (max-width: 359px) {
+    .track-head { flex-wrap: wrap; }
+    .track .track-name { flex: 1 1 100%; }
+    .track-btns { flex: 1 1 100%; }
+    .track-btns .vol { flex: 1 1 auto; width: auto; }
+    /* keep the whole play row on one line */
+    body .controls { gap: 6px; }
+    body .controls #restartBtn, body .controls .skip { flex-basis: 38px; }
+    body .controls #playBtn { min-width: 0; }
+    body .controls #loopBtn { padding-left: 6px; padding-right: 6px; font-size: 0.85rem; }
+  }
+
   /* ===== MOBILE ===== */
   @media (max-width: 700px) {
     body { padding-left: calc(12px + env(safe-area-inset-left)); padding-right: calc(12px + env(safe-area-inset-right)); }
@@ -373,15 +398,17 @@
     }
     .theme-white .controls { background: rgba(245,245,245,0.95); box-shadow: 0 -8px 24px rgba(0,0,0,0.18), 0 -1px 0 rgba(0,0,0,0.12); }
     .theme-white .controls::before { background: linear-gradient(to bottom, rgba(245,245,245,0), rgba(0,0,0,0.08)); }
-    .controls #playBtn, .controls #loopBtn { flex: 1 1 35%; white-space: nowrap; }
-    .controls #restartBtn { flex: 0 0 52px; padding: 0; }
-    .speed-control { flex: 1 1 auto; }
+    .controls #playBtn, .controls #loopBtn { flex: 1 1 25%; white-space: nowrap; padding-left: 8px; padding-right: 8px; }
+    .controls #restartBtn, .controls .skip { flex: 0 0 46px; padding: 0; }
+    .controls .speed-control { font-size: 0.95rem; }
+    .controls .speed-control input[type="range"] { width: 140px; }
     .drag-hint { font-size: 0.95rem; padding: 6px 14px; }
-    .controls .section-line { order: 4; flex: 1 1 auto; font-size: 0.95rem; }
-    .controls .clock { order: 5; font-size: 0.95rem; }
-    .controls .speed-control { order: 6; flex: 1 1 100%; }
-    .section-line input[type="text"] { width: 54px; font-size: 0.95rem; }
-    .speed-control input[type="range"] { flex: 1; width: auto; min-width: 80px; }
+    .status-row { gap: 6px 16px; }
+    .controls .clock { padding: 5px 12px; }
+    .controls .section-line { font-size: 0.95rem; gap: 4px; }
+    .controls .clock { font-size: 1rem; }
+    .section-line .sec-times { gap: 4px; }
+    .section-line input[type="text"] { width: 56px; font-size: 16px; }  /* under 16px makes iPhone zoom in and stay zoomed */
     .theme-switcher { gap: 4px; }
     .theme-pick { padding: 5px 8px; font-size: 0.8rem; white-space: nowrap; }
   }
@@ -421,8 +448,12 @@
 
 <div class="controls" id="controls">
   <button class="btn" id="restartBtn" title="Back to the start" aria-label="Back to the start"></button>
-  <button class="btn primary" id="playBtn">Play</button>
+  <button class="btn skip" id="backBtn" title="Back 1 second" aria-label="Back 1 second"></button>
+  <button class="btn primary" id="playBtn" title="Play" aria-label="Play"></button>
+  <button class="btn skip" id="fwdBtn" title="Forward 1 second" aria-label="Forward 1 second"></button>
   <button class="btn" id="loopBtn">Loop: Off</button>
+  <div class="status-row">
+  <span class="clock" id="clock">0:00 / 0:00</span>
   <div class="section-line" id="sectionLine">
     <span class="sec-label">Section</span>
     <button class="whole-song" id="wholeSongBtn" title="Type a start and end time">Whole song</button>
@@ -433,12 +464,12 @@
       <button class="mini" id="clearSelBtn" title="Clear section" aria-label="Clear section">&#10005;</button>
     </span>
   </div>
-  <div class="speed-control">
-    <span>Speed:</span>
-    <input type="range" id="speedSlider" min="0.5" max="1.5" step="0.05" value="1">
-    <span id="speedValue">1.0x</span>
   </div>
-  <span class="clock" id="clock">0:00 / 0:00</span>
+  <div class="speed-control">
+    <span class="sec-label">Speed</span>
+    <input type="range" id="speedSlider" min="0.5" max="1.5" step="0.05" value="1" aria-label="Speed">
+    <span id="speedValue">1.00x</span>
+  </div>
 </div>
 
 <div class="instructions">
@@ -446,8 +477,9 @@
   <ol>
     <li>Add a file for each part</li>
     <li>Drag on a wave to pick a section</li>
-    <li>Press Play and Loop</li>
-    <li><span class="inline-icon"></span> mutes a part, <b>S</b> plays it alone</li>
+    <li>Press <span class="inline-icon" id="playHintIcon"></span> and Loop</li>
+    <li><span class="inline-icon" id="muteHintIcon"></span> mutes a part, <b>S</b> plays it alone</li>
+    <li>You can also type the times at <b>Section</b></li>
   </ol>
 </div>
 
@@ -1687,6 +1719,8 @@ const SVG_OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 const SPEAKER_BODY = '<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/>';
 const ICON_SPEAKER = SVG_OPEN + SPEAKER_BODY + '<path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
 const ICON_MUTED = SVG_OPEN + SPEAKER_BODY + '<path d="M17 9l5 6M22 9l-5 6"/></svg>';
+const ICON_PLAY = SVG_OPEN + '<path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/></svg>';
+const ICON_PAUSE = SVG_OPEN + '<path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg>';
 
 let ctx = null, mixBus = null;
 let tracks = [];          // { id, name, buffer, gain, peaks, volume, muted, solo, src, els }
@@ -1704,6 +1738,7 @@ let theme = 'lofi';
 const $ = id => document.getElementById(id);
 const tracksEl = $('tracks'), emptyHint = $('emptyHint'), statusMsg = $('statusMsg');
 const addBtn = $('addBtn'), removeAllBtn = $('removeAllBtn'), fileInput = $('fileInput');
+const backBtn = $('backBtn'), fwdBtn = $('fwdBtn');
 const restartBtn = $('restartBtn'), playBtn = $('playBtn'), loopBtn = $('loopBtn'), clearSelBtn = $('clearSelBtn');
 const speedSlider = $('speedSlider'), speedValue = $('speedValue'), clock = $('clock');
 const controls = $('controls'), dragHint = $('dragHint'), sectionLine = $('sectionLine'), wholeSongBtn = $('wholeSongBtn');
@@ -1734,7 +1769,8 @@ function setTheme(name) {
   saveSettings();
 }
 
-document.querySelector('.instructions .inline-icon').innerHTML = ICON_SPEAKER;
+$('muteHintIcon').innerHTML = ICON_SPEAKER;
+$('playHintIcon').innerHTML = ICON_PLAY;
 
 /* ---------- settings ---------- */
 function saveSettings() {
@@ -1748,7 +1784,7 @@ function restoreSettings() {
     const s = JSON.parse(localStorage.getItem('choirMultitrack') || '{}');
     if(typeof s.selStart === 'number' && typeof s.selEnd === 'number') savedSel = [s.selStart, s.selEnd];
     setTheme(s.theme && THEMES.indexOf(s.theme) !== -1 ? s.theme : 'lofi');
-    if(s.speed) { speed = s.speed; speedSlider.value = speed; speedValue.textContent = speed.toFixed(2) + 'x'; }
+    if(s.speed) { speed = s.speed; speedSlider.value = speed; showSpeed(); }
     if(s.isLooping) { isLooping = true; loopBtn.textContent = 'Loop: On'; loopBtn.classList.add('active'); }
   } catch(e) { setTheme('lofi'); }
 }
@@ -2278,7 +2314,7 @@ function startPlayback(from) {
   playOffset = from;
   playStartCtx = when;
   isPlaying = true;
-  playBtn.textContent = 'Pause';
+  setPlayIcon(true);
   startSilentKeeper();
   acquireWakeLock();
 }
@@ -2287,7 +2323,7 @@ function stopPlayback() {
   if(isPlaying) pausedAt = currentPos();
   stopSources();
   isPlaying = false;
-  playBtn.textContent = 'Play';
+  setPlayIcon(false);
   stopSilentKeeper();
   releaseWakeLock();
 }
@@ -2301,10 +2337,49 @@ function seek(t) {
 
 // back to the start of the section when looping, otherwise of the song
 restartBtn.innerHTML = SVG_OPEN + '<path d="M6 5v14"/><path d="M19 5L9 12l10 7z" fill="currentColor"/></svg>';
+function setPlayIcon(playing) {
+  playBtn.innerHTML = playing ? ICON_PAUSE : ICON_PLAY;
+  playBtn.title = playing ? 'Pause' : 'Play';
+  playBtn.setAttribute('aria-label', playBtn.title);
+}
+setPlayIcon(false);
 restartBtn.addEventListener('click', () => {
   if(!tracks.length) return;
   seek(loopActive() ? selStart : 0);
 });
+
+// little jumps back and forward; while looping they stay inside the section
+const SKIP = 1;
+backBtn.innerHTML = SVG_OPEN + '<path d="M11 6L3 12l8 6zM21 6l-8 6 8 6z" fill="currentColor"/></svg>';
+fwdBtn.innerHTML = SVG_OPEN + '<path d="M13 6l8 6-8 6zM3 6l8 6-8 6z" fill="currentColor"/></svg>';
+function skipBy(sec) {
+  if(!tracks.length) return;
+  let t = currentPos() + sec;
+  if(loopActive()) t = Math.max(selStart, Math.min(t, selEnd - 0.05));
+  seek(t);
+}
+// tap = 1 second; hold = keeps going, a little faster the longer you hold
+function holdToSkip(btn, dir) {
+  let timer = null, steps = 0;
+  const stop = () => { clearTimeout(timer); timer = null; };
+  const tick = () => {
+    skipBy(dir * SKIP);
+    steps++;
+    timer = setTimeout(tick, steps < 2 ? 400 : steps < 10 ? 160 : 80);
+  };
+  btn.addEventListener('pointerdown', e => {
+    if(e.button !== 0) return;
+    e.preventDefault();
+    try { btn.setPointerCapture(e.pointerId); } catch(_) {}
+    stop(); steps = 0; tick();
+  });
+  ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => btn.addEventListener(ev, stop));
+  // keyboard (Enter on a focused button) has no pointer: one step
+  btn.addEventListener('click', e => { if(e.detail === 0) skipBy(dir * SKIP); });
+  btn.addEventListener('contextmenu', e => e.preventDefault());
+}
+holdToSkip(backBtn, -1);
+holdToSkip(fwdBtn, 1);
 
 playBtn.addEventListener('click', () => {
   if(!tracks.length) return;
@@ -2320,8 +2395,11 @@ loopBtn.addEventListener('click', () => {
   if(isPlaying) startPlayback(currentPos());
 });
 
-speedSlider.addEventListener('input', () => {
-  const v = parseFloat(speedSlider.value);
+function showSpeed() {
+  speedValue.textContent = speed.toFixed(2) + 'x';
+}
+
+function setSpeed(v) {
   if(isPlaying) {
     const pos = currentPos();
     speed = v;
@@ -2331,9 +2409,11 @@ speedSlider.addEventListener('input', () => {
   } else {
     speed = v;
   }
-  speedValue.textContent = v.toFixed(2) + 'x';
+  showSpeed();
   saveSettings();
-});
+}
+
+speedSlider.addEventListener('input', () => setSpeed(parseFloat(speedSlider.value)));
 
 /* ---------- playhead + clock ---------- */
 function updatePlayheads() {
@@ -2382,6 +2462,8 @@ document.addEventListener('keydown', e => {
   if(e.code === 'Space') { e.preventDefault(); playBtn.click(); }
   else if(e.key === 'Home' || e.key === '0') restartBtn.click();
   else if(e.key === 'l' || e.key === 'L') loopBtn.click();
+  else if(e.key === 'ArrowLeft') { e.preventDefault(); skipBy(-SKIP); }
+  else if(e.key === 'ArrowRight') { e.preventDefault(); skipBy(SKIP); }
 });
 
 /* ---------- resize ---------- */
