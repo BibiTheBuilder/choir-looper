@@ -23,7 +23,6 @@
   }
 
   /* ===== THEMES ===== */
-  body.theme-white { background: #f5f5f5; color: #111; }
   body.theme-dark { background: #0b0c10; color: #d9dce3; }
   /* Pride: the six flag colours as soft bands sized to the screen, so the
      whole rainbow always shows. A fixed layer covers any page length and
@@ -41,6 +40,7 @@
   body.theme-chaos { background: #1a0a2e; color: #fff; }
   /* Lofi Girl: warm dusk study room, rain on the window */
   body.theme-lofi { background: linear-gradient(180deg, #241b24 0%, #392a2c 55%, #4b3430 100%); background-attachment: fixed; color: #f3dcc4; }
+  body.theme-halloween { background: linear-gradient(180deg, #0d0814 0%, #1d0f26 55%, #2a1420 100%); background-attachment: fixed; color: #efe2cf; }
 
   /* ===== ANIMATED BACKGROUND ===== */
   #sceneCanvas {
@@ -49,9 +49,11 @@
   }
   body.theme-chaos #sceneCanvas,
   body.theme-deepsea #sceneCanvas,
+  body.theme-halloween #sceneCanvas,
   body.theme-lofi #sceneCanvas { display: block; }
   body.theme-chaos .main-content,
   body.theme-deepsea .main-content,
+  body.theme-halloween .main-content,
   body.theme-lofi .main-content { position: relative; z-index: 1; }
 
   .main-content { display: flex; flex-direction: column; align-items: center; width: 100%; }
@@ -61,7 +63,6 @@
     font-family: 'Fredoka One', ui-rounded, 'SF Pro Rounded', 'Arial Rounded MT Bold', 'Varela Round', 'Nunito', 'Trebuchet MS', sans-serif; font-size: 2.2rem; margin-bottom: 2px;
     text-transform: uppercase; letter-spacing: 3px; text-align: center;
   }
-  .theme-white h1 { color: #111; }
   .theme-dark h1 { color: #e6e8ee; }
   .theme-rainbow h1 {
     background: linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff00, #0077ff, #8800ff);
@@ -75,18 +76,19 @@
     animation: rainbowText 1.5s linear infinite;
   }
   .theme-lofi h1 { color: #f0b184; text-shadow: 0 2px 14px rgba(0,0,0,0.5); }
+  .theme-halloween h1 { color: #ff8c2e; text-shadow: 0 0 16px rgba(255,140,46,0.45), 0 2px 10px rgba(0,0,0,0.6); }
   @keyframes rainbowText { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
 
   .subtitle {
     font-size: 1.2rem; font-weight: 800; margin-bottom: 18px; text-align: center;
     padding: 8px 20px; border-radius: 6px; display: inline-block;
   }
-  .theme-white .subtitle { background: rgba(0,0,0,0.07); color: #111; }
   .theme-dark .subtitle { background: rgba(255,255,255,0.06); color: #c9cdd6; }
   .theme-rainbow .subtitle { background: rgba(0,0,0,0.4); color: #fff; }
   .theme-deepsea .subtitle { background: rgba(79,242,233,0.1); color: #bff4ee; }
   .theme-chaos .subtitle { background: rgba(255,0,255,0.3); color: #0ff; }
   .theme-lofi .subtitle { background: rgba(0,0,0,0.3); color: #e9c9ab; }
+  .theme-halloween .subtitle { background: rgba(0,0,0,0.35); color: #e8cfb4; }
 
   /* ===== BUTTONS ===== */
   .btn {
@@ -99,10 +101,6 @@
   .btn:disabled { opacity: 0.4; cursor: default; transform: none; }
 
 
-  .theme-white .btn { background: #fff; color: #111; border-color: #999; }
-  .theme-white .btn:hover { background: #eee; }
-  .theme-white .btn.primary { background: #0066cc; color: #fff; border-color: #0066cc; }
-  .theme-white .btn.active { background: #0066cc; color: #fff; }
 
   .theme-dark .btn { background: #171a21; color: #d9dce3; border-color: #343a46; }
   .theme-dark .btn:hover { background: #1f232c; }
@@ -131,6 +129,10 @@
   .theme-lofi .btn:hover { background: rgba(0,0,0,0.45); }
   .theme-lofi .btn.primary { background: #e0955e; color: #2b1f1d; border-color: #f0b184; }
   .theme-lofi .btn.active { background: #c98fa0; color: #2b1f1d; border-color: #e6b3c0; }
+  .theme-halloween .btn { background: rgba(0,0,0,0.4); color: #e6d6c2; border-color: rgba(196,98,30,0.55); }
+  .theme-halloween .btn:hover { background: rgba(0,0,0,0.5); }
+  .theme-halloween .btn.primary { background: #b4561a; color: #fbeadb; border-color: #d0702c; }
+  .theme-halloween .btn.active { background: #5e3a8e; color: #efe4fb; border-color: #8461b4; }
 
   /* ===== TOP ROW ===== */
   .upload-row { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; }
@@ -140,7 +142,6 @@
   .status-msg.visible { display: block; }
   .status-msg.error { background: #c0392b; color: #fff; }
   .status-msg.info { background: rgba(0,0,0,0.35); color: #fff; }
-  .theme-white .status-msg.info { background: rgba(0,0,0,0.75); }
   @keyframes shakeX { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-6px); } 40%,80% { transform: translateX(6px); } }
   .shake { animation: shakeX 0.35s ease; }
   input.invalid { border-color: #ff3333 !important; }
@@ -151,12 +152,12 @@
     display: grid; grid-template-columns: 210px 1fr; gap: 12px; align-items: center;
     border-radius: 10px; padding: 8px 10px;
   }
-  .theme-white .track { background: #e8e8e8; }
   .theme-dark .track { background: #12141a; border: 1px solid #1e222b; }
   .theme-rainbow .track { background: rgba(0,0,0,0.3); }
   .theme-deepsea .track { background: rgba(2,16,30,0.6); border: 1px solid rgba(79,242,233,0.22); }
   .theme-chaos .track { background: rgba(0,0,0,0.5); border: 1px solid #ff00ff; }
   .theme-lofi .track { background: rgba(0,0,0,0.3); border: 1px solid rgba(240,177,132,0.22); }
+  .theme-halloween .track { background: rgba(10,5,16,0.45); border: 1px solid rgba(155,107,214,0.25); }
 
   .track.dim .track-wave { opacity: 0.3; }
   .track.dim .track-name { opacity: 0.55; }
@@ -171,7 +172,6 @@
     font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 0.85rem;
     padding: 4px 9px; cursor: pointer; -webkit-tap-highlight-color: transparent;
   }
-  .theme-white .mini { border-color: #888; }
   .theme-dark .mini { border-color: #343a46; }
   .theme-dark .mini.on { background: #a85a6c; border-color: #a85a6c; color: #f3eef0; }
   .theme-dark .mini.on.solo { background: #c9a85a; border-color: #c9a85a; color: #0b0c10; }
@@ -179,6 +179,7 @@
   .theme-deepsea .mini { border-color: rgba(79,242,233,0.5); }
   .theme-chaos .mini { border-color: #ff0; }
   .theme-lofi .mini { border-color: rgba(240,177,132,0.5); }
+  .theme-halloween .mini { border-color: rgba(196,98,30,0.6); }
   .mini.mute { display: inline-flex; align-items: center; justify-content: center; }
   .mini svg { width: 18px; height: 18px; display: block; }
   .mini.on { background: #ff3d68; color: #fff; border-color: #ff3d68; }
@@ -190,13 +191,13 @@
     /* vertical swipes scroll the page; sideways drags pick a section */
     cursor: crosshair; touch-action: pan-y; -webkit-user-select: none; user-select: none;
   }
-  .theme-white .track-wave { background: #d5d5d5; }
   .theme-dark .track-wave { background: #0e1015; }
   .theme-dark input[type="range"] { accent-color: #8aa2c8; }
   .theme-rainbow .track-wave { background: rgba(0,0,0,0.35); }
   .theme-deepsea .track-wave { background: rgba(2,16,30,0.85); }
   .theme-chaos .track-wave { background: rgba(0,0,0,0.55); }
   .theme-lofi .track-wave { background: rgba(24,15,18,0.72); }
+  .theme-halloween .track-wave { background: rgba(12,6,18,0.78); }
   .track-wave canvas { width: 100%; height: 100%; display: block; }
 
   .sel-overlay { position: absolute; top: 0; height: 100%; pointer-events: none; display: none; }
@@ -207,20 +208,20 @@
   }
   .sel-overlay::before { left: -5px; }
   .sel-overlay::after { right: -5px; }
-  .theme-white .sel-overlay { color: #0066cc; background: rgba(0,100,200,0.2); border-left: 2px solid #0066cc; border-right: 2px solid #0066cc; }
   .theme-dark .sel-overlay { color: #8aa2c8; background: rgba(138,162,200,0.16); border-left: 2px solid #8aa2c8; border-right: 2px solid #8aa2c8; }
   .theme-rainbow .sel-overlay { color: #fff; background: rgba(255,255,255,0.2); border-left: 2px solid #fff; border-right: 2px solid #fff; }
   .theme-deepsea .sel-overlay { color: #4ff2e9; background: rgba(79,242,233,0.18); border-left: 2px solid #4ff2e9; border-right: 2px solid #4ff2e9; }
   .theme-chaos .sel-overlay { color: #0ff; background: rgba(255,0,255,0.3); border-left: 2px solid #0ff; border-right: 2px solid #0ff; }
   .theme-lofi .sel-overlay { color: #f0b184; background: rgba(240,177,132,0.2); border-left: 2px solid #f0b184; border-right: 2px solid #f0b184; }
+  .theme-halloween .sel-overlay { color: #ff8c2e; background: rgba(255,140,46,0.18); border-left: 2px solid #ff8c2e; border-right: 2px solid #ff8c2e; }
 
   .ph { position: absolute; top: 0; height: 100%; width: 2px; pointer-events: none; display: none; }
-  .theme-white .ph { background: #ff3333; }
   .theme-dark .ph { background: #e3c08d; }
   .theme-rainbow .ph { background: #fff; }
   .theme-deepsea .ph { background: #eafffc; box-shadow: 0 0 12px #4ff2e9; }
   .theme-chaos .ph { background: #ff0; }
   .theme-lofi .ph { background: #fff1e0; box-shadow: 0 0 10px rgba(240,177,132,0.8); }
+  .theme-halloween .ph { background: #fff4e0; box-shadow: 0 0 10px rgba(255,140,46,0.8); }
 
   /* empty state doubles as a drop zone; tapping it opens the file picker */
   .empty-hint {
@@ -229,7 +230,6 @@
     border-radius: 12px; border: 2px dashed; cursor: pointer; -webkit-tap-highlight-color: transparent;
   }
   .empty-hint strong { display: block; font-size: 1.25rem; margin-bottom: 4px; }
-  .theme-white .empty-hint { background: #e8e8e8; color: #111; border-color: #999; }
   .theme-dark .empty-hint { background: #12141a; color: #d9dce3; border-color: #343a46; }
   .theme-rainbow .empty-hint { background: rgba(0,0,0,0.45); color: #fff; border-color: rgba(255,255,255,0.75); }
   .theme-deepsea .empty-hint { background: rgba(2,16,30,0.75); color: #bff4ee; border-color: rgba(79,242,233,0.5); }
@@ -237,6 +237,8 @@
   .theme-chaos .empty-hint strong { color: #ff0; }
   .theme-lofi .empty-hint { background: rgba(0,0,0,0.35); color: #f3dcc4; border-color: rgba(240,177,132,0.5); }
   .theme-lofi .empty-hint strong { color: #f0b184; }
+  .theme-halloween .empty-hint { background: rgba(0,0,0,0.4); color: #efe2cf; border-color: rgba(255,140,46,0.5); }
+  .theme-halloween .empty-hint strong { color: #ff8c2e; }
   .theme-deepsea .empty-hint strong { color: #4ff2e9; }
 
   /* ===== HINTS + TIME INPUTS ===== */
@@ -246,12 +248,12 @@
     padding: 6px 16px; border-radius: 20px; margin-top: 12px;
   }
   .drag-hint.visible { display: inline-block; }
-  .theme-white .drag-hint { background: rgba(0,0,0,0.07); color: #111; }
   .theme-dark .drag-hint { background: rgba(255,255,255,0.06); color: #c9cdd6; }
   .theme-rainbow .drag-hint { background: rgba(0,0,0,0.5); color: #fff; }
   .theme-deepsea .drag-hint { background: rgba(2,16,30,0.75); color: #bff4ee; }
   .theme-chaos .drag-hint { background: rgba(0,0,0,0.7); color: #0ff; }
   .theme-lofi .drag-hint { background: rgba(0,0,0,0.4); color: #f3dcc4; }
+  .theme-halloween .drag-hint { background: rgba(0,0,0,0.45); color: #efe2cf; }
 
   /* section readout in the transport: "Section 0:22 – 0:27 x" or "Whole song" */
   .section-line { display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 1rem; }
@@ -268,12 +270,12 @@
     font-size: 1rem; font-weight: 800; font-family: 'Nunito', sans-serif; text-align: center;
   }
   .section-line .mini { min-width: 36px; height: 36px; padding: 0; }
-  .theme-white .section-line input { background: #fff; color: #111; border-color: #999; }
   .theme-dark .section-line input { background: #171a21; color: #e6e8ee; border-color: #343a46; }
   .theme-rainbow .section-line input { background: rgba(0,0,0,0.45); color: #fff; border-color: rgba(255,255,255,0.6); }
   .theme-deepsea .section-line input { background: rgba(2,16,30,0.85); color: #eafffc; border-color: rgba(79,242,233,0.55); }
   .theme-chaos .section-line input { background: rgba(0,0,0,0.7); color: #ff0; border-color: #ff00ff; }
   .theme-lofi .section-line input { background: rgba(24,15,18,0.85); color: #f3dcc4; border-color: rgba(240,177,132,0.5); }
+  .theme-halloween .section-line input { background: rgba(12,6,18,0.85); color: #efe2cf; border-color: rgba(196,98,30,0.6); }
 
   /* ===== CONTROLS ===== */
   .controls { display: none; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
@@ -287,14 +289,12 @@
       backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       background: rgba(0,0,0,0.6); box-shadow: 0 10px 28px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.14);
     }
-    .theme-white .controls { background: rgba(245,245,245,0.95); box-shadow: 0 8px 24px rgba(0,0,0,0.16), 0 1px 0 rgba(0,0,0,0.12); }
   }
   /* section line, then speed on its own line underneath */
   /* top line: where you are in the song, next to the section */
   .status-row { order: -1; flex: 1 1 100%; display: flex; align-items: center; justify-content: center; gap: 8px 32px; flex-wrap: wrap; min-height: 36px; }
   /* the timer sits in its own soft pill so it reads as separate from the section */
   .controls .clock { padding: 6px 14px; border-radius: 20px; background: rgba(255,255,255,0.09); }
-  .theme-white .controls .clock { background: rgba(0,0,0,0.07); }
   .theme-rainbow .controls .clock { background: rgba(0,0,0,0.35); }
   .speed-control { order: 5; flex: 1 1 100%; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1rem; font-weight: 800; }
   .speed-control .sec-label { opacity: 0.8; }
@@ -312,12 +312,12 @@
     max-width: 560px; width: 100%; border-radius: 10px; padding: 18px 24px;
     font-size: 1.05rem; font-weight: 700; line-height: 1.9; text-align: center; margin-top: 18px;
   }
-  .theme-white .instructions { background: #e0e0e0; color: #111; }
   .theme-dark .instructions { background: #12141a; color: #c9cdd6; border: 1px solid #1e222b; }
   .theme-rainbow .instructions { background: rgba(0,0,0,0.3); color: #fff; }
   .theme-deepsea .instructions { background: rgba(2,16,30,0.7); color: #bff4ee; border: 1px solid rgba(79,242,233,0.3); }
   .theme-chaos .instructions { background: rgba(0,0,0,0.55); color: #0ff; border: 1px solid #ff00ff; }
   .theme-lofi .instructions { background: rgba(0,0,0,0.32); color: #f3dcc4; border: 1px solid rgba(240,177,132,0.25); }
+  .theme-halloween .instructions { background: rgba(0,0,0,0.38); color: #efe2cf; border: 1px solid rgba(155,107,214,0.3); }
   .instructions ol { list-style: none; counter-reset: step; display: inline-block; text-align: left; line-height: 1.7; }
   .instructions li { counter-increment: step; }
   .instructions li::before { content: counter(step) '.'; display: inline-block; width: 1.4em; opacity: 0.6; }
@@ -327,18 +327,18 @@
   .theme-deepsea .instructions strong { color: #4ff2e9; }
   .theme-chaos .instructions strong { color: #ff0; }
   .theme-lofi .instructions strong { color: #f0b184; }
+  .theme-halloween .instructions strong { color: #ff8c2e; }
 
   .other-link { margin-top: 14px; font-weight: 800; font-size: 1rem; }
   .other-link a { color: inherit; }
 
   /* ===== THEME SWITCHER ===== */
-  .theme-switcher { display: flex; gap: 8px; align-items: center; justify-content: center; margin: 0 0 14px; flex-wrap: wrap; max-width: 560px; }
+  .theme-switcher { display: flex; gap: 8px; align-items: center; justify-content: center; margin: 0 0 14px; flex-wrap: wrap; max-width: 680px; }
   .theme-pick {
     padding: 8px 16px; border-radius: 20px; font-size: 0.95rem; font-weight: 800;
     cursor: pointer; border: 2px solid; font-family: 'Nunito', sans-serif; transition: transform 0.15s;
   }
   .theme-pick:hover { transform: scale(1.08); }
-  .theme-pick.tp-white { background: #f5f5f5; color: #111; border-color: #999; }
   .theme-pick.tp-dark { background: #0b0c10; color: #d9dce3; border-color: #343a46; }
   .theme-pick.tp-rainbow {
     background: linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff00, #0077ff, #8800ff);
@@ -358,8 +358,11 @@
     background: linear-gradient(135deg, #4b3430, #e0955e);
     color: #fff1e0; border-color: #f0b184; text-shadow: 0 1px 3px rgba(0,0,0,0.6);
   }
+  .theme-pick.tp-halloween {
+    background: linear-gradient(135deg, #24112c 35%, #b4561a);
+    color: #fbeadb; border-color: #b4561a; text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+  }
   .theme-pick.active-theme { outline: 3px solid #fff; outline-offset: 2px; }
-  .theme-white .theme-pick.active-theme { outline-color: #111; }
 
   /* no sticky hover-zoom on touch screens */
   @media (hover: none) {
@@ -407,8 +410,6 @@
       content: ''; position: absolute; left: 0; right: 0; top: -28px; height: 28px; pointer-events: none;
       background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.35));
     }
-    .theme-white .controls { background: rgba(245,245,245,0.95); box-shadow: 0 -8px 24px rgba(0,0,0,0.18), 0 -1px 0 rgba(0,0,0,0.12); }
-    .theme-white .controls::before { background: linear-gradient(to bottom, rgba(245,245,245,0), rgba(0,0,0,0.08)); }
     .controls #playBtn, .controls #loopBtn { flex: 1 1 25%; white-space: nowrap; padding-left: 8px; padding-right: 8px; }
     .controls #restartBtn, .controls .skip { flex: 0 0 46px; padding: 0; }
     .controls .speed-control { font-size: 0.95rem; }
@@ -435,10 +436,10 @@
 <div class="theme-switcher" id="themeSwitcher">
   <button class="theme-pick tp-lofi active-theme" onclick="setTheme('lofi')">Lofi</button>
   <button class="theme-pick tp-deepsea" onclick="setTheme('deepsea')">Sea</button>
-  <button class="theme-pick tp-white" onclick="setTheme('white')">White</button>
   <button class="theme-pick tp-rainbow" onclick="setTheme('rainbow')">Pride</button>
   <button class="theme-pick tp-dark" onclick="setTheme('dark')">Dark</button>
   <button class="theme-pick tp-chaos" onclick="setTheme('chaos')">Chaos</button>
+  <button class="theme-pick tp-halloween" onclick="setTheme('halloween')">Halloween</button>
 </div>
 
 <div class="upload-row">
@@ -1698,6 +1699,426 @@ function drawLofi() {
   requestAnimationFrame(drawLofi);
 }
 
+// ===== HALLOWEEN SCENE =====
+// A quiet moonlit night: soft stars, a few slow bats, low fog, rising embers,
+// and a hill with gravestones and a glowing jack-o'-lantern. Nothing flashes.
+const stars = [];
+const bats = [];
+const embers = [];
+const fog = [];
+const floaters = [];
+const walkers = [];
+const castleWindows = [];
+const peeks = [];
+let spookyPhase = 0;
+
+function spawnBat(anywhere) {
+  const w = chaosCanvas.width, h = chaosCanvas.height;
+  const dir = Math.random() < 0.5 ? 1 : -1;
+  bats.push({ x: anywhere ? Math.random()*w : (dir > 0 ? -40 : w + 40), y: h*(0.08 + Math.random()*0.38),
+              vx: dir*(0.35 + Math.random()*0.5), size: 10 + Math.random()*12,
+              flap: Math.random()*Math.PI*2, flapSpeed: 0.09 + Math.random()*0.05, bob: Math.random()*Math.PI*2 });
+}
+
+function initHalloween() {
+  stars.length = 0; bats.length = 0; embers.length = 0; fog.length = 0; floaters.length = 0; walkers.length = 0;
+  const w = chaosCanvas.width, h = chaosCanvas.height;
+  for(let i = 0; i < 80; i++) {
+    stars.push({ x: Math.random()*w, y: Math.random()*h*0.7, r: 0.4 + Math.random()*1.2,
+                 tw: Math.random()*Math.PI*2, speed: 0.004 + Math.random()*0.01 });
+  }
+  for(let i = 0; i < 5; i++) spawnBat(true);
+  for(let i = 0; i < 5; i++) {
+    floaters.push({ x: w*(0.08 + i*0.21 + Math.random()*0.08), y: h*(0.1 + Math.random()*0.3),
+                    size: 0.8 + Math.random()*0.6, bob: Math.random()*Math.PI*2, vx: (Math.random() - 0.5)*0.2 });
+  }
+  spawnWalker(true, 'vampire'); spawnWalker(true, 'werewolf');
+  castleWindows.length = 0; peeks.length = 0;
+  for(let i = 0; i < 7; i++) castleWindows.push([0.12 + Math.random()*0.76, 0.15 + Math.random()*0.45]);
+  peeks.push({ state: 'rise', t: 0, up: 0, kind: 'zombie', wait: 0 });
+  peeks.push({ state: 'wait', t: 0, up: 0, kind: 'vampire', wait: 300 });
+  for(let i = 0; i < 18; i++) {
+    embers.push({ x: Math.random()*w, y: Math.random()*h, r: 1 + Math.random()*2.2,
+                  vy: -(0.15 + Math.random()*0.35), drift: Math.random()*Math.PI*2, alpha: 0.25 + Math.random()*0.4 });
+  }
+  for(let i = 0; i < 5; i++) {
+    fog.push({ x: Math.random()*w, y: h*(0.72 + Math.random()*0.22), rx: w*(0.25 + Math.random()*0.25),
+               ry: h*(0.05 + Math.random()*0.06), vx: (Math.random() < 0.5 ? -1 : 1)*(0.1 + Math.random()*0.15) });
+  }
+}
+
+function drawBat(b) {
+  const c = cctx, s = b.size, f = Math.sin(b.flap);
+  c.save();
+  c.translate(b.x, b.y + Math.sin(b.bob)*s*0.6);
+  c.fillStyle = 'rgba(150,120,195,0.32)';
+  c.beginPath();
+  for(const side of [-1, 1]) {
+    const tipY = -s*0.55*f;
+    c.moveTo(side*s*0.1, -s*0.08);
+    c.quadraticCurveTo(side*s*0.5, tipY - s*0.25, side*s*1.05, tipY);
+    c.quadraticCurveTo(side*s*0.85, tipY*0.5 + s*0.02, side*s*0.7, tipY*0.45 + s*0.16);
+    c.quadraticCurveTo(side*s*0.52, tipY*0.3 + s*0.06, side*s*0.38, tipY*0.25 + s*0.2);
+    c.quadraticCurveTo(side*s*0.24, s*0.08, side*s*0.08, s*0.14);
+  }
+  c.fill();
+  c.beginPath(); c.ellipse(0, 0, s*0.16, s*0.26, 0, 0, Math.PI*2); c.fill();
+  c.beginPath();
+  c.moveTo(-s*0.12, -s*0.18); c.lineTo(-s*0.09, -s*0.38); c.lineTo(-s*0.02, -s*0.22);
+  c.moveTo(s*0.12, -s*0.18); c.lineTo(s*0.09, -s*0.38); c.lineTo(s*0.02, -s*0.22);
+  c.fill();
+  c.restore();
+}
+
+function drawPumpkin(px, py, r, glow, rot) {
+  const c = cctx;
+  const halo = c.createRadialGradient(px, py, 0, px, py, r*5);
+  halo.addColorStop(0, 'rgba(255,140,46,' + (0.22*glow).toFixed(3) + ')');
+  halo.addColorStop(1, 'rgba(255,140,46,0)');
+  c.fillStyle = halo;
+  c.fillRect(px - r*5, py - r*5, r*10, r*10);
+  c.save();
+  c.translate(px, py); c.rotate(rot);
+  c.fillStyle = '#d9661a';
+  c.beginPath(); c.ellipse(-r*0.38, 0, r*0.62, r*0.78, 0, 0, Math.PI*2); c.fill();
+  c.beginPath(); c.ellipse(r*0.38, 0, r*0.62, r*0.78, 0, 0, Math.PI*2); c.fill();
+  c.fillStyle = '#ef7a24';
+  c.beginPath(); c.ellipse(0, 0, r*0.6, r*0.82, 0, 0, Math.PI*2); c.fill();
+  c.fillStyle = '#3d5a2a';
+  c.fillRect(-r*0.08, -r*1.0, r*0.16, r*0.28);
+  c.fillStyle = 'rgba(255,214,120,' + glow.toFixed(3) + ')';
+  c.beginPath();
+  c.moveTo(-r*0.5, -r*0.12); c.lineTo(-r*0.22, -r*0.42); c.lineTo(-r*0.14, -r*0.08);
+  c.moveTo(r*0.5, -r*0.12); c.lineTo(r*0.22, -r*0.42); c.lineTo(r*0.14, -r*0.08);
+  c.moveTo(-r*0.55, r*0.18);
+  c.quadraticCurveTo(0, r*0.75, r*0.55, r*0.18);
+  c.quadraticCurveTo(0, r*0.38, -r*0.55, r*0.18);
+  c.fill();
+  c.restore();
+}
+
+// ----- the night walkers: a vampire, a werewolf and a zombie, all slow and friendly-spooky -----
+function drawLeg(x, y, len, angle, width, color) {
+  const c = cctx;
+  c.save(); c.translate(x, y); c.rotate(angle);
+  c.fillStyle = color;
+  c.fillRect(-width/2, 0, width, len);
+  c.restore();
+}
+
+function drawVampire(H, step) {
+  const c = cctx, swing = Math.sin(step)*0.35;
+  drawLeg(-H*0.04, -H*0.46, H*0.46, swing, H*0.07, '#1a1020');
+  drawLeg(H*0.04, -H*0.46, H*0.46, -swing, H*0.07, '#1a1020');
+  // cape, billowing a little as he walks
+  const flutter = Math.sin(step*0.5)*H*0.04;
+  c.fillStyle = '#120814';
+  c.beginPath();
+  c.moveTo(-H*0.12, -H*0.82); c.lineTo(H*0.12, -H*0.82);
+  c.lineTo(-H*0.05 + flutter, -H*0.08); c.lineTo(-H*0.36 + flutter, -H*0.12);
+  c.closePath(); c.fill();
+  c.fillStyle = '#6b1030';
+  c.beginPath();
+  c.moveTo(-H*0.1, -H*0.8); c.lineTo(-H*0.08 + flutter, -H*0.14); c.lineTo(-H*0.3 + flutter, -H*0.16);
+  c.closePath(); c.fill();
+  // body with a white shirt front
+  c.fillStyle = '#1c1424';
+  c.fillRect(-H*0.1, -H*0.84, H*0.2, H*0.4);
+  c.fillStyle = '#e8e2ec';
+  c.beginPath(); c.moveTo(-H*0.04, -H*0.84); c.lineTo(H*0.04, -H*0.84); c.lineTo(0, -H*0.66); c.closePath(); c.fill();
+  // high collar
+  c.fillStyle = '#6b1030';
+  c.beginPath(); c.moveTo(-H*0.13, -H*0.84); c.lineTo(-H*0.16, -H*1.0); c.lineTo(-H*0.04, -H*0.86); c.closePath(); c.fill();
+  // pale head, slicked hair with a widow's peak, red eyes
+  c.fillStyle = '#e6e0ea';
+  c.beginPath(); c.arc(0, -H*0.93, H*0.09, 0, Math.PI*2); c.fill();
+  c.fillStyle = '#120814';
+  c.beginPath(); c.arc(0, -H*0.95, H*0.095, Math.PI*1.05, Math.PI*1.95); c.lineTo(H*0.02, -H*0.96); c.lineTo(0, -H*0.92); c.closePath(); c.fill();
+  c.fillStyle = '#c0213a';
+  c.beginPath(); c.arc(H*0.045, -H*0.93, H*0.012, 0, Math.PI*2); c.fill();
+}
+
+function drawWerewolf(H, step) {
+  const c = cctx, swing = Math.sin(step)*0.4;
+  drawLeg(-H*0.06, -H*0.42, H*0.42, swing, H*0.09, '#4a3123');
+  drawLeg(H*0.06, -H*0.42, H*0.42, -swing, H*0.09, '#4a3123');
+  // bushy tail, swaying a little
+  const sway = Math.sin(step*0.5)*H*0.03;
+  c.fillStyle = '#5a3d2b';
+  c.beginPath(); c.moveTo(-H*0.1, -H*0.5); c.quadraticCurveTo(-H*0.32, -H*0.5 + sway, -H*0.3, -H*0.3 + sway);
+  c.quadraticCurveTo(-H*0.2, -H*0.4, -H*0.08, -H*0.42); c.fill();
+  // hunched furry body with a ragged back
+  c.fillStyle = '#6b4a33';
+  c.beginPath(); c.moveTo(-H*0.12, -H*0.7); c.lineTo(-H*0.1, -H*0.8); c.lineTo(-H*0.05, -H*0.74); c.lineTo(-H*0.02, -H*0.84); c.lineTo(H*0.03, -H*0.77); c.lineTo(H*0.06, -H*0.84); c.lineTo(H*0.1, -H*0.74); c.fill();
+  c.beginPath(); c.ellipse(H*0.02, -H*0.6, H*0.16, H*0.22, 0.25, 0, Math.PI*2); c.fill();
+  // arm hanging forward with claws
+  const arm = Math.sin(step + Math.PI)*0.3 - 0.5;
+  c.save(); c.translate(H*0.08, -H*0.72); c.rotate(arm);
+  c.fillStyle = '#5a3d2b'; c.fillRect(-H*0.04, 0, H*0.08, H*0.34);
+  c.fillStyle = '#e8dcc0';
+  c.beginPath(); c.moveTo(-H*0.04, H*0.34); c.lineTo(-H*0.02, H*0.4); c.lineTo(0, H*0.34); c.lineTo(H*0.02, H*0.4); c.lineTo(H*0.04, H*0.34); c.fill();
+  c.restore();
+  // wolf head: ears, snout, a yellow eye
+  c.fillStyle = '#6b4a33';
+  c.beginPath(); c.ellipse(H*0.14, -H*0.84, H*0.1, H*0.09, 0, 0, Math.PI*2); c.fill();
+  c.beginPath(); c.moveTo(H*0.08, -H*0.9); c.lineTo(H*0.07, -H*1.02); c.lineTo(H*0.14, -H*0.92); c.fill();
+  c.beginPath(); c.moveTo(H*0.15, -H*0.92); c.lineTo(H*0.17, -H*1.03); c.lineTo(H*0.22, -H*0.9); c.fill();
+  c.beginPath(); c.moveTo(H*0.2, -H*0.88); c.lineTo(H*0.34, -H*0.82); c.lineTo(H*0.2, -H*0.77); c.fill();
+  c.fillStyle = '#ffd84a';
+  c.beginPath(); c.arc(H*0.18, -H*0.87, H*0.015, 0, Math.PI*2); c.fill();
+  c.fillStyle = '#1a1010';
+  c.beginPath(); c.arc(H*0.335, -H*0.82, H*0.015, 0, Math.PI*2); c.fill();
+}
+
+function drawZombie(H, step) {
+  const c = cctx, swing = Math.sin(step)*0.3;
+  // one stiff leg, one dragging
+  drawLeg(-H*0.05, -H*0.46, H*0.46, swing*0.5, H*0.08, '#2d3a55');
+  drawLeg(H*0.05, -H*0.46, H*0.46, -swing, H*0.08, '#2d3a55');
+  c.save();
+  c.rotate(0.08 + Math.sin(step)*0.04);
+  // torn shirt
+  c.fillStyle = '#4a6d8c';
+  c.beginPath();
+  c.moveTo(-H*0.11, -H*0.82); c.lineTo(H*0.11, -H*0.82); c.lineTo(H*0.11, -H*0.48);
+  c.lineTo(H*0.06, -H*0.44); c.lineTo(H*0.02, -H*0.49); c.lineTo(-H*0.04, -H*0.43); c.lineTo(-H*0.11, -H*0.48);
+  c.closePath(); c.fill();
+  // arms reaching forward
+  c.fillStyle = '#7fae6a';
+  c.fillRect(H*0.02, -H*0.8 + Math.sin(step*0.5)*H*0.01, H*0.3, H*0.06);
+  c.fillRect(H*0.0, -H*0.72 - Math.sin(step*0.5)*H*0.01, H*0.28, H*0.06);
+  // tilted green head with dark eyes and a stitched mouth
+  c.beginPath(); c.arc(H*0.02, -H*0.92, H*0.09, 0, Math.PI*2); c.fill();
+  c.fillStyle = '#2b3a22';
+  c.beginPath(); c.arc(H*0.05, -H*0.94, H*0.014, 0, Math.PI*2); c.fill();
+  c.beginPath(); c.arc(H*0.0, -H*0.945, H*0.012, 0, Math.PI*2); c.fill();
+  c.fillRect(H*0.0, -H*0.88, H*0.07, H*0.008);
+  c.restore();
+}
+
+const WALKERS = { vampire: drawVampire, werewolf: drawWerewolf, zombie: drawZombie };
+const WALKER_KINDS = Object.keys(WALKERS);
+function randomKind() { return WALKER_KINDS[Math.floor(Math.random()*WALKER_KINDS.length)]; }
+
+// ----- the castle: a battlement wall across the screen with a tall tower at each edge -----
+// The towers sit at the edges so they show beside the parts on a computer.
+function castleLayout(w, h) {
+  const tw = Math.max(44, Math.min(130, w*0.075));
+  const m = Math.max(12, Math.min(26, w*0.02));
+  return { tw, m, lx: Math.max(tw*0.55, w*0.05), rx: Math.min(w - tw*0.55, w*0.95),
+           wallTop: h*0.5, ltTop: h*0.2, rtTop: h*0.25 };
+}
+
+function spawnWalker(anywhere, kind) {
+  const w = chaosCanvas.width, h = chaosCanvas.height, L = castleLayout(w, h);
+  const dir = Math.random() < 0.5 ? 1 : -1;
+  kind = kind || randomKind();
+  walkers.push({ kind, dir, x: anywhere ? L.lx + Math.random()*(L.rx - L.lx) : (dir > 0 ? L.lx : L.rx),
+                 speed: kind === 'zombie' ? 0.25 : 0.35 + Math.random()*0.15, step: Math.random()*Math.PI*2 });
+}
+
+function drawSmallTower(x, top, tw, h) {
+  const c = cctx;
+  c.fillStyle = '#1c1126';
+  c.fillRect(x - tw/2, top, tw, h - top);
+  c.fillStyle = '#160d1f';
+  c.beginPath(); c.moveTo(x - tw*0.62, top); c.lineTo(x, top - tw*1.2); c.lineTo(x + tw*0.62, top); c.fill();
+  c.fillStyle = 'rgba(255,150,60,0.28)';
+  c.beginPath(); c.arc(x, top + tw*0.5, tw*0.13, Math.PI, 0); c.lineTo(x + tw*0.13, top + tw*0.8); c.lineTo(x - tw*0.13, top + tw*0.8); c.fill();
+}
+
+function drawWallBody(L, w, h) {
+  const c = cctx;
+  c.fillStyle = '#20142b';
+  c.fillRect(0, L.wallTop, w, h - L.wallTop);
+  // a few warm windows
+  c.fillStyle = 'rgba(255,150,60,0.22)';
+  castleWindows.forEach(([fx, fy]) => {
+    const x = w*fx, y = L.wallTop + (h - L.wallTop)*fy, ww = L.m*0.5;
+    c.beginPath(); c.arc(x, y, ww, Math.PI, 0); c.lineTo(x + ww, y + ww*1.8); c.lineTo(x - ww, y + ww*1.8); c.fill();
+  });
+}
+
+function drawParapet(L, w) {
+  const c = cctx, m = L.m;
+  c.fillStyle = '#291b35';
+  c.fillRect(0, L.wallTop - m*0.1, w, m*0.8);
+  for(let x = -m*0.5; x < w; x += m*2) c.fillRect(x, L.wallTop - m*0.9, m, m*0.85);
+}
+
+function drawTower(x, top, L, h, peek) {
+  const c = cctx, tw = L.tw;
+  c.fillStyle = '#291b35';
+  c.fillRect(x - tw/2, top, tw, h - top);
+  // pointed roof with a little flag
+  c.fillStyle = '#1a0f23';
+  c.beginPath(); c.moveTo(x - tw*0.66, top); c.lineTo(x, top - tw*1.25); c.lineTo(x + tw*0.66, top); c.fill();
+  c.strokeStyle = '#1a0f23'; c.lineWidth = 2;
+  c.beginPath(); c.moveTo(x, top - tw*1.25); c.lineTo(x, top - tw*1.55); c.stroke();
+  c.fillStyle = '#5e3a8e';
+  const wave = Math.sin(spookyPhase*2 + x)*tw*0.03;
+  c.beginPath(); c.moveTo(x, top - tw*1.55); c.lineTo(x + tw*0.28, top - tw*1.48 + wave); c.lineTo(x, top - tw*1.4); c.fill();
+  // the window someone peeks out of
+  const ww = tw*0.42, wh = tw*0.62, wx = x - ww/2, wy = top + tw*0.35;
+  c.save();
+  c.beginPath(); c.arc(x, wy + ww/2, ww/2, Math.PI, 0); c.lineTo(wx + ww, wy + wh); c.lineTo(wx, wy + wh); c.closePath();
+  c.fillStyle = 'rgba(255,150,60,0.4)'; c.fill();
+  c.clip();
+  if(peek.up > 0) {
+    const H = wh*1.25, cy = wy + wh*0.5;
+    const hidden = wy + wh + H*0.12;
+    const face = x < L.lx + 1 ? 1 : -1;
+    c.translate(x - face*(peek.kind === 'werewolf' ? H*0.14 : H*0.02), hidden + H*0.92 - peek.up*(hidden - cy));
+    c.scale(face, 1);
+    WALKERS[peek.kind](H, 0);
+  }
+  c.restore();
+  // window ledge
+  c.fillStyle = '#1a0f23';
+  c.fillRect(wx - tw*0.06, wy + wh, ww + tw*0.12, tw*0.06);
+}
+
+// someone rises into the tower window, looks around for a bit, then ducks back down
+function updatePeek(p) {
+  p.t++;
+  if(p.state === 'wait' && p.t > p.wait) { p.state = 'rise'; p.t = 0; p.kind = randomKind(); }
+  else if(p.state === 'rise') { p.up = Math.min(1, p.t/90); if(p.up >= 1) { p.state = 'hold'; p.t = 0; } }
+  else if(p.state === 'hold' && p.t > 200) { p.state = 'sink'; p.t = 0; }
+  else if(p.state === 'sink') { p.up = Math.max(0, 1 - p.t/90); if(p.up <= 0) { p.state = 'wait'; p.t = 0; p.wait = 240 + Math.random()*480; } }
+}
+
+function drawHill(w, h) {
+  const c = cctx, base = h*0.93;
+  c.fillStyle = '#0a0610';
+  c.beginPath();
+  c.moveTo(0, h);
+  c.lineTo(0, base);
+  c.quadraticCurveTo(w*0.25, base - h*0.07, w*0.5, base - h*0.02);
+  c.quadraticCurveTo(w*0.78, base + h*0.03, w, base - h*0.04);
+  c.lineTo(w, h);
+  c.fill();
+  // gravestones
+  const u = Math.max(10, Math.min(w, h)*0.028);
+  [[0.30, 1], [0.36, 0.8], [0.70, 1.1], [0.88, 0.85]].forEach(([fx, k]) => {
+    const x = w*fx, gw = u*1.3*k, gh = u*1.9*k;
+    const y = base - h*0.035 - (fx < 0.5 ? h*0.015 : -h*0.01);
+    c.beginPath();
+    c.moveTo(x - gw/2, y + gh*0.4);
+    c.lineTo(x - gw/2, y - gh*0.3);
+    c.arc(x, y - gh*0.3, gw/2, Math.PI, 0);
+    c.lineTo(x + gw/2, y + gh*0.4);
+    c.fill();
+  });
+  // jack-o'-lantern with a slow, soft candle glow
+  const r = u*1.5;
+  drawPumpkin(w*0.14, base - h*0.035 - r*0.55, r, 0.8 + 0.08*Math.sin(spookyPhase*1.3) + 0.04*Math.sin(spookyPhase*3.1), 0);
+}
+
+function drawHalloween() {
+  if(currentScene !== 'halloween') return;
+  const w = chaosCanvas.width, h = chaosCanvas.height;
+  if(w < 2 || h < 2) { resizeChaos(); requestAnimationFrame(drawHalloween); return; }
+  spookyPhase += 0.01;
+  cctx.clearRect(0, 0, w, h);
+
+  // stars, twinkling very slowly
+  stars.forEach(st => {
+    st.tw += st.speed;
+    cctx.fillStyle = 'rgba(240,228,210,' + (0.25 + 0.3*Math.abs(Math.sin(st.tw))).toFixed(3) + ')';
+    cctx.beginPath(); cctx.arc(st.x, st.y, st.r, 0, Math.PI*2); cctx.fill();
+  });
+
+  // full moon with a soft halo
+  const mr = Math.max(28, Math.min(80, Math.min(w, h)*0.07));
+  // on a phone the moon tucks into the top corner, next to the title
+  const mx = w < 700 ? w - mr - 12 : w*0.82, my = w < 700 ? mr + 14 : h*0.15;
+  const halo = cctx.createRadialGradient(mx, my, mr*0.8, mx, my, mr*5);
+  halo.addColorStop(0, 'rgba(240,226,190,0.16)');
+  halo.addColorStop(1, 'rgba(240,226,190,0)');
+  cctx.fillStyle = halo;
+  cctx.fillRect(mx - mr*5, my - mr*5, mr*10, mr*10);
+  cctx.fillStyle = '#efe3c2';
+  cctx.beginPath(); cctx.arc(mx, my, mr, 0, Math.PI*2); cctx.fill();
+  cctx.fillStyle = 'rgba(190,170,130,0.35)';
+  [[-0.3,-0.2,0.18],[0.25,0.1,0.13],[-0.05,0.35,0.1],[0.35,-0.35,0.08]].forEach(([dx, dy, k]) => {
+    cctx.beginPath(); cctx.arc(mx + dx*mr, my + dy*mr, k*mr, 0, Math.PI*2); cctx.fill();
+  });
+
+  // the castle, with the night walkers strolling along its battlements
+  const L = castleLayout(w, h);
+  drawSmallTower(w*0.3, h*0.34, L.tw*0.7, h);
+  drawSmallTower(w*0.7, h*0.37, L.tw*0.7, h);
+  drawWallBody(L, w, h);
+  const wh = Math.max(50, Math.min(100, Math.min(w, h)*0.11));
+  for(let i = walkers.length - 1; i >= 0; i--) {
+    const k = walkers[i];
+    k.x += k.dir*k.speed; k.step += k.speed*0.12;
+    if((k.dir > 0 && k.x > L.rx) || (k.dir < 0 && k.x < L.lx)) { walkers.splice(i, 1); continue; }
+    cctx.save();
+    cctx.translate(k.x, L.wallTop + L.m*0.3);
+    cctx.scale(k.dir, 1);
+    WALKERS[k.kind](wh, k.step);
+    cctx.restore();
+  }
+  if(walkers.length < 3 && Math.random() < 0.004) spawnWalker(false);
+  drawParapet(L, w);
+  peeks.forEach(updatePeek);
+  drawTower(L.lx, L.ltTop, L, h, peeks[0]);
+  drawTower(L.rx, L.rtTop, L, h, peeks[1]);
+
+  // pumpkins floating high in the air, bobbing gently
+  const pu = Math.max(10, Math.min(w, h)*0.028);
+  floaters.forEach(f => {
+    f.bob += 0.012; f.x += f.vx;
+    if(f.x < -60) f.x = w + 60; if(f.x > w + 60) f.x = -60;
+    drawPumpkin(f.x, f.y + Math.sin(f.bob)*pu*0.8, pu*f.size, 0.75 + 0.1*Math.sin(f.bob*1.7), Math.sin(f.bob)*0.12);
+  });
+
+  // bats drift across, a few at a time
+  for(let i = bats.length - 1; i >= 0; i--) {
+    const b = bats[i];
+    b.x += b.vx; b.flap += b.flapSpeed; b.bob += 0.02;
+    if(b.x < -60 || b.x > w + 60) { bats.splice(i, 1); spawnBat(false); continue; }
+    drawBat(b);
+  }
+
+  // embers rising from the pumpkin patch
+  embers.forEach(e => {
+    e.y += e.vy; e.drift += 0.012; e.x += Math.sin(e.drift)*0.25;
+    if(e.y < -10) { e.y = h + 10; e.x = Math.random()*w; }
+    const g = cctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.r*4);
+    g.addColorStop(0, 'rgba(255,170,80,' + e.alpha.toFixed(3) + ')');
+    g.addColorStop(1, 'rgba(255,120,40,0)');
+    cctx.fillStyle = g;
+    cctx.beginPath(); cctx.arc(e.x, e.y, e.r*4, 0, Math.PI*2); cctx.fill();
+  });
+
+  drawHill(w, h);
+
+  // low fog rolling over the hill
+  fog.forEach(f => {
+    f.x += f.vx;
+    if(f.x - f.rx > w) f.x = -f.rx;
+    if(f.x + f.rx < 0) f.x = w + f.rx;
+    const g = cctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.rx);
+    g.addColorStop(0, 'rgba(185,165,215,0.09)');
+    g.addColorStop(1, 'rgba(185,165,215,0)');
+    cctx.fillStyle = g;
+    cctx.save(); cctx.translate(f.x, f.y); cctx.scale(1, f.ry/f.rx); cctx.translate(-f.x, -f.y);
+    cctx.beginPath(); cctx.arc(f.x, f.y, f.rx, 0, Math.PI*2); cctx.fill();
+    cctx.restore();
+  });
+
+  // vignette keeps the controls readable on top
+  const vig = cctx.createRadialGradient(w/2, h/2, Math.min(w,h)*0.25, w/2, h/2, Math.max(w,h)*0.75);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(0,0,0,0.4)');
+  cctx.fillStyle = vig;
+  cctx.fillRect(0, 0, w, h);
+
+  requestAnimationFrame(drawHalloween);
+}
+
 // ===== SCENE DISPATCHER =====
 let currentScene = null;
 function startScene(name) {
@@ -1708,6 +2129,7 @@ function startScene(name) {
   if(name === 'chaos') startChaos();
   else if(name === 'deepsea') { initDeepsea(); drawDeepsea(); }
   else if(name === 'lofi') { initLofi(); drawLofi(); }
+  else if(name === 'halloween') { initHalloween(); drawHalloween(); }
 }
 function stopScene() {
   currentScene = null;
@@ -1722,9 +2144,9 @@ function restartScene() {
   startScene(n);
 }
 
-const WAVE_COLOR = { white:'#0066cc', dark:'#7f93b5', rainbow:'#ffffff', deepsea:'#4ff2e9', chaos:'#ff5cf5', lofi:'#f0b184' };
-const THEMES = ['lofi','deepsea','white','rainbow','dark','chaos'];
-const CANVAS_THEMES = ['chaos','deepsea','lofi'];
+const WAVE_COLOR = { dark:'#7f93b5', rainbow:'#ffffff', deepsea:'#4ff2e9', chaos:'#ff5cf5', lofi:'#f0b184', halloween:'#b48ae6' };
+const THEMES = ['lofi','deepsea','rainbow','dark','chaos','halloween'];
+const CANVAS_THEMES = ['chaos','deepsea','lofi','halloween'];
 const PEAK_BUCKETS = 4000;
 const SVG_OPEN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
 const SPEAKER_BODY = '<path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/>';
