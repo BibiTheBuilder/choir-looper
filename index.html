@@ -175,6 +175,11 @@
   .theme-dark .mini { border-color: #343a46; }
   .theme-dark .mini.on { background: #a85a6c; border-color: #a85a6c; color: #f3eef0; }
   .theme-dark .mini.on.solo { background: #c9a85a; border-color: #c9a85a; color: #0b0c10; }
+  .theme-deepsea .mini.on { background: #1b7a8c; border-color: #4ff2e9; color: #eafffc; box-shadow: 0 0 10px rgba(79,242,233,0.35); }
+  .theme-deepsea .mini.on.solo { background: #4ff2e9; border-color: #b8fff9; color: #02222e; box-shadow: 0 0 12px rgba(79,242,233,0.55); }
+  /* lofi: dusty old rose and lichen green, after Wada Sanzo's colour dictionary */
+  .theme-lofi .mini.on { background: #a8605f; border-color: #c98a82; color: #fbeee0; }
+  .theme-lofi .mini.on.solo { background: #8f9f78; border-color: #b3c09c; color: #1f2418; }
   .theme-rainbow .mini { border-color: rgba(255,255,255,0.6); }
   .theme-deepsea .mini { border-color: rgba(79,242,233,0.5); }
   .theme-chaos .mini { border-color: #ff0; }
@@ -334,35 +339,38 @@
 
   /* ===== THEME SWITCHER ===== */
   .theme-switcher { display: flex; gap: 8px; align-items: center; justify-content: center; margin: 0 0 14px; flex-wrap: wrap; max-width: 680px; }
+  /* thin, see-through outlines so the theme buttons sit quietly under the title */
   .theme-pick {
-    padding: 8px 16px; border-radius: 20px; font-size: 0.95rem; font-weight: 800;
-    cursor: pointer; border: 2px solid; font-family: 'Nunito', sans-serif; transition: transform 0.15s;
+    padding: 9px 17px; border-radius: 20px; font-size: 0.95rem; font-weight: 800;
+    cursor: pointer; border: 1px solid; font-family: 'Nunito', sans-serif; transition: transform 0.15s;
   }
   .theme-pick:hover { transform: scale(1.08); }
-  .theme-pick.tp-dark { background: #0b0c10; color: #d9dce3; border-color: #343a46; }
+  .theme-pick.tp-dark { background: #0b0c10; color: #d9dce3; border-color: rgba(120,130,150,0.35); }
   .theme-pick.tp-rainbow {
     background: linear-gradient(90deg, #ff0000, #ff7700, #ffff00, #00ff00, #0077ff, #8800ff);
-    color: #0b1d5e; border-color: #fff; text-shadow: 0 0 3px rgba(255,255,255,0.7);
+    color: #0b1d5e; border-color: rgba(255,255,255,0.3);
   }
   .theme-pick.tp-deepsea {
     background: linear-gradient(180deg, #04263b, #02101e);
-    color: #4ff2e9; border-color: #4ff2e9; text-shadow: 0 0 6px rgba(79,242,233,0.7);
+    color: #4ff2e9; border-color: rgba(79,242,233,0.3);
   }
   .theme-pick.tp-chaos {
     background: linear-gradient(135deg, #ff00ff, #000, #00ffff);
-    color: #ff0; border-color: #ff0; text-shadow: 0 0 6px #ff00ff;
-    animation: chaosPickPulse 1s ease infinite alternate;
+    color: #ff0; border-color: rgba(255,255,255,0.14); text-shadow: 0 1px 2px rgba(0,0,0,0.6);
   }
-  @keyframes chaosPickPulse { 0% { box-shadow: 0 0 4px #ff00ff; } 100% { box-shadow: 0 0 12px #00ffff; } }
   .theme-pick.tp-lofi {
     background: linear-gradient(135deg, #4b3430, #e0955e);
-    color: #fff1e0; border-color: #f0b184; text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    color: #fff1e0; border-color: rgba(240,177,132,0.35); text-shadow: 0 1px 2px rgba(0,0,0,0.35);
   }
   .theme-pick.tp-halloween {
     background: linear-gradient(135deg, #24112c 35%, #b4561a);
-    color: #fbeadb; border-color: #b4561a; text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+    color: #fbeadb; border-color: rgba(180,86,26,0.4); text-shadow: 0 1px 2px rgba(0,0,0,0.4);
   }
-  .theme-pick.active-theme { outline: 3px solid #fff; outline-offset: 2px; }
+  /* keep each button's colours inside its outline, so the thin line doesn't pick up the gradient
+     (comes after the per-theme backgrounds, which would otherwise reset it) */
+  .theme-switcher .theme-pick { background-clip: padding-box; }
+  /* the chosen theme gets a soft mint ring */
+  .theme-pick.active-theme { outline: 2px solid #a8dcc4; outline-offset: 2px; }
 
   /* no sticky hover-zoom on touch screens */
   @media (hover: none) {
@@ -422,7 +430,7 @@
     .section-line .sec-times { gap: 4px; }
     .section-line input[type="text"] { width: 56px; font-size: 16px; }  /* under 16px makes iPhone zoom in and stay zoomed */
     .theme-switcher { gap: 4px; }
-    .theme-pick { padding: 5px 8px; font-size: 0.8rem; white-space: nowrap; }
+    .theme-pick { padding: 6px 9px; font-size: 0.8rem; white-space: nowrap; }
   }
 </style>
 </head>
@@ -1656,14 +1664,60 @@ function drawLofi() {
   lofiPhase += 0.006;
   cctx.clearRect(0, 0, w, h);
 
-  // warm lamp glow, gently breathing
+  // soft purple dusk glow from the top left, so it isn't all brown
+  const dusk = 0.2 + 0.03 * Math.sin(lofiPhase*0.7 + 1.5);
+  const purple = cctx.createRadialGradient(0, 0, 0, 0, 0, Math.max(w, h)*0.7);
+  purple.addColorStop(0, 'rgba(92,58,128,' + dusk.toFixed(3) + ')');
+  purple.addColorStop(0.4, 'rgba(76,48,108,' + (dusk*0.45).toFixed(3) + ')');
+  purple.addColorStop(1, 'rgba(60,40,90,0)');
+  cctx.fillStyle = purple;
+  cctx.fillRect(0, 0, w, h);
+
+  // a street lamp: the pole stands at the edge and its curved arm reaches in over the top of the parts
+  const phone = w < 700;
+  const poleX = phone ? w - 10 : w*0.93;
+  // on a phone the lamp sits in the top corner, beside the title
+  const headX = phone ? w*0.86 : w*0.8, headY = phone ? 24 : h*0.13;
+  const pw = Math.max(4, Math.min(9, w*0.006));
   const breathe = 0.16 + 0.05 * Math.sin(lofiPhase);
-  const lamp = cctx.createRadialGradient(w*0.84, h*0.10, 0, w*0.84, h*0.10, Math.max(w,h)*0.6);
-  lamp.addColorStop(0, 'rgba(255,186,120,' + breathe.toFixed(3) + ')');
-  lamp.addColorStop(0.45, 'rgba(255,150,90,0.055)');
+  const lamp = cctx.createRadialGradient(headX, headY + pw, 0, headX, headY + pw, Math.max(w,h)*0.55);
+  lamp.addColorStop(0, 'rgba(255,214,160,' + (breathe + 0.1).toFixed(3) + ')');
+  lamp.addColorStop(0.12, 'rgba(255,186,120,' + breathe.toFixed(3) + ')');
+  lamp.addColorStop(0.45, 'rgba(255,150,90,0.05)');
   lamp.addColorStop(1, 'rgba(0,0,0,0)');
   cctx.fillStyle = lamp;
   cctx.fillRect(0, 0, w, h);
+  // soft cone of light falling from the lamp
+  const cone = cctx.createLinearGradient(0, headY, 0, headY + h*0.45);
+  cone.addColorStop(0, 'rgba(255,205,150,' + (breathe*0.5).toFixed(3) + ')');
+  cone.addColorStop(1, 'rgba(255,205,150,0)');
+  cctx.fillStyle = cone;
+  cctx.beginPath();
+  cctx.moveTo(headX - pw*2, headY + pw); cctx.lineTo(headX + pw*2.5, headY + pw);
+  cctx.lineTo(headX + h*0.16, headY + h*0.45); cctx.lineTo(headX - h*0.16, headY + h*0.45);
+  cctx.fill();
+  // pole and arm
+  cctx.strokeStyle = 'rgba(46,32,40,0.95)';
+  cctx.lineCap = 'round';
+  cctx.lineWidth = pw;
+  cctx.beginPath();
+  cctx.moveTo(poleX, h + 10);
+  cctx.lineTo(poleX, headY + h*0.12);
+  cctx.quadraticCurveTo(poleX, headY - h*0.015, headX + (poleX - headX)*0.45, headY - h*0.012);
+  cctx.quadraticCurveTo(headX + pw*3, headY - h*0.008, headX + pw*1.5, headY);
+  cctx.stroke();
+  cctx.strokeStyle = 'rgba(255,200,150,0.12)';
+  cctx.lineWidth = Math.max(1, pw*0.25);
+  cctx.beginPath(); cctx.moveTo(poleX - pw*0.25, h); cctx.lineTo(poleX - pw*0.25, headY + h*0.12); cctx.stroke();
+  // lamp head: a slim hood with a glowing underside
+  cctx.fillStyle = 'rgba(46,32,40,0.98)';
+  cctx.beginPath();
+  cctx.ellipse(headX, headY, pw*3.2, pw*1.1, -0.12, Math.PI, 0);
+  cctx.fill();
+  cctx.fillStyle = 'rgba(255,236,200,' + (0.75 + breathe).toFixed(3) + ')';
+  cctx.beginPath();
+  cctx.ellipse(headX, headY + pw*0.1, pw*2.6, pw*0.55, -0.12, 0, Math.PI);
+  cctx.fill();
 
   // drifting bokeh
   bokeh.forEach(b => {
